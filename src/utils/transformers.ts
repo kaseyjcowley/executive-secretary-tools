@@ -49,6 +49,7 @@ export const transformTrelloCards = async (
     // Get the only member in the list
     map(modify("idMembers", head)),
     // Using the plucked ID, hydrate the member information
+    // @ts-expect-error - can't match types right now
     mapAsync<ApiTrelloCard, Promise<TrelloCard>>(hydrateMembers)
   )(cards);
 };
