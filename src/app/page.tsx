@@ -13,13 +13,15 @@ export default async function Home() {
       {!hasInterviews ? (
         <h2 className="text-slate-800">No Interviews</h2>
       ) : (
-        Object.values(BishopricMemberId).map((memberId) => (
-          <InterviewsTable
-            key={memberId}
-            memberId={memberId}
-            interviews={interviews[memberId]}
-          />
-        ))
+        Object.values(BishopricMemberId)
+          .filter((memberId) => size(interviews[memberId]) > 0)
+          .map((memberId) => (
+            <InterviewsTable
+              key={memberId}
+              memberId={memberId}
+              interviews={interviews[memberId]}
+            />
+          ))
       )}
     </main>
   );
