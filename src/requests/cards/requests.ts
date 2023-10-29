@@ -1,4 +1,4 @@
-import { map, pipeAsync } from "rambdax";
+import { map, pipeAsync, partial } from "rambdax";
 
 import {
   buildCallingTrelloCard,
@@ -7,12 +7,9 @@ import {
   transformTrelloCards,
 } from "@/utils/transformers";
 
-import {
-  ApiTrelloCard,
-  CallingTrelloCard,
-  InterviewTrelloCard,
-  TrelloCard,
-} from "./types";
+import { ApiTrelloCard, CallingTrelloCard, InterviewTrelloCard } from "./types";
+
+import { CallingStage } from "@/constants";
 
 const DEFAULT_CARD_FIELDS = ["id", "name", "due", "assigned", "idMembers"];
 
@@ -47,18 +44,22 @@ const fetchInterviewCards = async (
   )(apiCards);
 };
 
-const fetchCallingCards = async (listId: string): Promise<TrelloCard[]> => {
+const fetchCallingCards = async (
+  stage: CallingStage,
+  listId: string
+): Promise<CallingTrelloCard[]> => {
   const apiCards = await fetchCards(listId);
 
   return await pipeAsync<CallingTrelloCard[]>(
     transformTrelloCards,
-    map(buildCallingTrelloCard)
+    // @ts-expect-error - these types don't match up to what the API says is possible
+    map(partial(buildCallingTrelloCard, stage))
   )(apiCards);
 };
 
 const INTERVIEW_BOARD_LIST_IDS = ["5f62e544085cf226223925e8"];
-const CALLINGS_BOARD_LIST_IDS = [
-  "5f62ba5c3d87c93ade73a3a1",
+const CALLINGS_BOARD_LIST_IDS = ["5f62ba5c3d87c93ade73a3a1"];
+const SETTING_APART_BOARD_LIST_IDS = [
   "5f62ba76ea8a665c566846a2",
   "5f62bc2052e58c7dc5740b4f",
 ];
@@ -66,5 +67,12 @@ const CALLINGS_BOARD_LIST_IDS = [
 export const fetchAllCardsGroupedByMember = async () =>
   await Promise.all([
     ...INTERVIEW_BOARD_LIST_IDS.map(fetchInterviewCards),
-    ...CALLINGS_BOARD_LIST_IDS.map(fetchCallingCards),
+    ...CALLINGS_BOARD_LIST_IDS.map(
+      // @ts-expect-error - these types don't match up to what the API says is possible
+      partial(fetchCallingCards, CallingStage.needsCallingExtended)
+    ),
+    ...SETTING_APART_BOARD_LIST_IDS.map(
+      // @ts-expect-error - these types don't match up to what the API says is possible
+      partial(fetchCallingCards, CallingStage.needsSettingApart)
+    ),
   ]).then((allCards) => groupSortedCardsByMember(allCards.flat()));
