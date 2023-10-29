@@ -1,4 +1,15 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nodeExternals = require("webpack-node-externals");
 
-module.exports = nextConfig
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
+
+module.exports = {
+  ...nextConfig,
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.externals = [nodeExternals()];
+    }
+
+    return config;
+  },
+};
