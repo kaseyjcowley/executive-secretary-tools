@@ -11,6 +11,7 @@ import {
   CallingStage,
 } from "@/constants";
 import { CallingTrelloCard, InterviewTrelloCard } from "@/requests/cards";
+import { SITE_URL } from "@/utils/urls";
 
 const app = new App({
   token: process.env.SLACK_USER_OAUTH_TOKEN,
@@ -18,7 +19,7 @@ const app = new App({
 });
 
 export async function POST(request: Request) {
-  const result = await fetch("http://localhost:3000/api/interviews").then((r) =>
+  const result = await fetch(`${SITE_URL}/api/interviews`).then((r) =>
     r.json()
   );
 

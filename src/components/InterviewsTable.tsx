@@ -14,7 +14,7 @@ export const InterviewsTable = ({ memberId, interviews }: Props) => {
     <table className="table-fixed text-slate-900 border border-slate-500 w-full">
       <tbody>
         <tr className="border border-slate-500">
-          <td className="p-2">{getMemberName(memberId)}</td>
+          <td className="p-2 font-bold">{getMemberName(memberId)}</td>
         </tr>
         {interviews.map((card) => (
           <tr key={card.name} className="odd:bg-white even:bg-slate-50">
