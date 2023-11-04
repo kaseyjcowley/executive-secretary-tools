@@ -2,6 +2,7 @@ import formatDate from "date-fns/format";
 
 import { CallingTrelloCard, InterviewTrelloCard } from "@/requests/cards";
 import { getMemberName } from "@/requests/members";
+import { CallingStage } from "@/constants";
 
 interface Props {
   memberId: string;
@@ -10,10 +11,10 @@ interface Props {
 
 export const InterviewsTable = ({ memberId, interviews }: Props) => {
   return (
-    <table className="table-fixed text-slate-900 border border-slate-500 w-1/2">
+    <table className="table-fixed text-slate-900 border border-slate-500 w-full">
       <tbody>
         <tr className="border border-slate-500">
-          <td className="p-2">{getMemberName(memberId)}</td>
+          <td className="p-2 font-bold">{getMemberName(memberId)}</td>
         </tr>
         {interviews.map((card) => (
           <tr key={card.name} className="odd:bg-white even:bg-slate-50">
@@ -21,11 +22,14 @@ export const InterviewsTable = ({ memberId, interviews }: Props) => {
             <td className="border border-slate-500 p-2">
               {formatDate(new Date(card.due), "h:mmaaa")}
             </td>
-            <td className="p-2">
+            <td className="border border-slate-500 p-2">
               {(() => {
                 switch (card.kind) {
-                  case "calling":
-                    return card.calling;
+                  case "calling": {
+                    return card.stage === CallingStage.needsCallingExtended
+                      ? `Calling as ${card.calling}`
+                      : `Setting apart as ${card.calling}`;
+                  }
                   case "interview": {
                     return card.labels?.name;
                   }

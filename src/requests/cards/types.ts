@@ -1,3 +1,4 @@
+import { CallingStage } from "@/constants";
 import { ApiMember } from "@/requests/members";
 
 export interface Label {
@@ -11,9 +12,9 @@ export interface ApiTrelloCard {
   idMembers: string;
 }
 
-export type TrelloCard = Omit<ApiTrelloCard, "idMembers"> & {
+export interface TrelloCard extends ApiTrelloCard {
   assigned: ApiMember["fullName"] | undefined;
-};
+}
 
 export interface InterviewTrelloCard extends TrelloCard {
   kind: "interview";
@@ -23,4 +24,5 @@ export interface InterviewTrelloCard extends TrelloCard {
 export interface CallingTrelloCard extends TrelloCard {
   kind: "calling";
   calling: string;
+  stage: CallingStage;
 }

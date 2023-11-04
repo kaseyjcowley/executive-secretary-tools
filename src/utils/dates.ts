@@ -1,11 +1,26 @@
-import { startOfDay, isSameDay, nextSunday as nextSundayFrom } from "date-fns";
+import {
+  startOfDay,
+  isSameDay,
+  nextSunday as nextSundayFrom,
+  isSunday,
+  isToday,
+} from "date-fns";
 
 import { ApiTrelloCard } from "@/requests/cards";
 
 export const isCardDueNextSunday = (card: ApiTrelloCard) => {
-  const today = startOfDay(Date.now());
   const due = startOfDay(new Date(card.due));
-  const nextSunday = nextSundayFrom(today);
+  const closestSunday = getClosestSunday();
 
-  return isSameDay(due, nextSunday);
+  return isSameDay(due, closestSunday);
+};
+
+export const getClosestSunday = () => {
+  const today = startOfDay(Date.now());
+
+  if (isSunday(today)) {
+    return today;
+  }
+
+  return nextSundayFrom(today);
 };

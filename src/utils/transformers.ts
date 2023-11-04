@@ -16,8 +16,7 @@ import {
   prop,
   sortByPath,
   groupBy,
-  complement,
-  isEmpty,
+  defaultTo,
 } from "rambdax";
 
 import {
@@ -29,8 +28,7 @@ import {
 import { ApiMember, hydrateMembers } from "@/requests/members";
 
 import { isCardDueNextSunday } from "./dates";
-
-const hasAssignee = pipe(prop("idMembers"), complement(isEmpty));
+import { CallingStage } from "@/constants";
 
 export const groupSortedCardsByMember = (
   cards: TrelloCard[]
@@ -42,12 +40,11 @@ export const transformTrelloCards = async (
   cards: ApiTrelloCard[]
 ): Promise<TrelloCard[]> => {
   return pipeAsync<TrelloCard[]>(
-    // Only use cards that have an assignee
-    filter(hasAssignee),
     // Only get the cards that are due the next coming Sunday
     filter(isCardDueNextSunday),
     // Get the only member in the list
-    map(modify("idMembers", head)),
+    // @ts-expect-error - can't match types right now
+    map(modify("idMembers", pipe(head, defaultTo("unassigned")))),
     // Using the plucked ID, hydrate the member information
     // @ts-expect-error - can't match types right now
     mapAsync<ApiTrelloCard, Promise<TrelloCard>>(hydrateMembers)
@@ -61,9 +58,10 @@ export const buildInterviewTrelloCard = pipe(
   assoc("kind", "interview" as const)
 );
 
-export const buildCallingTrelloCard = (card: TrelloCard) =>
+export const buildCallingTrelloCard = (stage: CallingStage, card: TrelloCard) =>
   pipe(
     set(lensProp("name"), head(match(/.+?(?=\sas)/, card.name))),
     assoc("calling", nth(1, match(/as ([^;]+)$/, card.name))),
-    assoc("kind", "calling" as const)
+    assoc("kind", "calling" as const),
+    assoc("stage", stage)
   )(card);

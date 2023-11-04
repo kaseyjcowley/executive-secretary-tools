@@ -1,0 +1,10 @@
+Interviews for tomorrow:
+
+<@{{bishop}}>:
+{{bishopInterviews}}
+
+<@{{firstCounselor}}>:
+{{firstCounselorInterviews}}
+
+<@{{secondCounselor}}>:
+{{secondCounselorInterviews}}

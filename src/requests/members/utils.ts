@@ -1,13 +1,8 @@
+import { BishopricMemberName } from "@/constants";
 import { ApiTrelloCard, TrelloCard } from "@/requests/cards";
 
-import { fetchMembers } from "./requests";
-import { ApiMember } from "./types";
-
-export const getMemberName = async (
-  id: string
-): Promise<string | undefined> => {
-  const members = await fetchMembers();
-  return members.find((m: ApiMember) => m.id === id)?.fullName;
+export const getMemberName = (id: string): string | undefined => {
+  return id === "unassigned" ? "unassigned" : BishopricMemberName[id];
 };
 
 export const hydrateMembers = async (
