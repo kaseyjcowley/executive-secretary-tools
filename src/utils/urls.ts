@@ -3,7 +3,7 @@ const getSiteUrl = () => {
     case "development":
       return "http://localhost:3000";
     default:
-      return process.env.VERCEL_URL;
+      return `https://${process.env.VERCEL_URL}`;
   }
 };
 
