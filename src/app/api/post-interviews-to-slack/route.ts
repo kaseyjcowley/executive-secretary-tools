@@ -4,6 +4,7 @@ import { NextRequest } from "next/server";
 import { App } from "@slack/bolt";
 import { interpolate } from "rambdax";
 import format from "date-fns/format";
+import utcToZonedTime from "date-fns-tz/utcToZonedTime";
 
 import {
   BishopricMemberId,
@@ -61,9 +62,10 @@ export async function POST(request: NextRequest) {
 }
 
 function formatInterview(interview: InterviewTrelloCard | CallingTrelloCard) {
-  return `• ${format(new Date(interview.due), "h:mmaaa")} w/ ${
-    interview.name
-  } - ${
+  return `• ${format(
+    utcToZonedTime(interview.due, "America/Denver"),
+    "h:mmaaa"
+  )} w/ ${interview.name} - ${
     interview.kind === "calling"
       ? `${prettyPrintStage(interview.stage)} as ${interview.calling}`
       : interview.labels?.name
