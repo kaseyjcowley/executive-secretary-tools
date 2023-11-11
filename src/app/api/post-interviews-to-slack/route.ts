@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { NextRequest } from "next/server";
 import { App } from "@slack/bolt";
 import { interpolate } from "rambdax";
 import format from "date-fns/format";
@@ -18,7 +19,9 @@ const app = new App({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
 });
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+
   const result = await fetch(`${SITE_URL}/api/interviews`).then((r) =>
     r.json()
   );
@@ -41,7 +44,9 @@ export async function POST(request: Request) {
     );
 
   await app.client.chat.postMessage({
-    channel: SlackChannelId.bishopric,
+    channel: searchParams.has("dry-run")
+      ? SlackChannelId.automationTesting
+      : SlackChannelId.bishopric,
     text: interpolate(template, {
       bishop: BishopricSlackMemberIds.bishop,
       bishopInterviews,
