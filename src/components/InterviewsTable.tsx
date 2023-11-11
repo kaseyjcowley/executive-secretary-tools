@@ -1,4 +1,5 @@
-import { format as formatDate } from "date-fns-tz";
+import { utcToZonedTime } from "date-fns-tz";
+import formatDate from "date-fns/format";
 import getHours from "date-fns/getHours";
 import getMinutes from "date-fns/getMinutes";
 
@@ -32,9 +33,10 @@ export const InterviewsTable = ({ memberId, interviews }: Props) => {
             >
               <td className="border border-slate-500 p-2">{card.name}</td>
               <td className="border border-slate-500 p-2">
-                {formatDate(new Date(card.due), "h:mmaaa", {
-                  timeZone: "America/Denver",
-                })}
+                {formatDate(
+                  utcToZonedTime(card.due, "America/Denver"),
+                  "h:mmaaa"
+                )}
               </td>
               <td className="border border-slate-500 p-2">
                 {(() => {
