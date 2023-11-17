@@ -12,7 +12,7 @@ export default async function Home() {
   const hasInterviews = size(interviews) > 0;
 
   return (
-    <main className="p-24 flex flex-col space-y-10">
+    <main className="p-2 md:p-24 flex flex-col space-y-10">
       <h1 className="text-3xl font-bold leading-none tracking-tight text-gray-900">
         Interviews for Sunday {format(getClosestSunday(), "MMM do, yyyy")}
       </h1>
