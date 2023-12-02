@@ -61,7 +61,7 @@ export const buildInterviewTrelloCard = pipe(
 export const buildCallingTrelloCard = (stage: CallingStage, card: TrelloCard) =>
   pipe(
     set(lensProp("name"), head(match(/.+?(?=\sas)/, card.name))),
-    assoc("calling", nth(1, match(/as ([^;]+)$/, card.name))),
+    assoc("calling", nth(1, match(/as ([^;]+)/, card.name))),
     assoc("kind", "calling" as const),
     assoc("stage", stage)
   )(card);
