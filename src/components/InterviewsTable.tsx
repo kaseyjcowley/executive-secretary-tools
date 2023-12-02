@@ -17,7 +17,9 @@ export const InterviewsTable = ({ memberId, interviews }: Props) => {
     <table className="table-fixed text-slate-900 border border-slate-500 w-full">
       <tbody>
         <tr className="border border-slate-500">
-          <td className="p-2 font-bold">{getMemberName(memberId)}</td>
+          <td colSpan={3} className="p-2 font-bold">
+            {getMemberName(memberId)}
+          </td>
         </tr>
         {interviews.map((card) => {
           const hour = getHours(new Date(card.due));
