@@ -68,7 +68,7 @@ function formatInterview(interview: InterviewTrelloCard | CallingTrelloCard) {
   )} w/ ${interview.name} - ${
     interview.kind === "calling"
       ? `${prettyPrintStage(interview.stage)} as ${interview.calling}`
-      : interview.labels?.name
+      : interview.labels?.name ?? "Interview"
   }`;
 }
 

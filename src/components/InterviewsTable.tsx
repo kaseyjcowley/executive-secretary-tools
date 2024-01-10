@@ -49,7 +49,7 @@ export const InterviewsTable = ({ memberId, interviews }: Props) => {
                         : `Setting apart as ${card.calling}`;
                     }
                     case "interview": {
-                      return card.labels?.name;
+                      return card.labels?.name ?? "Interview";
                     }
                   }
                 })()}
