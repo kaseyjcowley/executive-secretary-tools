@@ -22,7 +22,8 @@ const fetchCards = async (
       process.env.TRELLO_API_KEY
     }&token=${process.env.TRELLO_API_TOKEN}&fields=${DEFAULT_CARD_FIELDS.concat(
       additionalFields
-    ).toString()}`
+    ).toString()}`,
+    { cache: "no-cache" }
   )
     .then((response) => response.json())
     .catch((err) => console.error(err));
