@@ -19,6 +19,6 @@ export async function POST(request: NextRequest) {
   });
 
   return Response.json({
-    foo: "bar",
+    success: true,
   });
 }
