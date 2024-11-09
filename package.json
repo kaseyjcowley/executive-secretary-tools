@@ -15,6 +15,7 @@
     "date-fns-tz": "^2.0.0",
     "next": "13.4.19",
     "postcss": "8.4.29",
+    "prettier": "^3.3.3",
     "rambdax": "^10.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",

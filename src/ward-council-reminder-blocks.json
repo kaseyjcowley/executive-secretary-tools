@@ -1,0 +1,120 @@
+[
+  {
+    "type": "rich_text",
+    "elements": [
+      {
+        "type": "rich_text_section",
+        "elements": [
+          {
+            "type": "broadcast",
+            "range": "channel"
+          },
+          {
+            "type": "emoji",
+            "name": "rotating_light"
+          },
+          {
+            "type": "text",
+            "text": " Ward Council Input Needed! "
+          },
+          {
+            "type": "emoji",
+            "name": "rotating_light"
+          },
+          {
+            "type": "text",
+            "text": "\n\nAs we prepare for our upcoming ward council meeting, we’d love your inspired input. Please share any topics or areas of focus you feel we should discuss that align with our purpose of inviting all to come unto Christ. Specifically, consider ways we can help our ward members:\n\n"
+          }
+        ]
+      },
+      {
+        "type": "rich_text_list",
+        "style": "bullet",
+        "elements": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "text",
+                "text": "Live the gospel of Jesus Christ: ",
+                "style": {
+                  "bold": true
+                }
+              },
+              {
+                "type": "text",
+                "text": "How can we strengthen faith and encourage consistent gospel living among ward members?"
+              }
+            ]
+          },
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "text",
+                "text": "Care for those in need: ",
+                "style": {
+                  "bold": true
+                }
+              },
+              {
+                "type": "text",
+                "text": "What opportunities do we have to serve and uplift members and friends of the Church in our community?"
+              }
+            ]
+          },
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "text",
+                "text": "Invite all to receive the gospel: ",
+                "style": {
+                  "bold": true
+                }
+              },
+              {
+                "type": "text",
+                "text": "How can we better share the joy of the gospel with those around us and support missionary efforts?"
+              }
+            ]
+          },
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "text",
+                "text": "Unite families for eternity: ",
+                "style": {
+                  "bold": true
+                }
+              },
+              {
+                "type": "text",
+                "text": "What ideas do you have for helping families feel the blessings of temple and family history work?"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "rich_text_section",
+        "elements": [
+          {
+            "type": "text",
+            "text": "\n\nFeel free to post your thoughts here or send them directly to Bishop Hill before our meeting. As Elder David A. Bednar taught, “Revelation is scattered among the various members of a council” "
+          },
+          {
+            "type": "link",
+            "url": "https://www.churchofjesuschrist.org/inspiration/learning-from-gods-pattern-of-councils?lang=eng",
+            "text": "(Walker, 2022)"
+          },
+          {
+            "type": "text",
+            "text": ", your insights and perspective are vital as we work together to further God’s work in our ward."
+          }
+        ]
+      }
+    ]
+  }
+]

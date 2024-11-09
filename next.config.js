@@ -9,7 +9,6 @@ module.exports = {
     if (!isServer) {
       config.externals = [nodeExternals()];
     }
-
     return config;
   },
 };
