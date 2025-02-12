@@ -21,7 +21,7 @@ export enum SlackChannelId {
 export const BishopricSlackMemberIds: Record<BishopricMember, string> = {
   [BishopricMember.bishop]: "U01ASQSJ04Q",
   [BishopricMember.firstCounselor]: "U02RLUSKGQL",
-  [BishopricMember.secondCounselor]: "U07T96ABDDX",
+  [BishopricMember.secondCounselor]: "U08DC1RGZME",
   [BishopricMember.executiveSecretary]: "U01B1LT9999",
 } as const;
 
