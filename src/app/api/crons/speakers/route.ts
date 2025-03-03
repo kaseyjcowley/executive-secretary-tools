@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { app } from "@/utils/slack";
 import { SlackChannelId } from "@/constants";
+import { anyPass } from "rambdax";
+import {
+  getClosestSunday,
+  isFirstSunday,
+  isGeneralConference,
+} from "@/utils/dates";
 
 export async function GET(request: NextRequest) {
   // Confirm someone is allowed to do this
@@ -10,6 +16,13 @@ export async function GET(request: NextRequest) {
       status: 401,
     });
   }
+
+  // Skip posting when the first sunday is upcoming, or general conference is upcoming
+  const shouldSkip = anyPass([isFirstSunday, isGeneralConference])(
+    getClosestSunday()
+  );
+
+  if (shouldSkip) return NextResponse.json({ message: "Skipped" });
 
   // Grab the conductor for this month. It's found in the topic of the channel
   const channelInfo = await app.client.conversations.info({
@@ -43,7 +56,7 @@ export async function GET(request: NextRequest) {
         element: {
           type: "plain_text_input",
           multiline: true,
-          action_id: "plain_text_input-action",
+          action_id: "sacrament-speakers",
         },
         label: {
           type: "plain_text",
