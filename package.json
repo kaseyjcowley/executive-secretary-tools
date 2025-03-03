@@ -10,10 +10,13 @@
   },
   "dependencies": {
     "@slack/bolt": "^3.14.0",
+    "@types/nodemailer": "^6.4.17",
     "autoprefixer": "10.4.15",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
+    "googleapis": "^144.0.0",
     "next": "13.4.19",
+    "nodemailer": "^6.10.0",
     "postcss": "8.4.29",
     "prettier": "^3.3.3",
     "rambdax": "^10.0.0",
