@@ -41,8 +41,8 @@ class SacramentSpeakersHandler implements SlackInteractivityHandler {
       sendEmail({
         subject: `28th Ward Sacrament Speakers for ${date}`,
         text: `Hi Brother Cain, here are our speakers for ${date}:\n\n${action.value}\n\nThanks!\nKasey Cowley`,
-        to: dryRun ? "kcowley1988@gmail.com" : "martincain2@gmail.com",
-        from: "kcowley1988@gmail.com",
+        to: dryRun ? process.env.EMAIL_SENDER : process.env.EMAIL_RECIPIENT,
+        from: process.env.EMAIL_SENDER,
       });
     } catch (err) {
       console.error(err);
