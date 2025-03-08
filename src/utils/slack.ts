@@ -37,13 +37,19 @@ class SacramentSpeakersHandler implements SlackInteractivityHandler {
     dryRun: boolean
   ): Promise<void> {
     try {
+      console.log("Beginning send email...");
       const date = format(getClosestSunday(), "MMMM do");
-      sendEmail({
+      const recipient = dryRun
+        ? process.env.EMAIL_SENDER
+        : process.env.EMAIL_RECIPIENT;
+      console.log(`Sending email to ${recipient} with date: ${date}`);
+      await sendEmail({
         subject: `28th Ward Sacrament Speakers for ${date}`,
         text: `Hi Brother Cain, here are our speakers for ${date}:\n\n${action.value}\n\nThanks!\nKasey Cowley`,
-        to: dryRun ? process.env.EMAIL_SENDER : process.env.EMAIL_RECIPIENT,
+        to: recipient,
         from: process.env.EMAIL_SENDER,
       });
+      console.log("Done sending!");
     } catch (err) {
       console.error(err);
       return;
