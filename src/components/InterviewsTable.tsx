@@ -1,4 +1,5 @@
 import getHours from "date-fns/getHours";
+import { utcToZonedTime } from "date-fns-tz";
 
 import { CallingTrelloCard, InterviewTrelloCard } from "@/requests/cards";
 import { getMemberName } from "@/requests/members";
@@ -13,10 +14,14 @@ const END_OF_CHURCH_HOUR = 11;
 
 export const InterviewsTable = ({ memberId, interviews }: Props) => {
   const interviewsBeforeChurch = interviews.filter(
-    (interview) => getHours(new Date(interview.due)) < END_OF_CHURCH_HOUR
+    (interview) =>
+      getHours(utcToZonedTime(interview.due, "America/Denver")) <
+      END_OF_CHURCH_HOUR
   );
   const interviewsAfterChurch = interviews.filter(
-    (interview) => getHours(new Date(interview.due)) >= END_OF_CHURCH_HOUR
+    (interview) =>
+      getHours(utcToZonedTime(interview.due, "America/Denver")) >=
+      END_OF_CHURCH_HOUR
   );
 
   return (
