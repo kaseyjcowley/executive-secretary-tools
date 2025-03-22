@@ -23,11 +23,14 @@ export default async function Home() {
           {Object.values(BishopricMemberId)
             .filter((memberId) => interviews[memberId]?.length > 0)
             .map((memberId) => (
-              <InterviewsTable
-                key={memberId}
-                memberId={memberId}
-                interviews={interviews[memberId]}
-              />
+              <>
+                <InterviewsTable
+                  key={memberId}
+                  memberId={memberId}
+                  interviews={interviews[memberId]}
+                />
+                <hr className="border-t-2 border-gray-300" />
+              </>
             ))}
           {interviews.unassigned?.length > 0 && (
             <Fragment>
