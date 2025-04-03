@@ -13,14 +13,14 @@ export async function POST(request: NextRequest) {
 
     const parsedPayload = JSON.parse(payload.toString());
     const {
-      channel: { id: channel_id },
       actions: [action],
     } = parsedPayload;
+    const channel_id = parsedPayload?.channel?.channel_id;
 
     const handler = HandlerFactory.create(action.action_id);
     await handler.handle(
-      action,
-      channel_id === SlackChannelId.automationTesting
+      parsedPayload,
+      channel_id === SlackChannelId.automationTesting || true
     );
 
     return NextResponse.json({ message: "Success" });
