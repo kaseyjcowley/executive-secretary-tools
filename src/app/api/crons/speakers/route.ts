@@ -44,25 +44,27 @@ export async function GET(request: NextRequest) {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `<@${userIdConductingThisMonth}>, please add the Sacrament speakers for the week below. Thank you!`,
+          text: `<@${userIdConductingThisMonth}>, please click the button below to add Sacrament speakers for the week. Thank you!`,
         },
       },
       {
         type: "divider",
       },
       {
-        dispatch_action: true,
-        type: "input",
-        element: {
-          type: "plain_text_input",
-          multiline: true,
-          action_id: "sacrament-speakers",
-        },
-        label: {
-          type: "plain_text",
-          text: "Sacrament speakers for the week",
-          emoji: true,
-        },
+        type: "actions",
+        block_id: "speakers_actions",
+        elements: [
+          {
+            type: "button",
+            text: {
+              type: "plain_text",
+              text: "Submit Sacrament Speakers",
+              emoji: true,
+            },
+            style: "primary",
+            action_id: "open_speakers_modal",
+          },
+        ],
       },
     ],
   });

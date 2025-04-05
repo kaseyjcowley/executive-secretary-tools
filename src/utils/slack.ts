@@ -1,7 +1,9 @@
+import { App, View } from "@slack/bolt";
 import redis from "@/utils/redis"; // Import redis client
 import { sendEmail } from "./email";
 import { getClosestSunday } from "./dates";
 import format from "date-fns/format";
+import * as R from "rambdax";
 import {
   nextWednesday,
   setHours,
@@ -16,7 +18,31 @@ export const app = new App({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
 });
 
-type ActionId = "sacrament-speakers";
+type ActionId =
+  | "sacrament-speakers"
+  | "open_speakers_modal"
+  | "add_speaker_input";
+
+type ActionValue = {
+  type: string;
+  value: string;
+};
+
+type BlockActions = {
+  [action: string]: ActionValue;
+};
+
+type StateValues = {
+  [block: string]: BlockActions;
+};
+
+// The full view type given in the prompt
+type ViewState = {
+  id: string;
+  state: {
+    values: StateValues;
+  };
+};
 
 interface SlackInteractivityPayload {
   actions: [
@@ -29,6 +55,7 @@ interface SlackInteractivityPayload {
     },
   ];
   trigger_id: string;
+  view: ViewState;
 }
 
 interface SlackInteractivityHandler {
@@ -40,6 +67,9 @@ export class HandlerFactory {
     switch (actionId) {
       case "sacrament-speakers":
         return new SacramentSpeakersHandler();
+      case "open_speakers_modal":
+      case "add_speaker_input":
+        return new OpenSpeakersModalHandler();
     }
   }
 }
