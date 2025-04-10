@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     const handler = HandlerFactory.create(action.action_id);
     await handler.handle(
       parsedPayload,
-      channel_id === SlackChannelId.automationTesting || true
+      channel_id === SlackChannelId.automationTesting
     );
 
     return NextResponse.json({ message: "Success" });
