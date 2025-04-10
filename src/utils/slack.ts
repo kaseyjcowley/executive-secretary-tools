@@ -9,6 +9,7 @@ import {
   setSeconds,
   differenceInSeconds,
 } from "date-fns";
+import { App } from "@slack/bolt";
 
 export const app = new App({
   token: process.env.SLACK_USER_OAUTH_TOKEN,
@@ -20,11 +21,11 @@ type ActionId = "sacrament-speakers";
 interface SlackInteractivityPayload {
   actions: [
     {
-  type: string;
-  block_id: string;
-  action_id: ActionId;
-  value: string;
-  action_ts: string;
+      type: string;
+      block_id: string;
+      action_id: ActionId;
+      value: string;
+      action_ts: string;
     },
   ];
   trigger_id: string;
@@ -103,10 +104,6 @@ class SacramentSpeakersHandler implements SlackInteractivityHandler {
     } catch (err) {
       console.error("Error during SacramentSpeakersHandler execution:", err);
       // Consider if you need error handling if Redis fails but email succeeds
-    }
-  }
-}
-      return;
     }
   }
 }
