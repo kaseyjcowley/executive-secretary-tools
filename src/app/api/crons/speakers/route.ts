@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { app } from "@/utils/slack";
+import { BlockKit } from "@/utils/block-kit-builder"; // Import the builder
 import { SlackChannelId } from "@/constants";
 import { anyPass } from "rambdax";
 import {
@@ -36,38 +37,35 @@ export async function GET(request: NextRequest) {
       ? SlackChannelId.automationTesting
       : SlackChannelId.bishopric;
 
-  // Post a message for the bishopric member who is conducting
-  await app.client.chat.postMessage({
-    channel: slackChannel,
-    blocks: [
-      {
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `<@${userIdConductingThisMonth}>, please click the button below to add Sacrament speakers for the week. Thank you!`,
-        },
-      },
-      {
-        type: "divider",
-      },
-      {
-        type: "actions",
-        block_id: "speakers_actions",
-        elements: [
-          {
-            type: "button",
-            text: {
-              type: "plain_text",
-              text: "Submit Sacrament Speakers",
-              emoji: true,
-            },
-            style: "primary",
-            action_id: "open_speakers_modal",
-          },
-        ],
-      },
-    ],
-  });
+  // Build the message payload using the fluent interface
+  const messagePayload = BlockKit.message()
+    .channel(slackChannel)
+    .text(
+      `<@${userIdConductingThisMonth}>, please click the button below to add Sacrament speakers for the week.` // Fallback text
+    )
+    .addBlock(
+      BlockKit.section().text(
+        BlockKit.markdownText(
+          `<@${userIdConductingThisMonth}>, please click the button below to add Sacrament speakers for the week. Thank you!`
+        )
+      )
+    )
+    .addBlock(BlockKit.divider())
+    .addBlock(
+      BlockKit.actions()
+        .blockId("speakers_actions")
+        .addElement(
+          BlockKit.button(
+            BlockKit.plainText("Submit Sacrament Speakers", { emoji: true })
+          )
+            .style("primary")
+            .actionId("open_speakers_modal")
+        )
+    )
+    .build();
+
+  // Post the message using the built payload
+  await app.client.chat.postMessage(messagePayload);
 
   return NextResponse.json({ message: "Success" });
 }
