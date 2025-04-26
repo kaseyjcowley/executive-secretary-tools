@@ -12,18 +12,38 @@ export async function POST(request: NextRequest) {
     }
 
     const parsedPayload = JSON.parse(payload.toString());
-    const {
-      actions: [action],
-    } = parsedPayload;
-    const channel_id = parsedPayload?.channel?.channel_id;
+    const { type } = parsedPayload;
+    let handlerIdentifier;
 
-    const handler = HandlerFactory.create(action.action_id);
-    await handler.handle(
-      parsedPayload,
-      channel_id === SlackChannelId.automationTesting
-    );
+    switch (type) {
+      case "view_submission":
+        handlerIdentifier = parsedPayload.view.callback_id;
+        break;
+      case "block_actions":
+        handlerIdentifier = parsedPayload.actions[0].action_id;
+        break;
+    }
 
-    return NextResponse.json({ message: "Success" });
+    let privateMetadataDryRun;
+
+    try {
+      privateMetadataDryRun = JSON.parse(
+        parsedPayload.view.private_metadata
+      ).dryRun;
+    } catch (e) {
+      privateMetadataDryRun = false;
+    }
+
+    const channel_id = parsedPayload?.channel?.id;
+    const dryRun =
+      privateMetadataDryRun || channel_id === SlackChannelId.automationTesting;
+
+    const handler = HandlerFactory.create(handlerIdentifier);
+    const response = await handler.handle(parsedPayload, dryRun);
+
+    return NextResponse.json(response ?? { message: "Success" }, {
+      status: 200,
+    });
   } catch (error) {
     return new NextResponse(
       "There was a problem parsing the form data for this request.",

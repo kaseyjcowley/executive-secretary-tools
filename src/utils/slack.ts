@@ -1,25 +1,26 @@
-import { App } from "@slack/bolt";
+import { SlackChannelId, BishopricSlackMemberIds } from "@/constants";
 import redis from "@/utils/redis";
-import { sendEmail } from "./email";
-import { BlockKit, InputBlockBuilder } from "./block-kit-builder";
-import { getClosestSunday } from "./dates";
-import format from "date-fns/format";
-import * as R from "rambdax";
+import { App } from "@slack/bolt";
 import {
+  differenceInSeconds,
   nextWednesday,
   setHours,
   setMinutes,
   setSeconds,
-  differenceInSeconds,
 } from "date-fns";
+import format from "date-fns/format";
+import * as R from "rambdax";
+import { BlockKit, InputBlockBuilder } from "./block-kit-builder";
+import { getClosestSunday } from "./dates";
+import { sendEmail } from "./email";
 
 export const app = new App({
   token: process.env.SLACK_USER_OAUTH_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
 });
 
-type ActionId =
-  | "sacrament-speakers"
+type HandlerIdentifier =
+  | "submit_speakers"
   | "open_speakers_modal"
   | "add_speaker_input";
 
@@ -42,6 +43,7 @@ type ViewState = {
   state: {
     values: StateValues;
   };
+  private_metadata: string;
 };
 
 interface SlackInteractivityPayload {
@@ -49,23 +51,33 @@ interface SlackInteractivityPayload {
     {
       type: string;
       block_id: string;
-      action_id: ActionId;
+      action_id: HandlerIdentifier;
       value: string;
       action_ts: string;
     },
   ];
   trigger_id: string;
   view: ViewState;
+  container: {
+    message_ts: string;
+  };
 }
 
+type HandlerResponse = Record<string, any>;
+
 interface SlackInteractivityHandler {
-  handle(payload: SlackInteractivityPayload, dryRun: boolean): Promise<void>;
+  handle(
+    payload: SlackInteractivityPayload,
+    dryRun: boolean
+  ): Promise<HandlerResponse | void>;
 }
 
 export class HandlerFactory {
-  static create(actionId: ActionId): SlackInteractivityHandler {
-    switch (actionId) {
-      case "sacrament-speakers":
+  static create(
+    handlerIdentifier: HandlerIdentifier
+  ): SlackInteractivityHandler {
+    switch (handlerIdentifier) {
+      case "submit_speakers":
         return new SacramentSpeakersHandler();
       case "open_speakers_modal":
       case "add_speaker_input":
@@ -84,9 +96,31 @@ function calculateNextWednesdayExpiry(currentDate: Date): Date {
 
 class SacramentSpeakersHandler implements SlackInteractivityHandler {
   async handle(
-    { actions: [action] }: SlackInteractivityPayload,
+    payload: SlackInteractivityPayload,
     dryRun: boolean
-  ): Promise<void> {
+  ): Promise<HandlerResponse | void> {
+    const extractValuesFromView = R.pipe<
+      ViewState[],
+      StateValues | undefined,
+      StateValues | {},
+      BlockActions[],
+      ActionValue[],
+      string[]
+    >(
+      // Safely get state.values (might be undefined)
+      R.path(["state", "values"]),
+      // If path was nil, provide {} to prevent errors downstream
+      R.defaultTo({}),
+      // Get values of the blocks -> BlockActions[]
+      R.values,
+      // Map R.values over each BlockActions and flatten -> ActionValue[]
+      R.chain(R.values),
+      // Extract the 'value' property -> string[]
+      R.pluck("value")
+    );
+
+    const speakers = extractValuesFromView(payload.view);
+
     const closestSunday = getClosestSunday();
     const dateKey = format(closestSunday, "yyyy-MM-dd"); // Use consistent date format for key
     const redisKey = `sacrament-speakers:${dateKey}`;
@@ -110,9 +144,32 @@ class SacramentSpeakersHandler implements SlackInteractivityHandler {
 
       await sendEmail({
         subject: `28th Ward Sacrament Speakers for ${formattedDate}`,
-        text: `Hi Brother Cain, here are our speakers for ${formattedDate}:\n\n${action.value}\n\nThanks!\nKasey Cowley`,
+        text: `Hi Brother Cain, here are our speakers for ${formattedDate}:\n\n${speakers.join("\n")}\n\nThanks!\nKasey Cowley`,
         to: recipient,
         from: process.env.EMAIL_SENDER,
+      });
+
+      let metadata;
+      try {
+        metadata = JSON.parse(payload.view.private_metadata);
+      } catch (e) {
+        metadata = {};
+      }
+
+      await app.client.chat.postMessage({
+        channel: dryRun
+          ? SlackChannelId.automationTesting
+          : SlackChannelId.bishopric,
+        blocks: [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: "*Automated reply:*\n\nSacrament speakers have been submitted. Thanks!",
+            },
+          },
+        ],
+        thread_ts: metadata.conversation_ts,
       });
 
       const now = new Date(); // Capture timestamp *after* email is sent
@@ -131,6 +188,8 @@ class SacramentSpeakersHandler implements SlackInteractivityHandler {
           `Calculated expiry time (${expiryDate.toISOString()}) is in the past. Not setting Redis key ${redisKey}.`
         );
       }
+
+      return { response_action: "clear" };
     } catch (err) {
       console.error("Error during SacramentSpeakersHandler execution:", err);
       // Consider if you need error handling if Redis fails but email succeeds
@@ -145,7 +204,10 @@ class OpenSpeakersModalHandler implements SlackInteractivityHandler {
     payload: SlackInteractivityPayload,
     dryRun: boolean
   ): Promise<void> {
-    const metadata = JSON.stringify({ dryRun });
+    const metadata = JSON.stringify({
+      dryRun,
+      conversation_ts: payload.container.message_ts,
+    });
 
     const extractValuesFromView = R.pipe<
       ViewState[],
@@ -174,7 +236,7 @@ class OpenSpeakersModalHandler implements SlackInteractivityHandler {
     const modalViewBuilder = BlockKit.modal(
       BlockKit.plainText("Sacrament Speakers")
     )
-      .callbackId("submit_speakers_modal")
+      .callbackId("submit_speakers")
       .privateMetadata(metadata) // Pass dryRun status
       .submit(BlockKit.plainText("Submit"))
       .close(BlockKit.plainText("Cancel"))
