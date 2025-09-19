@@ -3,14 +3,10 @@ import {
   isSameDay,
   nextSunday as nextSundayFrom,
   isSunday,
-  getWeekOfMonth,
-  getMonth,
+  getDate,
 } from "date-fns";
 
 import { ApiTrelloCard } from "@/requests/cards";
-
-const APRIL_MONTH = 3;
-const OCTOBER_MONTH = 9;
 
 export const isCardDueNextSunday = (card: ApiTrelloCard) => {
   const due = startOfDay(new Date(card.due));
@@ -32,14 +28,5 @@ export const getClosestSunday = () => {
 };
 
 export const isFirstSunday: DatePredicate = (date = getClosestSunday()) => {
-  return getWeekOfMonth(date) === 1;
-};
-
-export const isGeneralConference: DatePredicate = (
-  date = getClosestSunday()
-) => {
-  const month = getMonth(date);
-  return (
-    (month === APRIL_MONTH || month === OCTOBER_MONTH) && isFirstSunday(date)
-  );
+  return isSunday(date) && getDate(date) <= 7;
 };

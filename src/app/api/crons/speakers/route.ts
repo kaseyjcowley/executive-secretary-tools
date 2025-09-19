@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { app } from "@/utils/slack";
 import { SlackChannelId } from "@/constants";
-import { anyPass } from "rambdax";
-import {
-  getClosestSunday,
-  isFirstSunday,
-  isGeneralConference,
-} from "@/utils/dates";
+import { getClosestSunday, isFirstSunday } from "@/utils/dates";
 
 export async function GET(request: NextRequest) {
   // Confirm someone is allowed to do this
@@ -18,9 +13,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Skip posting when the first sunday is upcoming, or general conference is upcoming
-  const shouldSkip = anyPass([isFirstSunday, isGeneralConference])(
-    getClosestSunday()
-  );
+  const shouldSkip = isFirstSunday(getClosestSunday());
 
   if (shouldSkip) return NextResponse.json({ message: "Skipped" });
 
