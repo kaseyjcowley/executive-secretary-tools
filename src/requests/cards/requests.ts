@@ -57,11 +57,11 @@ const fetchCallingCards = async (
   )(apiCards);
 };
 
-const INTERVIEW_BOARD_LIST_IDS = ["5f62e544085cf226223925e8"];
-const CALLINGS_BOARD_LIST_IDS = ["5f62ba5c3d87c93ade73a3a1"];
+const INTERVIEW_BOARD_LIST_IDS = ["698142f18c51336104b0ca18"];
+const CALLINGS_BOARD_LIST_IDS = ["6981402b631c5d579084983f"];
 const SETTING_APART_BOARD_LIST_IDS = [
-  "5f62ba76ea8a665c566846a2",
-  "5f62bc2052e58c7dc5740b4f",
+  "6981403b91ce00795685a559",
+  "6981404b5c5a06bfe7eeb917",
 ];
 
 export const fetchAllCardsGroupedByMember = async () =>
