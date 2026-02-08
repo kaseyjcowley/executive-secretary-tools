@@ -61,7 +61,7 @@ const INTERVIEW_BOARD_LIST_IDS = ["698142f18c51336104b0ca18"];
 const CALLINGS_BOARD_LIST_IDS = ["6981402b631c5d579084983f"];
 const SETTING_APART_BOARD_LIST_IDS = [
   "6981403b91ce00795685a559",
-  "6981404b5c5a06bfe7eeb917",
+  "5f62bc2052e58c7dc5740b4f",
 ];
 
 export const fetchAllCardsGroupedByMember = async () =>
