@@ -15,15 +15,15 @@ const DEFAULT_CARD_FIELDS = ["id", "name", "due", "assigned", "idMembers"];
 
 const fetchCards = async (
   listId: string,
-  additionalFields: string[] = []
+  additionalFields: string[] = [],
 ): Promise<ApiTrelloCard[]> => {
   const apiCards = await fetch(
     `https://api.trello.com/1/lists/${listId}/cards?key=${
       process.env.TRELLO_API_KEY
     }&token=${process.env.TRELLO_API_TOKEN}&fields=${DEFAULT_CARD_FIELDS.concat(
-      additionalFields
+      additionalFields,
     ).toString()}`,
-    { cache: "no-cache" }
+    { cache: "no-cache" },
   )
     .then((response) => response.json())
     .catch((err) => console.error(err));
@@ -32,7 +32,7 @@ const fetchCards = async (
 };
 
 const fetchInterviewCards = async (
-  listId: string
+  listId: string,
 ): Promise<InterviewTrelloCard[]> => {
   const apiCards = await fetchCards(listId, ["labels"]);
 
@@ -40,20 +40,20 @@ const fetchInterviewCards = async (
     // Filters cards by next sunday and does some minor transformations (hydrates members, etc)
     transformTrelloCards,
     // Does some interview-specific card transformations
-    map(buildInterviewTrelloCard)
+    map(buildInterviewTrelloCard),
   )(apiCards);
 };
 
 const fetchCallingCards = async (
   stage: CallingStage,
-  listId: string
+  listId: string,
 ): Promise<CallingTrelloCard[]> => {
   const apiCards = await fetchCards(listId);
 
   return await pipeAsync<CallingTrelloCard[]>(
     transformTrelloCards,
     // @ts-expect-error - these types don't match up to what the API says is possible
-    map(partial(buildCallingTrelloCard, stage))
+    map(partial(buildCallingTrelloCard, stage)),
   )(apiCards);
 };
 
@@ -69,10 +69,10 @@ export const fetchAllCardsGroupedByMember = async () =>
     ...INTERVIEW_BOARD_LIST_IDS.map(fetchInterviewCards),
     ...CALLINGS_BOARD_LIST_IDS.map(
       // @ts-expect-error - these types don't match up to what the API says is possible
-      partial(fetchCallingCards, CallingStage.needsCallingExtended)
+      partial(fetchCallingCards, CallingStage.needsCallingExtended),
     ),
     ...SETTING_APART_BOARD_LIST_IDS.map(
       // @ts-expect-error - these types don't match up to what the API says is possible
-      partial(fetchCallingCards, CallingStage.needsSettingApart)
+      partial(fetchCallingCards, CallingStage.needsSettingApart),
     ),
   ]).then((allCards) => groupSortedCardsByMember(allCards.flat()));
