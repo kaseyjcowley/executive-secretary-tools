@@ -1,4 +1,5 @@
 import getHours from "date-fns/getHours";
+import getMinutes from "date-fns/getMinutes";
 import { utcToZonedTime } from "date-fns-tz";
 
 import { CallingTrelloCard, InterviewTrelloCard } from "@/requests/cards";
@@ -10,19 +11,33 @@ interface Props {
   interviews: Array<InterviewTrelloCard | CallingTrelloCard>;
 }
 
-const END_OF_CHURCH_HOUR = 11;
+const END_OF_CHURCH_HOUR = 12;
+const END_OF_CHURCH_MINUTE = 30;
 
 export const InterviewsTable = ({ memberId, interviews }: Props) => {
-  const interviewsBeforeChurch = interviews.filter(
-    (interview) =>
-      getHours(utcToZonedTime(interview.due, "America/Denver")) <
-      END_OF_CHURCH_HOUR
-  );
-  const interviewsAfterChurch = interviews.filter(
-    (interview) =>
-      getHours(utcToZonedTime(interview.due, "America/Denver")) >=
-      END_OF_CHURCH_HOUR
-  );
+  const interviewsBeforeChurch = interviews.filter((interview) => {
+    const zonedDate = utcToZonedTime(interview.due, "America/Denver");
+    const hours = getHours(zonedDate);
+    const minutes = getMinutes(zonedDate);
+
+    // It's before 12:30 if:
+    // 1. The hour is less than 12
+    // 2. OR the hour is 12 and the minutes are less than 30
+    return (
+      hours < END_OF_CHURCH_HOUR ||
+      (hours === END_OF_CHURCH_HOUR && minutes < END_OF_CHURCH_MINUTE)
+    );
+  });
+  const interviewsAfterChurch = interviews.filter((interview) => {
+    const zonedDate = utcToZonedTime(interview.due, "America/Denver");
+    const hours = getHours(zonedDate);
+    const minutes = getMinutes(zonedDate);
+
+    return (
+      hours > END_OF_CHURCH_HOUR ||
+      (hours === END_OF_CHURCH_HOUR && minutes >= END_OF_CHURCH_MINUTE)
+    );
+  });
 
   return (
     <section>

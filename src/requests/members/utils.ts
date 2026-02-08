@@ -6,7 +6,7 @@ export const getMemberName = (id: string): string | undefined => {
 };
 
 export const hydrateMembers = async (
-  card: ApiTrelloCard
+  card: ApiTrelloCard,
 ): Promise<TrelloCard> => {
   const assigned = await getMemberName(card.idMembers);
   return {
