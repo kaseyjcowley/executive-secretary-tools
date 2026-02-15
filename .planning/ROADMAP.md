@@ -10,8 +10,9 @@ A phased approach to building an appointment messaging system that reads Trello 
 
 ---
 
-## Phase 1: Foundation
+## Phase 1: Foundation ✓
 
+**Status:** Complete (2026-02-14)
 **Goal:** Establish the template system and Trello data pipeline.
 
 **Dependencies:** None
@@ -24,17 +25,16 @@ A phased approach to building an appointment messaging system that reads Trello 
 - Configurable list IDs for Trello boards
 
 **Plans:** 3 plans
-- [ ] 01-foundation-01-PLAN.md — Template system with variable substitution
-- [ ] 01-foundation-02-PLAN.md — Trello contact types and fetcher
-- [ ] 01-foundation-03-PLAN.md — API route and list ID configuration
+- [x] 01-foundation-01-PLAN.md — Template system with variable substitution
+- [x] 01-foundation-02-PLAN.md — Trello contact types and fetcher
+- [x] 01-foundation-03-PLAN.md — API route and list ID configuration
 
 **Exit Criteria:**
-- Templates load from filesystem
-- Variables substitute correctly with test data
-- Trello data fetches contact info with phone number
+- Templates load from filesystem ✓
+- Variables substitute correctly with test data ✓
+- Trello data fetches contact info with phone number ✓
 
-**Risks:**
-- Phone number location in Trello unclear → Parse from description or add custom field
+**Verification:** 8/8 must-haves passed (100%)
 
 ---
 
