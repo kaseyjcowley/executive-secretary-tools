@@ -23,10 +23,10 @@ A phased approach to building an appointment messaging system that reads Trello 
 - Enhanced Trello fetcher to extract contact data (name, phone, labels, title)
 - Configurable list IDs for Trello boards
 
-**Plans:**
-1. Create template system with variable substitution
-2. Fetch and structure Trello contact data
-3. Add configuration for Trello list IDs
+**Plans:** 3 plans
+- [ ] 01-foundation-01-PLAN.md — Template system with variable substitution
+- [ ] 01-foundation-02-PLAN.md — Trello contact types and fetcher
+- [ ] 01-foundation-03-PLAN.md — API route and list ID configuration
 
 **Exit Criteria:**
 - Templates load from filesystem
@@ -252,4 +252,4 @@ Phase 7: Polish & Testing
 ```
 
 ---
-*Last updated: 2026-02-13*
+*Last updated: 2026-02-14*
