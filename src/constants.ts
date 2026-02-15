@@ -39,3 +39,10 @@ export const BishopricMemberName: Record<
   "69817e5a677e074add082272": "Dave Thibault",
   "5a837d172c1860b067ef60c8": "Kasey Cowley",
 } as const;
+
+// Trello list IDs for appointment messaging system
+// Format: "listId1,listId2,listId3"
+// To get list IDs: Open Trello list, check URL: /b/{boardId}/{listName}?l={listId}
+export const APPOINTMENT_LIST_IDS: string[] = process.env
+  .APPOINTMENT_LIST_IDS?.split(",")
+  .filter(Boolean) || [];
