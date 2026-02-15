@@ -1,0 +1,1 @@
+Hi {{name}}, following up on our {{appointmentType}} from {{date}}. How are things going? Text or call {{phone}} when you have a moment.

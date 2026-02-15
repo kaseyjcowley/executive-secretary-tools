@@ -1,0 +1,1 @@
+Hi {{name}}, you have an interview with the bishop on {{date}} at {{time}}. Text {{phone}} if you need to reschedule.
