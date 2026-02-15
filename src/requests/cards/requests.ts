@@ -2,12 +2,13 @@ import { map, pipeAsync, partial } from "rambdax";
 
 import {
   buildCallingTrelloCard,
+  buildContactCard,
   buildInterviewTrelloCard,
   groupSortedCardsByMember,
   transformTrelloCards,
 } from "@/utils/transformers";
 
-import { ApiTrelloCard, CallingTrelloCard, InterviewTrelloCard } from "./types";
+import { ApiTrelloCard, CallingTrelloCard, ContactCard, InterviewTrelloCard } from "./types";
 
 import { CallingStage } from "@/constants";
 
@@ -41,6 +42,18 @@ const fetchInterviewCards = async (
     transformTrelloCards,
     // Does some interview-specific card transformations
     map(buildInterviewTrelloCard),
+  )(apiCards);
+};
+
+export const fetchContactCards = async (listId: string): Promise<ContactCard[]> => {
+  // Fetch cards with description and labels (for phone extraction)
+  const apiCards = await fetchCards(listId, ["desc", "labels"]);
+
+  return await pipeAsync<ContactCard[]>(
+    // Filter cards (reuse existing transform or create new filter)
+    transformTrelloCards,
+    // Transform to ContactCard with phone extraction
+    map(buildContactCard),
   )(apiCards);
 };
 
