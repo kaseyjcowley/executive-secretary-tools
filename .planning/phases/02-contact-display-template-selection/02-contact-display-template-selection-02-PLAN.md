@@ -11,7 +11,7 @@ autonomous: true
 
 must_haves:
   truths:
-    - "ContactRow displays name, labels, and phone in a compact row"
+    - "ContactRow displays name and labels in a compact row"
     - "ContactRow has a dropdown for selecting message templates"
     - "ContactRow displays template preview with variables substituted"
     - "Template preview updates when dropdown selection changes"
@@ -42,10 +42,11 @@ must_haves:
       to: "src/components/ContactList.tsx"
       via: "import and render ContactList"
       pattern: "<ContactList"
+
 ---
 
 <objective>
-Build ContactRow component with per-contact template dropdown and live template preview, plus ContactList container component. This enables users to see what each message will look like with the selected contact's data substituted into the template.
+Build ContactRow component with per-contact template dropdown and live template preview, plus ContactList container component. This enables users to see what each message will look like with selected contact's data substituted into the template.
 
 Purpose: Provide template selection and preview functionality at the individual contact level, allowing users to verify message content before proceeding to the approval workflow.
 
@@ -105,7 +106,6 @@ Output: Interactive contact row component with template dropdown and substitutio
              loadTemplateContent(selectedTemplateId),
              {
                name: contact.name,
-               phone: contact.phone,
                appointmentType: contact.kind === 'calling' ? contact.calling : contact.labels?.name,
              } as TemplateVariables
            )
@@ -117,7 +117,6 @@ Output: Interactive contact row component with template dropdown and substitutio
        - Contact info section (flex row):
          - Name: `<span className="font-semibold text-slate-900">{contact.name}</span>`
          - Labels (if exist): `<span className="ml-2 text-sm text-slate-600">{contact.labels?.name}</span>`
-         - Phone (if exists): `<span className="ml-4 text-sm text-slate-600">{contact.phone}</span>`
        - Template dropdown:
          - `<select className="w-full md:w-64 p-2 border border-slate-300 rounded text-slate-900"`
          - Options: "Select message type" (disabled), then all messageTypes grouped by category
@@ -135,16 +134,18 @@ Output: Interactive contact row component with template dropdown and substitutio
     - Fixed height (not expandable)
     - Template preview always visible (no toggle)
     - Full text display (no truncation)
+
+    Note: Phone number substitution will be added in a later phase via IndexedDB fuzzy matching.
   </action>
   <verify>
     1. Start dev server: `npm run dev`
     2. Visit `http://localhost:3000/messages` (after Plan 01 completes)
     3. For any contact row:
-       - Verify name, label, phone are visible
+       - Verify name, label are visible
        - Verify dropdown shows all message types grouped by category
        - Select a template from dropdown
        - Verify preview shows template with {{name}} replaced with contact's name
-       - Verify {{phone}} is replaced if phone exists, or shows {{phone}} if missing
+       - Verify missing variables remain as placeholders (e.g., {{phone}})
     4. Change template selection: Verify preview updates
   </verify>
   <done>ContactRow displays contact info, template dropdown with grouped options, and live template preview with variable substitution</done>
@@ -193,7 +194,7 @@ Output: Interactive contact row component with template dropdown and substitutio
 <verification>
 After completing all tasks:
 1. Navigate to /messages page
-2. Verify each contact row displays name, labels, and phone
+2. Verify each contact row displays name and labels
 3. Verify template dropdown shows all options grouped by category
 4. Verify selecting a template shows preview with substituted variables
 5. Verify preview updates when template selection changes

@@ -14,7 +14,7 @@ must_haves:
   truths:
     - "User can navigate to /messages page and see contact list"
     - "Contact list displays all contacts from /api/contacts"
-    - "Contact rows show name, labels, and phone number"
+    - "Contact rows show name and labels"
     - "Loading state displays while fetching contacts"
     - "Empty state displays when no contacts exist"
   artifacts:
@@ -37,12 +37,13 @@ must_haves:
       to: "src/utils/template-loader.ts"
       via: "import and use getAvailableMessageTypes"
       pattern: "getAvailableMessageTypes"
+
 ---
 
 <objective>
-Create contact list page at `/messages` that displays all Trello contacts with their names, labels, and phone numbers. Page fetches contact data from `/api/contacts` and renders a responsive list view using existing Tailwind patterns.
+Create contact list page at `/messages` that displays all Trello contacts with their names and labels. Page fetches contact data from `/api/contacts` and renders a responsive list view using existing Tailwind patterns.
 
-Purpose: Provide the foundation UI for the appointment messaging workflow where users can browse contacts before selecting templates and generating messages.
+Purpose: Provide foundation UI for appointment messaging workflow where users can browse contacts before selecting templates and generating messages.
 
 Output: Server-rendered page component with contact list display, loading states, and template metadata utilities.
 </objective>
@@ -136,10 +137,9 @@ Output: Server-rendered page component with contact list display, loading states
        - Each contact in a div with border and padding
        - Display contact.name
        - Display contact.labels?.name if exists
-       - Display contact.phone if exists
        - Use Tailwind classes for styling (follow interviews pattern: border, padding, odd/even background)
 
-    Note: The full ContactList and ContactRow components will be implemented in Plan 02. This plan focuses on getting the page structure and data fetching working.
+    Note: Phone numbers will be looked up separately via IndexedDB fuzzy matching in a later phase. The full ContactList and ContactRow components will be implemented in Plan 02. This plan focuses on getting the page structure and data fetching working.
   </action>
   <verify>
     1. Start dev server: `npm run dev`
@@ -148,7 +148,7 @@ Output: Server-rendered page component with contact list display, loading states
     3. Test with no contacts (empty list IDs): Shows "No contacts found"
     4. Test loading state (slow network): Shows loading fallback
   </verify>
-  <done>Page at /messages loads and displays contacts from /api/contacts with name, labels, and phone visible for each contact</done>
+  <done>Page at /messages loads and displays contacts from /api/contacts with name and labels visible for each contact</done>
 </task>
 
 <task type="auto">
@@ -157,9 +157,9 @@ Output: Server-rendered page component with contact list display, loading states
   <action>
     Create `src/types/messages.ts` with:
 
-    1. Import ContactCard from card types:
+    1. Import card types:
        ```typescript
-       import { InterviewTrelloCard, CallingTrelloCard } from "@/requests/cards";
+       import { InterviewTrelloCard, CallingTrelloCard } from "@/requests/cards/types";
        ```
 
     2. Export Contact type union:
@@ -188,7 +188,7 @@ Output: Server-rendered page component with contact list display, loading states
        }
        ```
 
-    This centralizes message-related types for the entire feature.
+    This centralizes message-related types for the entire feature. Phone is optional in TemplateVariables since it will be populated dynamically via IndexedDB fuzzy matching.
   </action>
   <verify>
     Run: `npx tsc --noEmit`
@@ -203,14 +203,14 @@ Output: Server-rendered page component with contact list display, loading states
 After completing all tasks:
 1. Navigate to /messages page
 2. Verify all contacts from configured Trello lists are displayed
-3. Verify each contact shows name, label (if available), and phone (if available)
+3. Verify each contact shows name and label (if available)
 4. Verify loading state displays during fetch
 5. Verify empty state displays when no contacts configured
 </verification>
 
 <success_criteria>
 - Page at `/messages` loads and displays contacts from `/api/contacts`
-- Each contact row displays name, labels, and phone number
+- Each contact row displays name and labels
 - Loading and empty states are handled appropriately
 - Template metadata utility returns all 10 available message types with correct categories
 </success_criteria>
