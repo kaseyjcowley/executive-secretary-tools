@@ -51,6 +51,19 @@ export const transformTrelloCards = async (
   )(cards);
 };
 
+export const transformTrelloCardsForContacts = async (
+  cards: ApiTrelloCard[]
+): Promise<TrelloCard[]> => {
+  return pipeAsync<TrelloCard[]>(
+    // Get the only member in the list
+    // @ts-expect-error - can't match types right now
+    map(modify("idMembers", pipe(head, defaultTo("unassigned")))),
+    // Using the plucked ID, hydrate the member information
+    // @ts-expect-error - can't match types right now
+    mapAsync<ApiTrelloCard, Promise<TrelloCard>>(hydrateMembers)
+  )(cards);
+};
+
 export const buildInterviewTrelloCard = pipe(
   // Pluck the one label and only get it's id and name
   over(lensProp("labels"), pipe(head, pick(["id", "name"]))),
