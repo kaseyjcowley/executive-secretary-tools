@@ -26,3 +26,9 @@ export interface CallingTrelloCard extends TrelloCard {
   calling: string;
   stage: CallingStage;
 }
+
+export interface ContactCard extends TrelloCard {
+  kind: "contact";
+  phone?: string;
+  labels?: Label[];
+}
