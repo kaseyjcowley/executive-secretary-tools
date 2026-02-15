@@ -46,19 +46,23 @@ A phased approach to building an appointment messaging system that reads Trello 
 
 **Deliverables:**
 - Contact list page showing all Trello contacts
-- Contact card component (name, labels, preview)
-- Message type dropdown with ~10 options
-- Template preview showing selected template
+- Contact row component (name, labels, phone, template dropdown, preview)
+- Message type dropdown with ~10 options grouped by category
+- Template preview showing selected template with variable substitution
+- Contact ordering (calling first, interview next, others last)
+- Auto-select template based on contact labels
 
-**Plans:**
-1. Create contact list API route
-2. Build contact list page with React components
-3. Add message type dropdown and template preview
+**Plans:** 3 plans
+- [ ] 02-contact-display-template-selection-01-PLAN.md — Template loader, page structure, and types
+- [ ] 02-contact-display-template-selection-02-PLAN.md — ContactRow and ContactList components
+- [ ] 02-contact-display-template-selection-03-PLAN.md — Contact ordering and auto-selection
 
 **Exit Criteria:**
 - User can see all contacts from Trello
-- Dropdown shows available message templates
-- Selected template preview displays
+- Dropdown shows available message templates grouped by category
+- Selected template preview displays with substituted variables
+- Contacts ordered by label type (calling first, interview next, others last)
+- Templates auto-selected based on contact labels
 
 ---
 
@@ -252,4 +256,4 @@ Phase 7: Polish & Testing
 ```
 
 ---
-*Last updated: 2026-02-14*
+*Last updated: 2026-02-15*
