@@ -22,6 +22,7 @@ import {
 import {
   ApiTrelloCard,
   CallingTrelloCard,
+  ContactCard,
   InterviewTrelloCard,
   TrelloCard,
 } from "@/requests/cards";
@@ -65,3 +66,20 @@ export const buildCallingTrelloCard = (stage: CallingStage, card: TrelloCard) =>
     assoc("kind", "calling" as const),
     assoc("stage", stage)
   )(card);
+
+const extractPhoneFromDescription = (desc: string): string | undefined => {
+  if (!desc) return undefined;
+  // Match "Phone: number" pattern in description
+  const phoneMatch = desc.match(/Phone:\s*([0-9\-\(\)\s]+?)(?:\n|$)/i);
+  return phoneMatch ? phoneMatch[1].trim() : undefined;
+};
+
+export const buildContactCard = pipe(
+  // Extract phone from description
+  (card: TrelloCard) => ({
+    ...card,
+    phone: extractPhoneFromDescription((card as any).desc || ""),
+  }),
+  // Set kind to "contact"
+  assoc("kind", "contact" as const)
+);
