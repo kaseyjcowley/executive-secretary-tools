@@ -41,8 +41,7 @@ export const BishopricMemberName: Record<
 } as const;
 
 // Trello list IDs for appointment messaging system
-// Format: "listId1,listId2,listId3"
+// Configure as arrays in src/app/api/contacts/route.ts:
+//   APPOINTMENT_INTERVIEW_LIST_IDS: string[] = ["listId1", "listId2"]
+//   APPOINTMENT_CALLING_LIST_IDS: string[] = ["listId3", "listId4"]
 // To get list IDs: Open Trello list, check URL: /b/{boardId}/{listName}?l={listId}
-export const APPOINTMENT_LIST_IDS: string[] = process.env
-  .APPOINTMENT_LIST_IDS?.split(",")
-  .filter(Boolean) || [];

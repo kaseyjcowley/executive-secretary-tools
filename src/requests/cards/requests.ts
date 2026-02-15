@@ -2,13 +2,12 @@ import { map, pipeAsync, partial } from "rambdax";
 
 import {
   buildCallingTrelloCard,
-  buildContactCard,
   buildInterviewTrelloCard,
   groupSortedCardsByMember,
   transformTrelloCards,
 } from "@/utils/transformers";
 
-import { ApiTrelloCard, CallingTrelloCard, ContactCard, InterviewTrelloCard } from "./types";
+import { ApiTrelloCard, CallingTrelloCard, InterviewTrelloCard } from "./types";
 
 import { CallingStage } from "@/constants";
 
@@ -32,7 +31,7 @@ const fetchCards = async (
   return apiCards;
 };
 
-const fetchInterviewCards = async (
+export const fetchInterviewCards = async (
   listId: string,
 ): Promise<InterviewTrelloCard[]> => {
   const apiCards = await fetchCards(listId, ["labels"]);
@@ -45,19 +44,8 @@ const fetchInterviewCards = async (
   )(apiCards);
 };
 
-export const fetchContactCards = async (listId: string): Promise<ContactCard[]> => {
-  // Fetch cards with description and labels (for phone extraction)
-  const apiCards = await fetchCards(listId, ["desc", "labels"]);
 
-  return await pipeAsync<ContactCard[]>(
-    // Filter cards (reuse existing transform or create new filter)
-    transformTrelloCards,
-    // Transform to ContactCard with phone extraction
-    map(buildContactCard),
-  )(apiCards);
-};
-
-const fetchCallingCards = async (
+export const fetchCallingCards = async (
   stage: CallingStage,
   listId: string,
 ): Promise<CallingTrelloCard[]> => {
@@ -76,6 +64,11 @@ const SETTING_APART_BOARD_LIST_IDS = [
   "6981403b91ce00795685a559",
   "5f62bc2052e58c7dc5740b4f",
 ];
+
+// List IDs for appointment messaging system
+// Configure these directly as arrays of Trello list IDs
+const APPOINTMENT_INTERVIEW_LIST_IDS: string[] = [];
+const APPOINTMENT_CALLING_LIST_IDS: string[] = [];
 
 export const fetchAllCardsGroupedByMember = async () =>
   await Promise.all([

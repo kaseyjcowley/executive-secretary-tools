@@ -1,26 +1,35 @@
 import { NextResponse } from "next/server";
-import { ContactCard } from "@/requests/cards";
-import { fetchContactCards } from "@/requests/cards/requests";
-import { APPOINTMENT_LIST_IDS } from "@/constants";
+import { fetchInterviewCards, fetchCallingCards } from "@/requests/cards/requests";
+import { InterviewTrelloCard, CallingTrelloCard } from "@/requests/cards/types";
+import { CallingStage } from "@/constants";
 
 export const dynamic = 'force-dynamic';
 
+// List IDs for appointment messaging system - configure these directly
+const APPOINTMENT_INTERVIEW_LIST_IDS: string[] = [];
+const APPOINTMENT_CALLING_LIST_IDS: string[] = [];
+
 export async function GET() {
   try {
-    const listIds = APPOINTMENT_LIST_IDS;
-
-    if (!listIds || listIds.length === 0) {
-      return NextResponse.json({ contacts: [] });
-    }
-
-    // Fetch from all configured lists in parallel
-    const allContacts = await Promise.all(
-      listIds.map((listId) => fetchContactCards(listId))
+    // Fetch interview cards from configured interview lists
+    const interviewCards = await Promise.all(
+      APPOINTMENT_INTERVIEW_LIST_IDS.map((listId) => fetchInterviewCards(listId))
     );
 
-    return NextResponse.json({
-      contacts: allContacts.flat(),
-    });
+    // Fetch calling cards from configured calling lists
+    const callingCards = await Promise.all(
+      APPOINTMENT_CALLING_LIST_IDS.map((listId) =>
+        fetchCallingCards(CallingStage.needsCallingExtended, listId)
+      )
+    );
+
+    // Combine both types into a single contacts array
+    const contacts = [
+      ...interviewCards.flat(),
+      ...callingCards.flat(),
+    ];
+
+    return NextResponse.json({ contacts });
   } catch (error) {
     console.error("Error fetching contacts:", error);
     return NextResponse.json(
