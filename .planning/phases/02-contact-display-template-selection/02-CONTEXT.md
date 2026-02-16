@@ -25,7 +25,10 @@ Build a UI page that displays Trello contacts and lets users select message temp
 - Categorized dropdown (grouped by label/category)
 - Template categories aligned with Trello labels (e.g., "temple recommend interview", "calling", etc.)
 - Auto-select default template based on contact's labels when contact loads
-- 1:1 label-to-template matching: a card with label "temple recommend interview" matches "temple recommend renewal" template
+- Label-to-template matching: uses explicit mapping object (LABEL_TO_TEMPLATE_MAP) that maps label names to template filenames
+  - Example: "temple recommend interview" label → "temple-visit" template file
+  - Case-insensitive label matching
+  - Falls back to "interview-reminder" for unknown labels
 - Show friendly names in dropdown (not raw label names)
 - Dropdown always visible
 - Per-contact selection: each contact row has its own template dropdown

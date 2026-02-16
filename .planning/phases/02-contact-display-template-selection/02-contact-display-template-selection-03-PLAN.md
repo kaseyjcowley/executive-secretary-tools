@@ -16,7 +16,7 @@ must_haves:
     - "Contacts with 'calling' labels appear first in the list"
     - "Contacts with 'interview' labels appear after calling contacts"
     - "All other contacts appear after calling and interview contacts"
-    - "Template dropdown auto-selects based on contact's labels on load"
+    - "Template dropdown auto-selects based on contact's labels on load (keyword-based partial matching)"
     - "Friendly names appear in template dropdown (not raw IDs)"
   artifacts:
     - path: "src/utils/contact-ordering.ts"
@@ -127,28 +127,35 @@ Output: Contact ordering utility, ContactList with applied ordering, and Contact
   <action>
     Update `src/utils/template-loader.ts` to add auto-selection logic:
 
-    1. Export `autoSelectTemplate(contact: Contact, messageTypes: MessageType[])` function:
-       - For calling contacts (kind === 'calling'):
-         - Match to template with id === 'calling-acceptance'
-         - If not found, return undefined
+    1. Create LABEL_TO_TEMPLATE_MAP constant (explicit 1:1 mapping):
+       ```typescript
+       const LABEL_TO_TEMPLATE_MAP: Record<string, string> = {
+         'calling': 'calling-acceptance',
+         'calling interview': 'calling-acceptance',
+         'temple recommend interview': 'temple-visit',
+         'temple recommend renewal': 'temple-visit',
+         'welfare meeting': 'welfare-meeting',
+         'family council': 'family-council',
+         'bishop interview': 'bishop-interview',
+         'first counselor interview': 'first-counselor-interview',
+         'second counselor interview': 'second-counselor-interview',
+         'interview': 'interview-reminder',
+         'setting apart': 'setting-apart',
+         'follow up': 'follow-up',
+       };
+       ```
+
+    2. Export `autoSelectTemplate(contact: Contact, messageTypes: MessageType[])` function:
+       - For calling contacts (kind === 'calling'): return 'calling-acceptance' from map
        - For interview contacts (kind === 'interview'):
          - Get label name from contact.labels?.name
-         - Check for partial matches against messageTypes:
-           - 'temple' label → 'temple-visit' template
-           - 'welfare' label → 'welfare-meeting' template
-           - 'family' label → 'family-council' template
-           - 'bishop' in label → 'bishop-interview' template
-           - 'first counselor' in label → 'first-counselor-interview' template
-           - 'second counselor' in label → 'second-counselor-interview' template
-           - Default → 'interview-reminder' template
-         - Case-insensitive matching
-         - Return template.id or undefined if no match
+         - Look up in LABEL_TO_TEMPLATE_MAP (case-insensitive key search)
+         - Return template.id if found, else return 'interview-reminder' as default
+       - Return undefined if no match found
 
-    2. The function should be used by ContactRow to set initialTemplateId prop.
+    3. The function should be used by ContactRow to set initialTemplateId prop.
 
-    Per planning_context: "1:1 label-to-template matching: a card with label 'temple recommend interview' matches 'temple recommend renewal' template"
-    - Note: Since our template is 'temple-visit', match any label containing 'temple' to it
-    - Use partial matching since exact 1:1 isn't possible with existing templates
+    This provides explicit label-to-template mapping while accommodating the actual template filenames.
   </action>
   <verify>
     Run: `node -e "
@@ -159,17 +166,21 @@ Output: Contact ordering utility, ContactList with applied ordering, and Contact
     const calling = {kind: 'calling', name: 'Test', labels: {name: 'calling'}};
     console.log('Calling:', autoSelectTemplate(calling, messageTypes));
 
-    // Test temple
+    // Test temple recommend interview
     const temple = {kind: 'interview', name: 'Test', labels: {name: 'temple recommend interview'}};
-    console.log('Temple:', autoSelectTemplate(temple, messageTypes));
+    console.log('Temple recommend interview:', autoSelectTemplate(temple, messageTypes));
 
-    // Test bishop
+    // Test bishop interview
     const bishop = {kind: 'interview', name: 'Test', labels: {name: 'bishop interview'}};
-    console.log('Bishop:', autoSelectTemplate(bishop, messageTypes));
+    console.log('Bishop interview:', autoSelectTemplate(bishop, messageTypes));
+
+    // Test unknown label
+    const unknown = {kind: 'interview', name: 'Test', labels: {name: 'unknown type'}};
+    console.log('Unknown:', autoSelectTemplate(unknown, messageTypes));
     "`
-    Expected: 'calling-acceptance', 'temple-visit', 'bishop-interview'
+    Expected: 'calling-acceptance', 'temple-visit', 'bishop-interview', 'interview-reminder'
   </verify>
-  <done>autoSelectTemplate returns correct template IDs for calling, temple, bishop, and other label types</done>
+  <done>autoSelectTemplate returns correct template IDs using explicit label-to-template mapping</done>
 </task>
 
 <task type="auto">
