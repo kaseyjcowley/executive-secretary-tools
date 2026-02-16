@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { Contact } from "@/types/messages";
 import { ContactRow } from "./ContactRow";
-import { sortContactsByLabel } from "@/utils/contact-ordering";
 
 interface MessageType {
   id: string;
@@ -94,9 +93,6 @@ function autoSelectTemplate(contact: Contact, messageTypes: MessageType[]): stri
 export const ContactList = ({ contacts }: Props) => {
   const [messageTypes, setMessageTypes] = useState<MessageType[]>([]);
 
-  // Sort contacts by label priority
-  const sortedContacts = sortContactsByLabel(contacts);
-
   useEffect(() => {
     fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/message-types`
@@ -112,7 +108,7 @@ export const ContactList = ({ contacts }: Props) => {
 
   return (
     <div className="space-y-2">
-      {sortedContacts.map((contact, index) => {
+      {contacts.map((contact, index) => {
         const initialTemplateId = autoSelectTemplate(contact, messageTypes);
         return (
           <ContactRow
