@@ -5,8 +5,8 @@
 **Initialized:** 2026-02-13
 **Current Milestone:** v1 — Appointment Messaging System
 **Current Phase:** 02-contact-display-template-selection (Contact Display & Template Selection)
-**Current Plan:** 02-contact-display-template-selection-01 (Contact List Page) - COMPLETED
-**Next Action:** Execute Plan 02 - Contact List Component with Template Selection
+**Current Plan:** 02-contact-display-template-selection-02 (Contact List Component with Template Selection) - COMPLETED
+**Next Action:** Execute Plan 03 - Template Preview with Variable Substitution
 
 ## Context Summary
 
@@ -37,6 +37,7 @@ This is a brownfield project adding an automated appointment messaging system to
 | ~10 message templates | Scope based on user's current messaging needs |
 | Phone verification needed | User wants to catch incorrect phone numbers before sending |
 | Template categories from filename keywords | Simpler than metadata files, automatic category detection (calling, interview, temple, welfare, family, follow-up) |
+| API-driven template loading for client components | Client components cannot import fs-dependent modules, fetch from API endpoint instead |
 
 ## Codebase Context
 
@@ -89,6 +90,7 @@ This is a brownfield project adding an automated appointment messaging system to
 - `.planning/phases/01-foundation/01-foundation-03-SUMMARY.md` — Trello configuration API summary
 - `.planning/phases/01-foundation/01-foundation-VERIFICATION.md` — Phase 1 verification report (8/8 passed)
 - `.planning/phases/02-contact-display-template-selection/02-contact-display-template-selection-01-SUMMARY.md` — Contact list page completion summary
+- `.planning/phases/02-contact-display-template-selection/02-contact-display-template-selection-02-SUMMARY.md` — Contact list component with template selection summary
 
 ## Commits
 
@@ -117,6 +119,7 @@ This is a brownfield project adding an automated appointment messaging system to
 | 01-foundation | 02 | 5min | 3 | 3 | 2026-02-15 |
 | 01-foundation | 03 | 36s | 2 | 2 | 2026-02-15 |
 | 02-contact-display-template-selection | 01 | 3m 43s | 3 | 3 | 2026-02-16 |
+| 02-contact-display-template-selection | 02 | 4m 10s | 3 | 7 | 2026-02-16 |
 
 ## Phase 1 Completion Summary
 
@@ -142,7 +145,11 @@ This is a brownfield project adding an automated appointment messaging system to
 - Built template loader utility with 10 message types across 6 categories ✓
 - Established type definitions (Contact, ContactState, TemplateVariables) ✓
 
-**Plan 02: Contact List Component with Template Selection** - IN PROGRESS
+**Plan 02: Contact List Component with Template Selection** - COMPLETE (2026-02-16)
+- Created ContactRow component with template dropdown grouped by category ✓
+- Implemented live template preview with variable substitution ({{name}}, {{appointmentType}}) ✓
+- Built ContactList container fetching message types from API ✓
+- Separated client and server code: template-substitution.ts for client, message-types API for server ✓
 
 **Plan 03: Template Preview with Variable Substitution** - NOT STARTED
 
@@ -150,11 +157,9 @@ This is a brownfield project adding an automated appointment messaging system to
 
 ## Next Steps
 
-Execute Plan 02 - Contact List Component with Template Selection:
-- Extract ContactList into reusable component
-- Add template selection dropdown using getAvailableMessageTypes()
-- Implement template preview with variable substitution
-- Add contact row component with expanded state
+Execute Plan 03 - Template Preview with Variable Substitution:
+- (Note: Plan 02 already implemented template preview with variable substitution)
+- Plan 03 scope may need adjustment to focus on ordering logic or additional features
 
 ---
-*Last updated: 2026-02-16*
+*Last updated: 2026-02-16 (Plan 02 complete)*
