@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import { interpolate } from "rambdax";
 
 /**
  * Loads a template file from the filesystem.
@@ -26,17 +25,4 @@ export function loadTemplate(templateName: string): string {
       `Failed to load template "${templateName}": ${error instanceof Error ? error.message : "Unknown error"}`
     );
   }
-}
-
-/**
- * Substitutes variables into a template using {{variable}} syntax.
- * @param template - Template string with {{variable}} placeholders
- * @param variables - Object containing variable values
- * @returns Template with variables substituted
- */
-export function substituteTemplate(
-  template: string,
-  variables: Record<string, unknown>
-): string {
-  return interpolate(template, variables);
 }
