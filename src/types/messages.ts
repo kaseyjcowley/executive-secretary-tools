@@ -15,4 +15,5 @@ export interface TemplateVariables {
   date?: string;
   time?: string;
   location?: string;
+  [key: string]: unknown; // Index signature to allow any string key
 }
