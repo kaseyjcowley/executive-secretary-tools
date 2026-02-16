@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { Contact } from "@/types/messages";
 
 export interface MessageType {
   id: string;
@@ -89,4 +90,59 @@ export function loadTemplateContent(id: string): string {
   // Import dynamically to avoid circular dependencies
   const { loadTemplate } = require("./templates");
   return loadTemplate(id);
+}
+
+/**
+ * Explicit mapping from label names to template IDs.
+ * Provides 1:1 mapping for common label patterns.
+ */
+const LABEL_TO_TEMPLATE_MAP: Record<string, string> = {
+  'calling': 'calling-acceptance',
+  'calling interview': 'calling-acceptance',
+  'temple recommend interview': 'temple-visit',
+  'temple recommend renewal': 'temple-visit',
+  'welfare meeting': 'welfare-meeting',
+  'family council': 'family-council',
+  'bishop interview': 'bishop-interview',
+  'first counselor interview': 'first-counselor-interview',
+  'second counselor interview': 'second-counselor-interview',
+  'interview': 'interview-reminder',
+  'setting apart': 'setting-apart',
+  'follow up': 'follow-up',
+};
+
+/**
+ * Auto-selects a template based on contact's labels.
+ * For calling contacts: returns 'calling-acceptance'
+ * For interview contacts: looks up label name in LABEL_TO_TEMPLATE_MAP
+ * Returns undefined if no match found.
+ */
+export function autoSelectTemplate(
+  contact: Contact,
+  messageTypes: MessageType[]
+): string | undefined {
+  // Calling contacts always use calling-acceptance
+  if (contact.kind === 'calling') {
+    return 'calling-acceptance';
+  }
+
+  // For interview contacts, look up label in map
+  if (contact.kind === 'interview' && contact.labels?.name) {
+    const labelName = contact.labels.name.toLowerCase();
+
+    // Find matching template ID from map (case-insensitive)
+    const matchingTemplateId = Object.entries(LABEL_TO_TEMPLATE_MAP).find(
+      ([label]) => label.toLowerCase() === labelName
+    )?.[1];
+
+    if (matchingTemplateId) {
+      return matchingTemplateId;
+    }
+
+    // Default to interview-reminder for unknown labels
+    return 'interview-reminder';
+  }
+
+  // No match found
+  return undefined;
 }
