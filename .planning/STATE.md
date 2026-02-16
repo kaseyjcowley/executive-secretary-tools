@@ -5,8 +5,8 @@
 **Initialized:** 2026-02-13
 **Current Milestone:** v1 — Appointment Messaging System
 **Current Phase:** 02-contact-display-template-selection (Contact Display & Template Selection)
-**Current Plan:** 02-contact-display-template-selection-02 (Contact List Component with Template Selection) - COMPLETED
-**Next Action:** Execute Plan 03 - Template Preview with Variable Substitution
+**Current Plan:** 02-contact-display-template-selection-03 (Contact Ordering and Template Auto-Selection) - COMPLETED
+**Next Action:** Execute Phase 03 or create new phase plans
 
 ## Context Summary
 
@@ -38,6 +38,8 @@ This is a brownfield project adding an automated appointment messaging system to
 | Phone verification needed | User wants to catch incorrect phone numbers before sending |
 | Template categories from filename keywords | Simpler than metadata files, automatic category detection (calling, interview, temple, welfare, family, follow-up) |
 | API-driven template loading for client components | Client components cannot import fs-dependent modules, fetch from API endpoint instead |
+| Explicit label-to-template mapping | Provides predictable, maintainable mapping vs fuzzy keyword matching for auto-selection |
+| Server-side ordering in page component | Prevents FOUC by ensuring correct order on initial load, avoids duplicate client-side sorting |
 
 ## Codebase Context
 
@@ -91,6 +93,7 @@ This is a brownfield project adding an automated appointment messaging system to
 - `.planning/phases/01-foundation/01-foundation-VERIFICATION.md` — Phase 1 verification report (8/8 passed)
 - `.planning/phases/02-contact-display-template-selection/02-contact-display-template-selection-01-SUMMARY.md` — Contact list page completion summary
 - `.planning/phases/02-contact-display-template-selection/02-contact-display-template-selection-02-SUMMARY.md` — Contact list component with template selection summary
+- `.planning/phases/02-contact-display-template-selection/02-contact-display-template-selection-03-SUMMARY.md` — Contact ordering and template auto-selection summary
 
 ## Commits
 
@@ -120,6 +123,7 @@ This is a brownfield project adding an automated appointment messaging system to
 | 01-foundation | 03 | 36s | 2 | 2 | 2026-02-15 |
 | 02-contact-display-template-selection | 01 | 3m 43s | 3 | 3 | 2026-02-16 |
 | 02-contact-display-template-selection | 02 | 4m 10s | 3 | 7 | 2026-02-16 |
+| 02-contact-display-template-selection | 03 | 3m 42s | 4 | 4 | 2026-02-16 |
 
 ## Phase 1 Completion Summary
 
@@ -138,6 +142,12 @@ This is a brownfield project adding an automated appointment messaging system to
 - **Description parsing over custom fields**: Simpler regex-based phone extraction from Trello card descriptions
 - **Optional phone field**: Supports gradual migration of Trello cards without phone data
 
+### What Was Built
+1. **Contact Ordering Utility** - `src/utils/contact-ordering.ts` with `sortContactsByLabel()` for priority-based sorting
+2. **Template Auto-Selection** - `autoSelectTemplate()` in both template-loader.ts (server) and ContactList.tsx (client)
+3. **Server-Side Ordering** - Applied in page component to prevent FOUC on initial load
+4. **Label Pattern Matching** - Supports 11 label patterns: calling, temple, welfare, family, bishop, counselor, setting apart, follow up
+
 ## Phase 2 Progress
 
 **Plan 01: Contact List Page** - COMPLETE (2026-02-16)
@@ -151,15 +161,17 @@ This is a brownfield project adding an automated appointment messaging system to
 - Built ContactList container fetching message types from API ✓
 - Separated client and server code: template-substitution.ts for client, message-types API for server ✓
 
-**Plan 03: Template Preview with Variable Substitution** - NOT STARTED
+**Plan 03: Contact Ordering and Template Auto-Selection** - COMPLETE (2026-02-16)
+- Created contact ordering utility with label-based sorting (calling first, interview next, others last) ✓
+- Implemented template auto-selection based on label patterns (11 patterns supported) ✓
+- Applied ordering server-side to prevent FOUC ✓
+- Pre-selected templates on load based on contact labels ✓
 
 ---
 
 ## Next Steps
 
-Execute Plan 03 - Template Preview with Variable Substitution:
-- (Note: Plan 02 already implemented template preview with variable substitution)
-- Plan 03 scope may need adjustment to focus on ordering logic or additional features
+Phase 02 is complete. Ready for Phase 03 or additional features.
 
 ---
-*Last updated: 2026-02-16 (Plan 02 complete)*
+*Last updated: 2026-02-16 (Plan 03 complete)*
