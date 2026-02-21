@@ -1,1 +1,1 @@
-Hi {{name}}, this is a reminder about your {{appointmentType}} on {{date}} at {{time}}. Looking forward to meeting with you!
+Hello {{name}}, this is a reminder about your appointment with {{who}} on {{date}} at {{time}}.

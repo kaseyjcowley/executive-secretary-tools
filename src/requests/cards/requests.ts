@@ -102,9 +102,6 @@ const SETTING_APART_BOARD_LIST_IDS = [
 
 // List IDs for appointment messaging system
 // Configure these directly as arrays of Trello list IDs
-const APPOINTMENT_INTERVIEW_LIST_IDS: string[] = [];
-const APPOINTMENT_CALLING_LIST_IDS: string[] = [];
-
 export const fetchAllCardsGroupedByMember = async () =>
   await Promise.all([
     ...INTERVIEW_BOARD_LIST_IDS.map(fetchInterviewCards),

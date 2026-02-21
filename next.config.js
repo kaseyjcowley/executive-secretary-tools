@@ -1,14 +1,12 @@
-const nodeExternals = require("webpack-node-externals");
-
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
-
-module.exports = {
-  ...nextConfig,
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.externals = [nodeExternals()];
-    }
+const nextConfig = {
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.txt$/,
+      type: "asset/source",
+    });
     return config;
   },
 };
+
+module.exports = nextConfig;

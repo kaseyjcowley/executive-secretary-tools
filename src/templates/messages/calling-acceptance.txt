@@ -1,1 +1,0 @@
-Hi {{name}}, thank you for accepting the calling as {{appointmentType}}. We'll schedule a time to set you apart soon. Text {{phone}} if you have questions.

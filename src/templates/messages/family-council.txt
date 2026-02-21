@@ -1,1 +1,0 @@
-Hi {{name}}, you have a family council scheduled for {{date}} at {{time}}. Please bring your family. Text {{phone}} if you need to reschedule.

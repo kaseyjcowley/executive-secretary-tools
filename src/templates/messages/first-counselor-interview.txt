@@ -1,1 +1,0 @@
-Hi {{name}}, you have an interview with the first counselor on {{date}} at {{time}}. Text {{phone}} if you need to reschedule.

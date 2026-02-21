@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Contact, TemplateVariables } from "@/types/messages";
+import { Contact, MessageType } from "@/types/messages";
 import {
   getAvailableMessageTypes,
   loadTemplateContent,
-  MessageType,
 } from "@/utils/template-loader";
-import { substituteTemplate } from "@/utils/templates";
+import { substituteTemplate } from "@/utils/template-substitution";
+import { isSunday, startOfTomorrow } from "date-fns";
 
 interface Props {
   contact: Contact;
@@ -15,7 +15,8 @@ interface Props {
 }
 
 export const ContactRow = ({ contact, initialTemplateId }: Props) => {
-  const [selectedTemplateId, setSelectedTemplateId] = useState(initialTemplateId);
+  const [selectedTemplateId, setSelectedTemplateId] =
+    useState(initialTemplateId);
   const messageTypes = getAvailableMessageTypes();
 
   // Group message types by category
@@ -30,23 +31,27 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
 
   // Compute template preview with variable substitution
   const templatePreview = selectedTemplateId
-    ? substituteTemplate(
-        loadTemplateContent(selectedTemplateId),
-        {
-          name: contact.name,
-          appointmentType:
-            contact.kind === "calling"
-              ? contact.calling
-              : contact.labels?.name,
-        } as TemplateVariables
-      )
+    ? substituteTemplate(loadTemplateContent(selectedTemplateId), {
+        name: contact.name,
+        appointmentType:
+          contact.kind === "calling" ? contact.calling : contact.labels?.name,
+        date: isSunday(startOfTomorrow()) ? "tomorrow" : "Sunday",
+        // TODO: Remove hard-coded
+        "before-or-after-church": "after church",
+        // TODO: Remove hard-coded
+        time: "12:30pm",
+      })
     : "";
 
   return (
     <div className="border border-slate-300 p-4 space-y-3">
       {/* Contact info section */}
       <div className="flex flex-col md:flex-row md:items-center">
-        <span className="font-semibold text-slate-900">{contact.name}</span>
+        <span className="font-semibold text-slate-900">
+          {contact.kind === "calling"
+            ? `${contact.name} as ${contact.calling}`
+            : contact.name}
+        </span>
         {"labels" in contact && contact.labels?.name && (
           <span className="md:ml-2 text-sm text-slate-600">
             {contact.labels.name}
@@ -55,35 +60,82 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
         <span className="md:ml-auto text-sm text-slate-700">---</span>
       </div>
 
-      {/* Template dropdown */}
-      <select
-        className="w-full md:w-64 p-2 border border-slate-300 rounded text-slate-900"
-        value={selectedTemplateId || ""}
-        onChange={(e) => setSelectedTemplateId(e.target.value)}
-      >
-        <option value="" disabled>
-          Select message type
-        </option>
+      <div className="flex items-center">
+        {/* Template dropdown */}
+        <select
+          className="w-full md:w-64 p-2 border border-slate-300 rounded text-slate-900"
+          value={selectedTemplateId || ""}
+          onChange={(e) => setSelectedTemplateId(e.target.value)}
+        >
+          <option value="" disabled>
+            Select message type
+          </option>
 
-        {Object.entries(categories).map(([category, types]) => {
-          if (types.length === 0) return null;
-          return (
-            <optgroup key={category} label={category.charAt(0).toUpperCase() + category.slice(1)}>
-              {types.map((type) => (
-                <option key={type.id} value={type.id}>
-                  {type.name}
-                </option>
-              ))}
-            </optgroup>
-          );
-        })}
-      </select>
+          {Object.entries(categories).map(([category, types]) => {
+            if (types.length === 0) return null;
+            return (
+              <optgroup
+                key={category}
+                label={category.charAt(0).toUpperCase() + category.slice(1)}
+              >
+                {types.map((type) => (
+                  <option key={type.id} value={type.id}>
+                    {type.name}
+                  </option>
+                ))}
+              </optgroup>
+            );
+          })}
+        </select>
+
+        <form className="max-w-[8rem] mx-auto">
+          <label
+            htmlFor="time"
+            className="block mb-2 text-sm font-medium text-heading text-slate-700"
+          >
+            Select time:
+          </label>
+          <div className="relative">
+            <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+              <svg
+                className="w-4 h-4 text-body"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+              </svg>
+            </div>
+            <input
+              type="time"
+              id="time"
+              className="block w-full p-2.5 bg-neutral-secondary-medium border border-default-medium border-slate-700 text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body text-slate-700"
+              min="09:00"
+              max="18:00"
+              value="00:00"
+              required
+            />
+          </div>
+        </form>
+      </div>
 
       {/* Template preview section */}
       {templatePreview ? (
-        <div className="p-3 bg-slate-50 rounded border border-slate-200 text-slate-800 whitespace-pre-wrap text-sm">
-          {templatePreview}
-        </div>
+        <div
+          className="p-3 bg-slate-50 rounded border border-slate-200 text-slate-800 whitespace-pre-wrap text-sm"
+          dangerouslySetInnerHTML={{
+            __html: templatePreview.replace(/\\n/g, "<br />"),
+          }}
+        />
       ) : (
         <div className="p-3 bg-slate-50 rounded border border-slate-200 text-slate-500 italic text-sm">
           Select a template to preview the message

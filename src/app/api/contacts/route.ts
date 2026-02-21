@@ -9,7 +9,6 @@ export const dynamic = "force-dynamic";
 
 // List IDs for appointment messaging system - configure these directly
 const APPOINTMENT_INTERVIEW_LIST_IDS: string[] = ["698142f18c51336104b0ca17"];
-const APPOINTMENT_CALLING_LIST_IDS: string[] = ["69814029755d3899bbf4191c"];
 
 export async function GET() {
   try {
@@ -21,11 +20,16 @@ export async function GET() {
     );
 
     // Fetch calling cards from configured calling lists (no date filtering)
-    const callingCards = await Promise.all(
-      APPOINTMENT_CALLING_LIST_IDS.map((listId) =>
-        fetchCallingCardsForContacts(CallingStage.needsCallingExtended, listId),
+    const callingCards = await Promise.all([
+      fetchCallingCardsForContacts(
+        CallingStage.needsCallingExtended,
+        "69814029755d3899bbf4191c",
       ),
-    );
+      fetchCallingCardsForContacts(
+        CallingStage.needsSettingApart,
+        "5f62bc2052e58c7dc5740b4f",
+      ),
+    ]);
 
     // Combine both types into a single contacts array
     const contacts = [...interviewCards.flat(), ...callingCards.flat()];

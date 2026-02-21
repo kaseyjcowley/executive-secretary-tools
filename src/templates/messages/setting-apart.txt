@@ -1,1 +1,1 @@
-Hi {{name}}, you're scheduled to be set apart from your calling on {{date}} at {{time}}. Please be at {{location}} 5 minutes before.
+Hey {{name}}, are you available {{date}} {{before-or-after-church}} at {{time}} to be set apart for your new calling?
