@@ -4,6 +4,7 @@ import {
   fetchCallingCardsForContacts,
 } from "@/requests/cards/requests";
 import { CallingStage } from "@/constants";
+import { matchContact } from "@/utils/contact-fuzzy-match";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,13 @@ export async function GET() {
     // Combine both types into a single contacts array
     const contacts = [...interviewCards.flat(), ...callingCards.flat()];
 
-    return NextResponse.json({ contacts });
+    // Enrich contacts with phone numbers from fuzzy-matched directory entries
+    const enrichedContacts = contacts.map(contact => ({
+      ...contact,
+      phone: matchContact(contact.name) || undefined,
+    }));
+
+    return NextResponse.json({ contacts: enrichedContacts });
   } catch (error) {
     console.error("Error fetching contacts:", error);
     return NextResponse.json(

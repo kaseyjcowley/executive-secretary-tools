@@ -19,11 +19,13 @@ export interface TrelloCard extends ApiTrelloCard {
 export interface InterviewTrelloCard extends TrelloCard {
   kind: "interview";
   labels?: Label;
+  phone?: string;
 }
 
 export interface CallingTrelloCard extends TrelloCard {
   kind: "calling";
   calling: string;
   stage: CallingStage;
+  phone?: string;
 }
 
