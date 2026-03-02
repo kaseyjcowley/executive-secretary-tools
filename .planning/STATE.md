@@ -113,6 +113,7 @@ This is a brownfield project adding an automated appointment messaging system to
 | 076b3ea | docs: add project state memory |
 | e243507 | chore: add project config |
 | 255d54a | docs: initialize project - automated appointment messaging system |
+| 4640ab9 | feat(quick-3): add member dropdown to ContactRow with fuzzy match pre-selection |
 
 ## Performance Metrics
 
@@ -125,6 +126,7 @@ This is a brownfield project adding an automated appointment messaging system to
 | 02-contact-display-template-selection | 02 | 4m 10s | 3 | 7 | 2026-02-16 |
 | 02-contact-display-template-selection | 03 | 3m 42s | 4 | 4 | 2026-02-16 |
 | Phase quick P2 | 1min | 1 tasks | 1 files |
+| Phase quick P3 | 80 | 1 tasks | 1 files |
 
 ## Phase 1 Completion Summary
 
@@ -174,6 +176,7 @@ This is a brownfield project adding an automated appointment messaging system to
 |---|-------------|------|--------|-----------|
 | 1 | Create a system that uses Fuse.js to load in a json blob of names/ages/phone numbers in order to match the names against the Trello cards that are up for messaging in the `/messages` endpoint. The JSON will just be a file that is loaded from the filesystem. We should use the names of the Trello cards in our Fuse.js system to fuzzy match the most likely name/age/phone number of each of the contacts listed in ContactList.tsx. | 2026-02-21 | 6daad4f | [1-create-a-system-that-uses-fuse-js-to-loa](./quick/1-create-a-system-that-uses-fuse-js-to-loa/) |
 | 2 | There is now a members.json file located in the data directory. You should never read that file, but the contents of it is an array of objects with name, age, gender, which is either the string, m or f, and phone number. can you use that structure and plug it in to our fuse.js implementation where we fuzzy search for the details of a contact based on the best possible search of their name from the Trello card. | 2026-03-02 | 1e25e1b | [2-there-is-now-a-members-json-file-located](./quick/2-there-is-now-a-members-json-file-located/) |
+| 3 | Now that we have phone number and contact details from members.json, create a dropdown in ContactRow.tsx that shows all the names from members.json, with the value being the phone number. The dropdown should pre-select based on the fuzzy match we have in place. | 2026-03-02 | 4640ab9 | [3-now-that-we-have-phone-number-and-contac](./quick/3-now-that-we-have-phone-number-and-contac/) |
 
 ---
 
@@ -182,12 +185,12 @@ This is a brownfield project adding an automated appointment messaging system to
 Phase 02 is complete. Ready for Phase 03 or additional features.
 
 ---
-*Last updated: 2026-03-01 - Plan created for quick task 3: Add member dropdown to ContactRow with fuzzy match pre-selection*
+*Last updated: 2026-03-02 - Completed quick task 3: Member dropdown with fuzzy match pre-selection*
 ## Quick Tasks
 
 | Quick Task | Plan | Duration | Tasks | Files | Date |
 |------------|------|----------|-------|-------|------|
 | Fuse.js contact enrichment | 1 | 2 min | 3 | 6 | 2026-02-21 |
 | members.json integration with gender field | 2 | 1 min | 1 | 1 | 2026-03-02 |
-| Member dropdown with fuzzy match | 3 | Not started | 1 | 1 | 2026-03-01 |
+| Member dropdown with fuzzy match | 3 | 80s | 1 | 1 | 2026-03-02 |
 
