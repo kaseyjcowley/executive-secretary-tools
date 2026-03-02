@@ -182,11 +182,12 @@ This is a brownfield project adding an automated appointment messaging system to
 Phase 02 is complete. Ready for Phase 03 or additional features.
 
 ---
-*Last updated: 2026-03-02 - Completed quick task 2: There is now a members.json file located in the data directory. You should never read that file, but the contents of it is an array of objects with name, age, gender, which is either the string, m or f, and phone number. can you use that structure and plug it in to our fuse.js implementation where we fuzzy search for the details of a contact based on the best possible search of their name from the Trello card.*
+*Last updated: 2026-03-01 - Plan created for quick task 3: Add member dropdown to ContactRow with fuzzy match pre-selection*
 ## Quick Tasks
 
 | Quick Task | Plan | Duration | Tasks | Files | Date |
 |------------|------|----------|-------|-------|------|
 | Fuse.js contact enrichment | 1 | 2 min | 3 | 6 | 2026-02-21 |
 | members.json integration with gender field | 2 | 1 min | 1 | 1 | 2026-03-02 |
+| Member dropdown with fuzzy match | 3 | Not started | 1 | 1 | 2026-03-01 |
 
