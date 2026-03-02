@@ -35,10 +35,10 @@ export async function GET() {
     // Combine both types into a single contacts array
     const contacts = [...interviewCards.flat(), ...callingCards.flat()];
 
-    // Enrich contacts with phone numbers from fuzzy-matched directory entries
+    // Enrich contacts with member IDs from fuzzy-matched directory entries
     const enrichedContacts = contacts.map(contact => ({
       ...contact,
-      phone: matchContact(contact.name) || undefined,
+      memberId: matchContact(contact.name) || undefined,
     }));
 
     return NextResponse.json({ contacts: enrichedContacts });

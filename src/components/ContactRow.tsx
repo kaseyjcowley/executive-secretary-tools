@@ -9,7 +9,7 @@ import {
 import { substituteTemplate } from "@/utils/template-substitution";
 import { isSunday, startOfTomorrow } from "date-fns";
 import members from "@/data/members.json";
-import { matchContact } from "@/utils/contact-fuzzy-match";
+import { matchContact, getPhoneById } from "@/utils/contact-fuzzy-match";
 
 interface Props {
   contact: Contact;
@@ -19,23 +19,30 @@ interface Props {
 export const ContactRow = ({ contact, initialTemplateId }: Props) => {
   const [selectedTemplateId, setSelectedTemplateId] =
     useState(initialTemplateId);
-  const [selectedPhone, setSelectedPhone] = useState<string | undefined>();
+  const [selectedMemberId, setSelectedMemberId] = useState<number | undefined>();
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
   const messageTypes = getAvailableMessageTypes();
 
-  // Fuzzy match and pre-select phone on mount
+  // Fuzzy match and pre-select member on mount
   useEffect(() => {
-    const matchedPhone = matchContact(contact.name);
-    setSelectedPhone(matchedPhone);
+    const matchedId = matchContact(contact.name);
+    setSelectedMemberId(matchedId);
   }, [contact.name]);
+
+  // Look up phone number when member ID changes
+  useEffect(() => {
+    if (selectedMemberId !== undefined) {
+      const phone = getPhoneById(selectedMemberId);
+      setPhoneNumber(phone || "---");
+    } else {
+      setPhoneNumber("---");
+    }
+  }, [selectedMemberId]);
 
   // Group message types by category
   const categories: Record<string, MessageType[]> = {
     calling: messageTypes.filter((m) => m.category === "calling"),
     interview: messageTypes.filter((m) => m.category === "interview"),
-    temple: messageTypes.filter((m) => m.category === "temple"),
-    welfare: messageTypes.filter((m) => m.category === "welfare"),
-    family: messageTypes.filter((m) => m.category === "family"),
-    "follow-up": messageTypes.filter((m) => m.category === "follow-up"),
   };
 
   // Compute template preview with variable substitution
@@ -68,19 +75,19 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
         )}
         <select
           className="md:ml-4 p-2 border border-slate-300 rounded text-slate-900 text-sm"
-          value={selectedPhone || ""}
-          onChange={(e) => setSelectedPhone(e.target.value)}
+          value={selectedMemberId?.toString() || ""}
+          onChange={(e) => setSelectedMemberId(e.target.value ? parseInt(e.target.value) : undefined)}
         >
           <option value="" disabled>
             Select member (or verify fuzzy match)
           </option>
           {members.map((member) => (
-            <option key={member.name} value={member.phone}>
+            <option key={`${member.name}-${member.age}-${member.gender}`} value={member.id.toString()}>
               {member.name}
             </option>
           ))}
         </select>
-        <span className="md:ml-auto text-sm text-slate-700">---</span>
+        <span className="md:ml-auto text-sm text-slate-700">{phoneNumber}</span>
       </div>
 
       <div className="flex items-center">
