@@ -21,7 +21,7 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
     useState(initialTemplateId);
   const [selectedMemberId, setSelectedMemberId] = useState<number | undefined>();
   const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [selectedTime, setSelectedTime] = useState("12:30");
+  const [selectedTime, setSelectedTime] = useState("12:00");
   const messageTypes = getAvailableMessageTypes();
 
   // Fuzzy match and pre-select member on mount
@@ -150,7 +150,8 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
               id="time"
               className="block w-full p-2.5 bg-neutral-secondary-medium border border-default-medium border-slate-700 text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body text-slate-700"
               min="09:00"
-              max="18:00"
+              max="14:00"
+              step="300"
               value={selectedTime}
               onChange={(e) => setSelectedTime(e.target.value)}
               required
