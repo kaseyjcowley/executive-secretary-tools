@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Contact, MessageType } from "@/types/messages";
 import {
   getAvailableMessageTypes,
@@ -8,6 +8,8 @@ import {
 } from "@/utils/template-loader";
 import { substituteTemplate } from "@/utils/template-substitution";
 import { isSunday, startOfTomorrow } from "date-fns";
+import members from "@/data/members.json";
+import { matchContact } from "@/utils/contact-fuzzy-match";
 
 interface Props {
   contact: Contact;
@@ -17,7 +19,14 @@ interface Props {
 export const ContactRow = ({ contact, initialTemplateId }: Props) => {
   const [selectedTemplateId, setSelectedTemplateId] =
     useState(initialTemplateId);
+  const [selectedPhone, setSelectedPhone] = useState<string | undefined>();
   const messageTypes = getAvailableMessageTypes();
+
+  // Fuzzy match and pre-select phone on mount
+  useEffect(() => {
+    const matchedPhone = matchContact(contact.name);
+    setSelectedPhone(matchedPhone);
+  }, [contact.name]);
 
   // Group message types by category
   const categories: Record<string, MessageType[]> = {
@@ -57,6 +66,20 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
             {contact.labels.name}
           </span>
         )}
+        <select
+          className="md:ml-4 p-2 border border-slate-300 rounded text-slate-900 text-sm"
+          value={selectedPhone || ""}
+          onChange={(e) => setSelectedPhone(e.target.value)}
+        >
+          <option value="" disabled>
+            Select member (or verify fuzzy match)
+          </option>
+          {members.map((member) => (
+            <option key={member.name} value={member.phone}>
+              {member.name}
+            </option>
+          ))}
+        </select>
         <span className="md:ml-auto text-sm text-slate-700">---</span>
       </div>
 
