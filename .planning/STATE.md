@@ -127,6 +127,8 @@ This is a brownfield project adding an automated appointment messaging system to
 | 02-contact-display-template-selection | 03 | 3m 42s | 4 | 4 | 2026-02-16 |
 | Phase quick P2 | 1min | 1 tasks | 1 files |
 | Phase quick P3 | 80 | 1 tasks | 1 files |
+| Phase quick P4 | 84 | 1 tasks | 1 files |
+| Phase quick 4 | 84s | 1 tasks | 1 files |
 
 ## Phase 1 Completion Summary
 
@@ -177,6 +179,8 @@ This is a brownfield project adding an automated appointment messaging system to
 | 1 | Create a system that uses Fuse.js to load in a json blob of names/ages/phone numbers in order to match the names against the Trello cards that are up for messaging in the `/messages` endpoint. The JSON will just be a file that is loaded from the filesystem. We should use the names of the Trello cards in our Fuse.js system to fuzzy match the most likely name/age/phone number of each of the contacts listed in ContactList.tsx. | 2026-02-21 | 6daad4f | [1-create-a-system-that-uses-fuse-js-to-loa](./quick/1-create-a-system-that-uses-fuse-js-to-loa/) |
 | 2 | There is now a members.json file located in the data directory. You should never read that file, but the contents of it is an array of objects with name, age, gender, which is either the string, m or f, and phone number. can you use that structure and plug it in to our fuse.js implementation where we fuzzy search for the details of a contact based on the best possible search of their name from the Trello card. | 2026-03-02 | 1e25e1b | [2-there-is-now-a-members-json-file-located](./quick/2-there-is-now-a-members-json-file-located/) |
 | 3 | Now that we have phone number and contact details from members.json, create a dropdown in ContactRow.tsx that shows all the names from members.json, with the value being the phone number. The dropdown should pre-select based on the fuzzy match we have in place. | 2026-03-02 | 4640ab9 | [3-now-that-we-have-phone-number-and-contac](./quick/3-now-that-we-have-phone-number-and-contac/) |
+| 4 | In @src/components/ContactRow.tsx on line 148, there is a time input selector. I'd like to hook that selector up to the value on line 58 such that when the time picker changes, it updates the value in that object. | 2026-03-02 | f8b553a | [4-in-src-components-contactrow-tsx-on-line](./quick/4-in-src-components-contactrow-tsx-on-line/) |
+| 5 | Update time picker in ContactRow.tsx to restrict hours between 9am-2pm and enforce 5-minute increments. | 2026-03-02 | 5330c51 | [5-update-time-picker-in-contactrow-tsx-to-](./quick/5-update-time-picker-in-contactrow-tsx-to-/) |
 
 ---
 
@@ -185,7 +189,7 @@ This is a brownfield project adding an automated appointment messaging system to
 Phase 02 is complete. Ready for Phase 03 or additional features.
 
 ---
-*Last updated: 2026-03-02 - Completed quick task 3: Member dropdown with fuzzy match pre-selection*
+*Last updated: 2026-03-02 - Completed quick task 5: Restrict time picker to 9am-2pm with 5-minute increments*
 ## Quick Tasks
 
 | Quick Task | Plan | Duration | Tasks | Files | Date |
@@ -193,4 +197,6 @@ Phase 02 is complete. Ready for Phase 03 or additional features.
 | Fuse.js contact enrichment | 1 | 2 min | 3 | 6 | 2026-02-21 |
 | members.json integration with gender field | 2 | 1 min | 1 | 1 | 2026-03-02 |
 | Member dropdown with fuzzy match | 3 | 80s | 1 | 1 | 2026-03-02 |
+| Time selector to template value | 4 | 84s | 1 | 1 | 2026-03-02 |
+| Time picker constraints | 5 | 30s | 1 | 1 | 2026-03-02 |
 
