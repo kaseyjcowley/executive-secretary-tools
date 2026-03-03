@@ -1,1 +1,3 @@
-Hey {{name}}, are you available {{date}} {{before-or-after-church}} at {{time}} to be set apart for your new calling?
+Hey {{name}},
+
+are you available {{date}} {{before-or-after-church}} at {{time}} to be set apart for your new calling?
