@@ -107,7 +107,7 @@ export const ContactList = ({ contacts }: Props) => {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-8">
       {contacts.map((contact, index) => {
         const initialTemplateId = autoSelectTemplate(
           contact,

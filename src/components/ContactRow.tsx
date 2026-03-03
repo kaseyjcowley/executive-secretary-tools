@@ -9,7 +9,7 @@ import {
   loadTemplateContent,
 } from "@/utils/template-loader";
 import { substituteTemplate } from "@/utils/template-substitution";
-import { format, isSunday, parse, startOfTomorrow } from "date-fns";
+import { format, isSunday, isBefore, parse, startOfTomorrow } from "date-fns";
 
 interface Props {
   contact: Contact;
@@ -51,37 +51,42 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
   const displayName = prefix ? `${prefix} ${lastName}` : contact.name;
 
   // Compute template preview with variable substitution
+  const churchEndTime = parse("12:30", "HH:mm", new Date());
+  const selectedTimeDate = parse(selectedTime, "HH:mm", new Date());
+  const beforeOrAfterChurch = isBefore(selectedTimeDate, churchEndTime)
+    ? "before church"
+    : "after church";
+
   const templatePreview = selectedTemplateId
     ? substituteTemplate(loadTemplateContent(selectedTemplateId), {
         name: displayName,
         appointmentType:
           contact.kind === "calling" ? contact.calling : contact.labels?.name,
         date: isSunday(startOfTomorrow()) ? "tomorrow" : "Sunday",
-        // TODO: Remove hard-coded
-        "before-or-after-church": "after church",
+        "before-or-after-church": beforeOrAfterChurch,
         time: format(parse(selectedTime, "HH:mm", new Date()), "h:mm a"),
       })
     : "";
 
   return (
-    <div className="border border-slate-300 p-4">
+    <div className="border border-slate-300 p-4 overflow-hidden">
       <div className="flex flex-col md:flex-row gap-3">
         {/* Left column: form fields */}
-        <div className="space-y-3">
+        <div className="space-y-3 w-full">
           {/* Contact info section */}
-          <div className="flex flex-row items-center justify-start">
-            <span className="font-semibold text-slate-900">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
+            <span className="font-semibold text-slate-900 break-words">
               {contact.kind === "calling"
                 ? `${contact.name} as ${contact.calling}`
                 : contact.name}
             </span>
             {"labels" in contact && contact.labels?.name && (
-              <span className="ml-2 text-sm text-slate-600">
+              <span className="text-sm text-slate-600">
                 {contact.labels.name}
               </span>
             )}
             <select
-              className="ml-2 p-2 border border-slate-300 rounded text-slate-900 text-sm"
+              className="w-full md:w-auto md:min-w-[200px] p-2 border border-slate-300 rounded text-slate-900 text-sm"
               value={selectedMemberId?.toString() || ""}
               onChange={(e) =>
                 setSelectedMemberId(
@@ -97,16 +102,16 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
                   key={`${member.name}-${member.age}-${member.gender}`}
                   value={member.id.toString()}
                 >
-                  {member.name} - {member.phone}
+                  {member.name}
                 </option>
               ))}
             </select>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col md:flex-row gap-3 w-full">
             {/* Template dropdown */}
             <select
-              className="md:w-64 p-2 border border-slate-300 rounded text-slate-900"
+              className="w-full md:w-64 p-2 border border-slate-300 rounded text-slate-900 text-sm"
               value={selectedTemplateId || ""}
               onChange={(e) => setSelectedTemplateId(e.target.value)}
             >
@@ -131,7 +136,7 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
               })}
             </select>
 
-            <form className="max-w-[8rem]">
+            <form className="w-full md:max-w-[8rem]">
               <div className="relative">
                 <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
                   <svg
@@ -154,72 +159,52 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
                 </div>
                 <select
                   id="time"
-                  className="block w-full p-2.5 pe-10 bg-neutral-secondary-medium border border-default-medium border-slate-700 text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs text-slate-700"
+                  className="block w-full p-2.5 pe-10 border border-slate-300 text-sm rounded focus:ring-blue-500 focus:border-blue-500 text-slate-700"
                   value={selectedTime}
                   onChange={(e) => setSelectedTime(e.target.value)}
                   required
                 >
-                  <option value="09:00">9:00 am</option>
-                  <option value="09:05">9:05 am</option>
-                  <option value="09:10">9:10 am</option>
-                  <option value="09:15">9:15 am</option>
-                  <option value="09:20">9:20 am</option>
-                  <option value="09:25">9:25 am</option>
-                  <option value="09:30">9:30 am</option>
-                  <option value="09:35">9:35 am</option>
-                  <option value="09:40">9:40 am</option>
-                  <option value="09:45">9:45 am</option>
-                  <option value="09:50">9:50 am</option>
-                  <option value="09:55">9:55 am</option>
-                  <option value="10:00">10:00 am</option>
-                  <option value="10:05">10:05 am</option>
-                  <option value="10:10">10:10 am</option>
-                  <option value="10:15">10:15 am</option>
-                  <option value="10:20">10:20 am</option>
-                  <option value="10:25">10:25 am</option>
-                  <option value="10:30">10:30 am</option>
-                  <option value="10:35">10:35 am</option>
-                  <option value="10:40">10:40 am</option>
-                  <option value="10:45">10:45 am</option>
-                  <option value="10:50">10:50 am</option>
-                  <option value="10:55">10:55 am</option>
-                  <option value="11:00">11:00 am</option>
-                  <option value="11:05">11:05 am</option>
-                  <option value="11:10">11:10 am</option>
-                  <option value="11:15">11:15 am</option>
-                  <option value="11:20">11:20 am</option>
-                  <option value="11:25">11:25 am</option>
-                  <option value="11:30">11:30 am</option>
-                  <option value="11:35">11:35 am</option>
-                  <option value="11:40">11:40 am</option>
-                  <option value="11:45">11:45 am</option>
-                  <option value="11:50">11:50 am</option>
-                  <option value="11:55">11:55 am</option>
-                  <option value="12:00">12:00 pm</option>
-                  <option value="12:05">12:05 pm</option>
-                  <option value="12:10">12:10 pm</option>
-                  <option value="12:15">12:15 pm</option>
-                  <option value="12:20">12:20 pm</option>
-                  <option value="12:25">12:25 pm</option>
-                  <option value="12:30">12:30 pm</option>
-                  <option value="12:35">12:35 pm</option>
-                  <option value="12:40">12:40 pm</option>
-                  <option value="12:45">12:45 pm</option>
-                  <option value="12:50">12:50 pm</option>
-                  <option value="12:55">12:55 pm</option>
-                  <option value="13:00">1:00 pm</option>
-                  <option value="13:05">1:05 pm</option>
-                  <option value="13:10">1:10 pm</option>
-                  <option value="13:15">1:15 pm</option>
-                  <option value="13:20">1:20 pm</option>
-                  <option value="13:25">1:25 pm</option>
-                  <option value="13:30">1:30 pm</option>
-                  <option value="13:35">1:35 pm</option>
-                  <option value="13:40">1:40 pm</option>
-                  <option value="13:45">1:45 pm</option>
-                  <option value="13:50">1:50 pm</option>
-                  <option value="13:55">1:55 pm</option>
-                  <option value="14:00">2:00 pm</option>
+                  <optgroup label="Before church">
+                    <option value="09:00">9:00 am</option>
+                    <option value="09:05">9:05 am</option>
+                    <option value="09:10">9:10 am</option>
+                    <option value="09:15">9:15 am</option>
+                    <option value="09:20">9:20 am</option>
+                    <option value="09:25">9:25 am</option>
+                    <option value="09:30">9:30 am</option>
+                    <option value="09:35">9:35 am</option>
+                    <option value="09:40">9:40 am</option>
+                    <option value="09:45">9:45 am</option>
+                    <option value="09:50">9:50 am</option>
+                    <option value="09:55">9:55 am</option>
+                    <option value="10:00">10:00 am</option>
+                    <option value="10:05">10:05 am</option>
+                    <option value="10:10">10:10 am</option>
+                    <option value="10:15">10:15 am</option>
+                    <option value="10:20">10:20 am</option>
+                    <option value="10:25">10:25 am</option>
+                  </optgroup>
+                  <optgroup label="After church">
+                    <option value="12:30">12:30 pm</option>
+                    <option value="12:35">12:35 pm</option>
+                    <option value="12:40">12:40 pm</option>
+                    <option value="12:45">12:45 pm</option>
+                    <option value="12:50">12:50 pm</option>
+                    <option value="12:55">12:55 pm</option>
+                    <option value="13:00">1:00 pm</option>
+                    <option value="13:05">1:05 pm</option>
+                    <option value="13:10">1:10 pm</option>
+                    <option value="13:15">1:15 pm</option>
+                    <option value="13:20">1:20 pm</option>
+                    <option value="13:25">1:25 pm</option>
+                    <option value="13:30">1:30 pm</option>
+                    <option value="13:35">1:35 pm</option>
+                    <option value="13:40">1:40 pm</option>
+                    <option value="13:45">1:45 pm</option>
+                    <option value="13:50">1:50 pm</option>
+                    <option value="13:55">1:55 pm</option>
+                    <option value="14:00">2:00 pm</option>
+                  </optgroup>
                 </select>
               </div>
             </form>
@@ -227,7 +212,7 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
         </div>
 
         {/* Right column: template preview */}
-        <div className="w-[30rem] flex-shrink-0 ml-auto">
+        <div className="w-full md:w-[30rem] md:flex-shrink-0">
           {templatePreview ? (
             <div
               className="p-3 bg-slate-50 rounded border border-slate-200 text-slate-800 whitespace-pre-wrap text-sm"
