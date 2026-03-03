@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
+import members from "@/data/members.json";
 import { Contact, MessageType } from "@/types/messages";
+import { matchContact } from "@/utils/contact-fuzzy-match";
 import {
   getAvailableMessageTypes,
   loadTemplateContent,
 } from "@/utils/template-loader";
 import { substituteTemplate } from "@/utils/template-substitution";
 import { isSunday, startOfTomorrow } from "date-fns";
-import members from "@/data/members.json";
-import { matchContact, getPhoneById } from "@/utils/contact-fuzzy-match";
 
 interface Props {
   contact: Contact;
