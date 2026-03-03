@@ -19,7 +19,9 @@ interface Props {
 export const ContactRow = ({ contact, initialTemplateId }: Props) => {
   const [selectedTemplateId, setSelectedTemplateId] =
     useState(initialTemplateId);
-  const [selectedMemberId, setSelectedMemberId] = useState<number | undefined>();
+  const [selectedMemberId, setSelectedMemberId] = useState<
+    number | undefined
+  >();
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState("12:00");
   const messageTypes = getAvailableMessageTypes();
@@ -76,13 +78,20 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
         <select
           className="md:ml-4 p-2 border border-slate-300 rounded text-slate-900 text-sm"
           value={selectedMemberId?.toString() || ""}
-          onChange={(e) => setSelectedMemberId(e.target.value ? parseInt(e.target.value) : undefined)}
+          onChange={(e) =>
+            setSelectedMemberId(
+              e.target.value ? parseInt(e.target.value) : undefined,
+            )
+          }
         >
           <option value="" disabled>
             Select member (or verify fuzzy match)
           </option>
           {members.map((member) => (
-            <option key={`${member.name}-${member.age}-${member.gender}`} value={member.id.toString()}>
+            <option
+              key={`${member.name}-${member.age}-${member.gender}`}
+              value={member.id.toString()}
+            >
               {member.name}
             </option>
           ))}
@@ -90,10 +99,10 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
         <span className="md:ml-auto text-sm text-slate-700">{phoneNumber}</span>
       </div>
 
-      <div className="flex items-center">
+      <div className="flex items-center gap-2">
         {/* Template dropdown */}
         <select
-          className="w-full md:w-64 p-2 border border-slate-300 rounded text-slate-900"
+          className="md:w-64 p-2 border border-slate-300 rounded text-slate-900"
           value={selectedTemplateId || ""}
           onChange={(e) => setSelectedTemplateId(e.target.value)}
         >
@@ -118,13 +127,7 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
           })}
         </select>
 
-        <form className="max-w-[8rem] mx-auto">
-          <label
-            htmlFor="time"
-            className="block mb-2 text-sm font-medium text-heading text-slate-700"
-          >
-            Select time:
-          </label>
+        <form className="max-w-[8rem]">
           <div className="relative">
             <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
               <svg
@@ -145,17 +148,75 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
                 />
               </svg>
             </div>
-            <input
-              type="time"
+            <select
               id="time"
-              className="block w-full p-2.5 bg-neutral-secondary-medium border border-default-medium border-slate-700 text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body text-slate-700"
-              min="09:00"
-              max="14:00"
-              step="300"
+              className="block w-full p-2.5 pe-10 bg-neutral-secondary-medium border border-default-medium border-slate-700 text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs text-slate-700"
               value={selectedTime}
               onChange={(e) => setSelectedTime(e.target.value)}
               required
-            />
+            >
+              <option value="09:00">09:00</option>
+              <option value="09:05">09:05</option>
+              <option value="09:10">09:10</option>
+              <option value="09:15">09:15</option>
+              <option value="09:20">09:20</option>
+              <option value="09:25">09:25</option>
+              <option value="09:30">09:30</option>
+              <option value="09:35">09:35</option>
+              <option value="09:40">09:40</option>
+              <option value="09:45">09:45</option>
+              <option value="09:50">09:50</option>
+              <option value="09:55">09:55</option>
+              <option value="10:00">10:00</option>
+              <option value="10:05">10:05</option>
+              <option value="10:10">10:10</option>
+              <option value="10:15">10:15</option>
+              <option value="10:20">10:20</option>
+              <option value="10:25">10:25</option>
+              <option value="10:30">10:30</option>
+              <option value="10:35">10:35</option>
+              <option value="10:40">10:40</option>
+              <option value="10:45">10:45</option>
+              <option value="10:50">10:50</option>
+              <option value="10:55">10:55</option>
+              <option value="11:00">11:00</option>
+              <option value="11:05">11:05</option>
+              <option value="11:10">11:10</option>
+              <option value="11:15">11:15</option>
+              <option value="11:20">11:20</option>
+              <option value="11:25">11:25</option>
+              <option value="11:30">11:30</option>
+              <option value="11:35">11:35</option>
+              <option value="11:40">11:40</option>
+              <option value="11:45">11:45</option>
+              <option value="11:50">11:50</option>
+              <option value="11:55">11:55</option>
+              <option value="12:00">12:00</option>
+              <option value="12:05">12:05</option>
+              <option value="12:10">12:10</option>
+              <option value="12:15">12:15</option>
+              <option value="12:20">12:20</option>
+              <option value="12:25">12:25</option>
+              <option value="12:30">12:30</option>
+              <option value="12:35">12:35</option>
+              <option value="12:40">12:40</option>
+              <option value="12:45">12:45</option>
+              <option value="12:50">12:50</option>
+              <option value="12:55">12:55</option>
+              <option value="13:00">13:00</option>
+              <option value="13:05">13:05</option>
+              <option value="13:10">13:10</option>
+              <option value="13:15">13:15</option>
+              <option value="13:20">13:20</option>
+              <option value="13:25">13:25</option>
+              <option value="13:30">13:30</option>
+              <option value="13:35">13:35</option>
+              <option value="13:40">13:40</option>
+              <option value="13:45">13:45</option>
+              <option value="13:50">13:50</option>
+              <option value="13:55">13:55</option>
+              <option value="14:00">14:00</option>
+            </select>
           </div>
         </form>
       </div>
