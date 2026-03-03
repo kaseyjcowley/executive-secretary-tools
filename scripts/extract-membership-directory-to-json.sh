@@ -107,8 +107,8 @@ echo "==> Extracting member data..."
 OUTPUT_FILE="members.json"
 echo "[" >"$OUTPUT_FILE"
 first_entry=true
-
-echo "$SNAP3" | grep -E 'row "' | while IFS= read -r line; do
+id=1
+while IFS= read -r line; do
   # Extract the quoted row content
   content=$(echo "$line" | sed -E 's/^[^"]*"(.+)"[[:space:]]*(\[.*)?$/\1/')
 
@@ -135,6 +135,11 @@ echo "$SNAP3" | grep -E 'row "' | while IFS= read -r line; do
     phone=""
   fi
 
+  # Skip entries without a phone number
+  if [[ -z "$phone" ]]; then
+    continue
+  fi
+
   # Escape double quotes in name for valid JSON
   name_escaped=$(echo "$name" | sed 's/"/\\"/g')
 
@@ -145,12 +150,17 @@ echo "$SNAP3" | grep -E 'row "' | while IFS= read -r line; do
     echo "," >>"$OUTPUT_FILE"
   fi
 
-  printf '  {"name": "%s", "gender": "%s", "age": %s, "phone": "%s"}' \
-    "$name_escaped" "$gender" "$age" "$phone" >>"$OUTPUT_FILE"
-done
+  printf '  {"id": %d, "name": "%s", "gender": "%s", "age": %s, "phone": "%s"}' \
+    "$id" "$name_escaped" "$gender" "$age" "$phone" >>"$OUTPUT_FILE"
+  ((id++))
+done < <(grep -E 'row "' <<< "$SNAP3")
 
 echo "" >>"$OUTPUT_FILE"
 echo "]" >>"$OUTPUT_FILE"
 
 echo ""
 echo "✅ Done! Successfully navigated to the Membership section."
+
+# ── Step 12: Close the playwright browser ─────────────────────────────────────
+echo "==> Closing playwright browser..."
+playwright-cli close
