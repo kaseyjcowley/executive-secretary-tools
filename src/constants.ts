@@ -45,3 +45,38 @@ export const BishopricMemberName: Record<
 //   APPOINTMENT_INTERVIEW_LIST_IDS: string[] = ["listId1", "listId2"]
 //   APPOINTMENT_CALLING_LIST_IDS: string[] = ["listId3", "listId4"]
 // To get list IDs: Open Trello list, check URL: /b/{boardId}/{listName}?l={listId}
+
+// Time constants for appointment scheduling
+export const CHURCH_END_TIME = "12:30";
+
+function generateTimeRange(
+  start: string,
+  end: string,
+  incrementMinutes: number,
+): string[] {
+  const times: string[] = [];
+  const [startHour, startMin] = start.split(":").map(Number);
+  const [endHour, endMin] = end.split(":").map(Number);
+
+  let currentHour = startHour;
+  let currentMin = startMin;
+
+  while (
+    currentHour < endHour ||
+    (currentHour === endHour && currentMin <= endMin)
+  ) {
+    times.push(
+      `${currentHour.toString().padStart(2, "0")}:${currentMin.toString().padStart(2, "0")}`,
+    );
+    currentMin += incrementMinutes;
+    if (currentMin >= 60) {
+      currentHour += Math.floor(currentMin / 60);
+      currentMin = currentMin % 60;
+    }
+  }
+
+  return times;
+}
+
+export const BEFORE_CHURCH_TIMES = generateTimeRange("09:00", "10:25", 5);
+export const AFTER_CHURCH_TIMES = generateTimeRange("12:30", "14:00", 5);
