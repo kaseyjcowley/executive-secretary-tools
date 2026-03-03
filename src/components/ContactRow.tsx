@@ -10,6 +10,7 @@ import {
 } from "@/utils/template-loader";
 import { substituteTemplate } from "@/utils/template-substitution";
 import { format, isSunday, isBefore, parse, startOfTomorrow } from "date-fns";
+import { Select } from "@/components/ui/Select";
 
 interface Props {
   contact: Contact;
@@ -19,17 +20,39 @@ interface Props {
 export const ContactRow = ({ contact, initialTemplateId }: Props) => {
   const [selectedTemplateId, setSelectedTemplateId] =
     useState(initialTemplateId);
-  const [selectedMemberId, setSelectedMemberId] = useState<
-    number | undefined
-  >();
-  const [selectedTime, setSelectedTime] = useState("12:00");
+  const [selectedMemberIds, setSelectedMemberIds] = useState<number[]>([NaN]);
+  const [selectedTime, setSelectedTime] = useState("12:30");
   const messageTypes = getAvailableMessageTypes();
 
   // Fuzzy match and pre-select member on mount
   useEffect(() => {
     const matchedId = matchContact(contact.name);
-    setSelectedMemberId(matchedId);
+    if (matchedId) {
+      setSelectedMemberIds([matchedId]);
+    }
   }, [contact.name]);
+
+  const handleAddMember = () => {
+    if (selectedMemberIds.length < 2) {
+      setSelectedMemberIds([...selectedMemberIds, NaN]);
+    }
+  };
+
+  const handleRemoveMember = (index: number) => {
+    const newIds = [...selectedMemberIds];
+    newIds.splice(index, 1);
+    setSelectedMemberIds(newIds);
+  };
+
+  const handleMemberChange = (index: number, memberId: number | undefined) => {
+    const newIds = [...selectedMemberIds];
+    if (memberId === undefined) {
+      newIds.splice(index, 1);
+    } else {
+      newIds[index] = memberId;
+    }
+    setSelectedMemberIds(newIds);
+  };
 
   // Group message types by category
   const categories: Record<string, MessageType[]> = {
@@ -37,18 +60,52 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
     interview: messageTypes.filter((m) => m.category === "interview"),
   };
 
-  const selectedMember = useMemo(
-    () => members.find((m) => m.id === selectedMemberId),
-    [selectedMemberId],
+  const selectedMembers = useMemo(
+    () => members.filter((m) => selectedMemberIds.includes(m.id)),
+    [selectedMemberIds],
   );
-  const prefix =
-    selectedMember?.gender === "M"
-      ? "Brother"
-      : selectedMember?.gender === "F"
-        ? "Sister"
-        : "";
-  const lastName = contact.name.split(" ").slice(-1)[0];
-  const displayName = prefix ? `${prefix} ${lastName}` : contact.name;
+
+  const displayNames = useMemo(() => {
+    if (selectedMembers.length === 0) return [];
+
+    const lastNames = selectedMembers.map((m) => m.name.split(",")[0]);
+    const allSameLastName =
+      lastNames.length > 1 && lastNames.every((ln) => ln === lastNames[0]);
+
+    if (allSameLastName) {
+      const sortedMembers = [...selectedMembers].sort((a, b) => {
+        if (a.gender === "M" && b.gender !== "M") return -1;
+        if (a.gender !== "M" && b.gender === "M") return 1;
+        return 0;
+      });
+      const prefix = sortedMembers
+        .map((m) =>
+          m.gender === "M" ? "Brother" : m.gender === "F" ? "Sister" : "",
+        )
+        .filter(Boolean)
+        .join(" & ");
+      return prefix
+        ? [`${prefix} ${lastNames[0]}`]
+        : selectedMembers.map((m) => m.name);
+    }
+
+    return selectedMembers.map((member) => {
+      const prefix =
+        member.gender === "M"
+          ? "Brother"
+          : member.gender === "F"
+            ? "Sister"
+            : "";
+      const lastName = member.name.split(",")[0];
+      return prefix ? `${prefix} ${lastName}` : member.name;
+    });
+  }, [selectedMembers]);
+
+  const nameVariable = displayNames.join(" & ");
+
+  const phoneNumbers = useMemo(() => {
+    return selectedMembers.map((m) => m.phone).filter((p): p is string => !!p);
+  }, [selectedMembers]);
 
   // Compute template preview with variable substitution
   const churchEndTime = parse("12:30", "HH:mm", new Date());
@@ -59,7 +116,7 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
 
   const templatePreview = selectedTemplateId
     ? substituteTemplate(loadTemplateContent(selectedTemplateId), {
-        name: displayName,
+        name: nameVariable,
         appointmentType:
           contact.kind === "calling" ? contact.calling : contact.labels?.name,
         date: isSunday(startOfTomorrow()) ? "tomorrow" : "Sunday",
@@ -85,33 +142,80 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
                 {contact.labels.name}
               </span>
             )}
-            <select
-              className="w-full md:w-auto md:min-w-[200px] p-2 border border-slate-300 rounded text-slate-900 text-sm"
-              value={selectedMemberId?.toString() || ""}
-              onChange={(e) =>
-                setSelectedMemberId(
-                  e.target.value ? parseInt(e.target.value) : undefined,
-                )
-              }
-            >
-              <option value="" disabled>
-                Select member (or verify fuzzy match)
-              </option>
-              {members.map((member) => (
-                <option
-                  key={`${member.name}-${member.age}-${member.gender}`}
-                  value={member.id.toString()}
-                >
-                  {member.name}
-                </option>
+            <div className="flex flex-wrap items-center gap-2">
+              {selectedMemberIds.map((memberId, index) => (
+                <div key={index} className="flex items-center gap-1">
+                  <Select
+                    className="md:w-auto md:min-w-[200px]"
+                    value={
+                      Number.isNaN(memberId) ? "" : memberId?.toString() || ""
+                    }
+                    onChange={(e) =>
+                      handleMemberChange(
+                        index,
+                        e.target.value ? parseInt(e.target.value) : undefined,
+                      )
+                    }
+                  >
+                    <option value="" disabled>
+                      Select member (or verify fuzzy match)
+                    </option>
+                    {members
+                      .filter(
+                        (m) =>
+                          !selectedMemberIds.includes(m.id) ||
+                          m.id === memberId,
+                      )
+                      .map((member) => (
+                        <option
+                          key={`${member.name}-${member.age}-${member.gender}`}
+                          value={member.id.toString()}
+                        >
+                          {member.name}
+                        </option>
+                      ))}
+                  </Select>
+                  {index > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveMember(index)}
+                      className="text-slate-500 hover:text-red-600 p-0.5"
+                      aria-label="Remove member"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  )}
+                </div>
               ))}
-            </select>
+              {selectedMemberIds.length < 2 && (
+                <button
+                  type="button"
+                  onClick={handleAddMember}
+                  className="self-stretch px-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded border border-slate-300 text-lg leading-none flex items-center justify-center"
+                  aria-label="Add another recipient"
+                >
+                  +
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col md:flex-row gap-3 w-full">
             {/* Template dropdown */}
-            <select
-              className="w-full md:w-64 p-2 border border-slate-300 rounded text-slate-900 text-sm"
+            <Select
+              className="md:w-64"
               value={selectedTemplateId || ""}
               onChange={(e) => setSelectedTemplateId(e.target.value)}
             >
@@ -134,7 +238,7 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
                   </optgroup>
                 );
               })}
-            </select>
+            </Select>
 
             <form className="w-full md:max-w-[8rem]">
               <div className="relative">
@@ -157,9 +261,9 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
                     />
                   </svg>
                 </div>
-                <select
+                <Select
                   id="time"
-                  className="block w-full p-2.5 pe-10 border border-slate-300 text-sm rounded focus:ring-blue-500 focus:border-blue-500 text-slate-700"
+                  className="pe-10"
                   value={selectedTime}
                   onChange={(e) => setSelectedTime(e.target.value)}
                   required
@@ -205,21 +309,33 @@ export const ContactRow = ({ contact, initialTemplateId }: Props) => {
                     <option value="13:55">1:55 pm</option>
                     <option value="14:00">2:00 pm</option>
                   </optgroup>
-                </select>
+                </Select>
               </div>
             </form>
           </div>
         </div>
 
         {/* Right column: template preview */}
-        <div className="w-full md:w-[30rem] md:flex-shrink-0">
+        <div className="w-full md:w-[30rem] md:flex-shrink-0 relative">
           {templatePreview ? (
-            <div
-              className="p-3 bg-slate-50 rounded border border-slate-200 text-slate-800 whitespace-pre-wrap text-sm"
-              dangerouslySetInnerHTML={{
-                __html: templatePreview.replace(/\\n/g, "<br />"),
-              }}
-            />
+            <>
+              {phoneNumbers.length > 0 && (
+                <a
+                  href={`sms:${phoneNumbers.join(",")}?body=${encodeURIComponent(templatePreview)}`}
+                  className="absolute top-1 right-2 text-sm text-blue-600 hover:text-blue-800 underline md:hidden"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Send message
+                </a>
+              )}
+              <div
+                className={`p-3 bg-slate-50 rounded border border-slate-200 text-slate-800 whitespace-pre-wrap text-sm ${phoneNumbers.length > 0 ? "pt-5" : ""}`}
+                dangerouslySetInnerHTML={{
+                  __html: templatePreview.replace(/\\n/g, "<br />"),
+                }}
+              />
+            </>
           ) : (
             <div className="p-3 bg-slate-50 rounded border border-slate-200 text-slate-500 italic text-sm">
               Select a template to preview the message
