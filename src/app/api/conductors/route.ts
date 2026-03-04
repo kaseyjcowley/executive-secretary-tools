@@ -5,7 +5,13 @@ import { ConductorState } from "@/types/conductors";
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  const internalToken = request.nextUrl.searchParams.get("internal_token");
+
+  const isAuthorized =
+    authHeader === `Bearer ${process.env.CRON_SECRET}` ||
+    internalToken === process.env.INTERNAL_TOOL_TOKEN;
+
+  if (!isAuthorized) {
     return new Response("Unauthorized", {
       status: 401,
     });
