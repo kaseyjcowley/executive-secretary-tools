@@ -3,20 +3,13 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-interface Conductor {
-  slackUserId: string;
-  name: string;
+interface RedisData {
+  [key: string]: unknown;
 }
 
-interface ConductorOverride extends Conductor {
-  reason: string;
-  expiresAfterDate: string;
-}
-
-interface ConductorState {
-  rotation: Conductor[];
-  currentIndex: number;
-  override: ConductorOverride | null;
+interface ApiResponse {
+  keys: string[];
+  data: RedisData;
 }
 
 function AuthPrompt({ onAuth }: { onAuth: (token: string) => void }) {
@@ -25,11 +18,9 @@ function AuthPrompt({ onAuth }: { onAuth: (token: string) => void }) {
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
       <div className="bg-gray-800 rounded-lg p-8 max-w-md w-full">
-        <h1 className="text-xl font-bold text-white mb-4">
-          Conductor Rotation
-        </h1>
+        <h1 className="text-xl font-bold text-white mb-4">Redis Viewer</h1>
         <p className="text-gray-400 mb-4">
-          Enter access token to view rotation state.
+          Enter access token to view database.
         </p>
         <input
           type="password"
@@ -80,66 +71,33 @@ function ErrorState({
   );
 }
 
-function DataDisplay({ state }: { state: ConductorState }) {
-  const currentConductor = state.rotation[state.currentIndex];
-
+function DataDisplay({ response }: { response: ApiResponse }) {
   return (
     <div className="min-h-screen bg-gray-900 p-6">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold text-white mb-6">
-          Conductor Rotation
-        </h1>
+        <h1 className="text-2xl font-bold text-white mb-2">Redis Database</h1>
+        <p className="text-gray-400 mb-6">{response.keys.length} keys</p>
 
         <div className="space-y-6">
-          <section className="bg-gray-800 rounded-lg p-4">
-            <h2 className="text-lg font-semibold text-blue-400 mb-3">
-              Current Conductor
-            </h2>
-            <pre className="bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto">
-              {JSON.stringify(currentConductor, null, 2)}
-            </pre>
-          </section>
-
-          <section className="bg-gray-800 rounded-lg p-4">
-            <h2 className="text-lg font-semibold text-blue-400 mb-3">
-              Rotation ({state.rotation.length} members)
-            </h2>
-            <pre className="bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto">
-              {JSON.stringify(state.rotation, null, 2)}
-            </pre>
-          </section>
-
-          <section className="bg-gray-800 rounded-lg p-4">
-            <h2 className="text-lg font-semibold text-blue-400 mb-3">
-              Current Index
-            </h2>
-            <pre className="bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto">
-              {state.currentIndex}
-            </pre>
-          </section>
-
-          <section className="bg-gray-800 rounded-lg p-4">
-            <h2 className="text-lg font-semibold text-blue-400 mb-3">
-              Override
-            </h2>
-            {state.override ? (
-              <pre className="bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto">
-                {JSON.stringify(state.override, null, 2)}
+          {response.keys.map((key) => (
+            <section key={key} className="bg-gray-800 rounded-lg p-4">
+              <h2 className="text-lg font-semibold text-blue-400 mb-3 break-all">
+                {key}
+              </h2>
+              <pre className="bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto text-sm">
+                {JSON.stringify(response.data[key], null, 2)}
               </pre>
-            ) : (
-              <p className="text-gray-400">No override set</p>
-            )}
-          </section>
+            </section>
+          ))}
         </div>
       </div>
     </div>
   );
 }
 
-export default function ConductorsPage() {
+export default function RedisPage() {
   const searchParams = useSearchParams();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [state, setState] = useState<ConductorState | null>(null);
+  const [response, setResponse] = useState<ApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const token = searchParams.get("token");
@@ -147,8 +105,8 @@ export default function ConductorsPage() {
   const fetchData = async (authToken: string) => {
     try {
       setError(null);
-      const response = await fetch(
-        `/api/conductors?internal_token=${authToken}`,
+      const res = await fetch(
+        `/api/internal/redis?internal_token=${authToken}`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -156,17 +114,16 @@ export default function ConductorsPage() {
         },
       );
 
-      if (!response.ok) {
-        if (response.status === 401) {
+      if (!res.ok) {
+        if (res.status === 401) {
           setError("Invalid token");
           return;
         }
-        throw new Error(`HTTP ${response.status}`);
+        throw new Error(`HTTP ${res.status}`);
       }
 
-      const data = await response.json();
-      setState(data);
-      setIsAuthenticated(true);
+      const data = await res.json();
+      setResponse(data);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to fetch");
     }
@@ -182,7 +139,7 @@ export default function ConductorsPage() {
     return (
       <AuthPrompt
         onAuth={(t) => {
-          window.location.href = `/internal/conductors?token=${t}`;
+          window.location.href = `/internal/redis?token=${t}`;
         }}
       />
     );
@@ -193,15 +150,15 @@ export default function ConductorsPage() {
       <ErrorState
         message={error}
         onRetry={() => {
-          window.location.href = "/internal/conductors";
+          window.location.href = "/internal/redis";
         }}
       />
     );
   }
 
-  if (!state) {
+  if (!response) {
     return <LoadingState />;
   }
 
-  return <DataDisplay state={state} />;
+  return <DataDisplay response={response} />;
 }
