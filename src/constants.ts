@@ -80,3 +80,10 @@ function generateTimeRange(
 
 export const BEFORE_CHURCH_TIMES = generateTimeRange("09:00", "10:25", 5);
 export const AFTER_CHURCH_TIMES = generateTimeRange("12:30", "14:00", 5);
+
+// Conductor rotation Redis keys
+export const REDIS_KEYS = {
+  CONDUCTOR_ROTATION: "church:conductors:rotation",
+  CONDUCTOR_CURRENT_INDEX: "church:conductors:currentIndex",
+  CONDUCTOR_OVERRIDE: "church:conductors:override",
+} as const;

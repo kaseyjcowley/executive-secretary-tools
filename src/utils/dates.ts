@@ -4,6 +4,9 @@ import {
   nextSunday as nextSundayFrom,
   isSunday,
   getDate,
+  getDay,
+  lastDayOfMonth,
+  startOfMonth,
 } from "date-fns";
 
 import { ApiTrelloCard } from "@/requests/cards";
@@ -29,4 +32,13 @@ export const getClosestSunday = () => {
 
 export const isFirstSunday: DatePredicate = (date = getClosestSunday()) => {
   return isSunday(date) && getDate(date) <= 7;
+};
+
+export const getLastSundayOfMonth = (date: Date): Date => {
+  const lastDay = lastDayOfMonth(date);
+  const dayOfWeek = getDay(lastDay);
+  const daysToSubtract = dayOfWeek;
+  const lastSunday = new Date(lastDay);
+  lastSunday.setDate(lastDay.getDate() - daysToSubtract);
+  return startOfDay(lastSunday);
 };
