@@ -1,0 +1,126 @@
+"use client";
+
+import { Contact } from "@/types/messages";
+import { getAvailableMessageTypes } from "@/utils/template-loader";
+import { ContactRow } from "./ContactRow";
+import { MessageType } from "@/types/messages";
+import { CallingStage } from "@/constants";
+
+interface Props {
+  contacts: Contact[];
+}
+
+/**
+ * Auto-selects a template based on contact's labels (client-side version).
+ * For calling contacts: returns 'calling-acceptance'
+ * For interview contacts: returns template ID based on label patterns
+ * Returns undefined if no match found.
+ */
+function autoSelectTemplate(
+  contact: Contact,
+  messageTypes: MessageType[],
+): string | undefined {
+  // Calling contacts always use calling-acceptance
+  if (contact.kind === "calling") {
+    return contact.stage === CallingStage.needsCallingExtended
+      ? "extend-calling"
+      : "setting-apart";
+  }
+
+  // For interview contacts, look up label in message types
+  if (contact.kind === "interview" && contact.labels?.name) {
+    const labelName = contact.labels.name.toLowerCase();
+
+    // Try to find exact match first
+    const exactMatch = messageTypes.find(
+      (mt) => mt.id === labelName.replace(/\s+/g, "-"),
+    );
+    if (exactMatch) return exactMatch.id;
+
+    if (labelName.includes("temple")) {
+      const templeTemplate = messageTypes.find(
+        (mt) => mt.id === "temple-visit",
+      );
+      if (templeTemplate) return templeTemplate.id;
+    }
+
+    if (labelName.includes("welfare")) {
+      const welfareTemplate = messageTypes.find(
+        (mt) => mt.id === "welfare-meeting",
+      );
+      if (welfareTemplate) return welfareTemplate.id;
+    }
+
+    if (labelName.includes("family")) {
+      const familyTemplate = messageTypes.find(
+        (mt) => mt.id === "family-council",
+      );
+      if (familyTemplate) return familyTemplate.id;
+    }
+
+    if (labelName.includes("bishop")) {
+      const bishopTemplate = messageTypes.find(
+        (mt) => mt.id === "bishop-interview",
+      );
+      if (bishopTemplate) return bishopTemplate.id;
+    }
+
+    if (labelName.includes("first counselor")) {
+      const firstCounselorTemplate = messageTypes.find(
+        (mt) => mt.id === "first-counselor-interview",
+      );
+      if (firstCounselorTemplate) return firstCounselorTemplate.id;
+    }
+
+    if (labelName.includes("second counselor")) {
+      const secondCounselorTemplate = messageTypes.find(
+        (mt) => mt.id === "second-counselor-interview",
+      );
+      if (secondCounselorTemplate) return secondCounselorTemplate.id;
+    }
+
+    if (labelName.includes("setting apart")) {
+      const settingApartTemplate = messageTypes.find(
+        (mt) => mt.id === "setting-apart",
+      );
+      if (settingApartTemplate) return settingApartTemplate.id;
+    }
+
+    if (labelName.includes("follow")) {
+      const followUpTemplate = messageTypes.find((mt) => mt.id === "follow-up");
+      if (followUpTemplate) return followUpTemplate.id;
+    }
+
+    // Default to interview-reminder for unknown labels
+    const defaultTemplate = messageTypes.find(
+      (mt) => mt.id === "interview-reminder",
+    );
+    if (defaultTemplate) return defaultTemplate.id;
+  }
+
+  return undefined;
+}
+
+export const ContactList = ({ contacts }: Props) => {
+  if (!contacts || contacts.length === 0) {
+    return <p className="text-slate-900 italic">No contacts to display</p>;
+  }
+
+  return (
+    <div className="space-y-8">
+      {contacts.map((contact, index) => {
+        const initialTemplateId = autoSelectTemplate(
+          contact,
+          getAvailableMessageTypes(),
+        );
+        return (
+          <ContactRow
+            key={contact.name || index}
+            contact={contact}
+            initialTemplateId={initialTemplateId}
+          />
+        );
+      })}
+    </div>
+  );
+};

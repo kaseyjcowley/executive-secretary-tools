@@ -1,0 +1,1 @@
+Hello {{name}}, is {{child}} available {{date}} {{before-or-after-church}} at {{time}} for their baptismal interview with Bishop Preece?

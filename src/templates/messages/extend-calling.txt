@@ -1,0 +1,1 @@
+Hey {{name}}!\n\nAre you available {{date}} {{before-or-after-church}} at {{time}} to meet with a member of the Bishopric?
