@@ -1,14 +1,10 @@
 import { Suspense } from "react";
 import { ContactList } from "@/components/ContactList";
 import { sortContactsByLabel } from "@/utils/contact-ordering";
+import { getAppointmentContacts } from "@/requests/cards";
 
 export default async function MessagesPage() {
-  const contactsResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/contacts`,
-    { cache: "no-store" },
-  );
-
-  const { contacts } = await contactsResponse.json();
+  const contacts = await getAppointmentContacts();
 
   // Apply ordering server-side before passing to ContactList
   const sortedContacts = sortContactsByLabel(contacts);
