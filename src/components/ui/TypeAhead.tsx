@@ -72,7 +72,9 @@ export const TypeAhead: React.FC<TypeAheadProps> = ({
       classNamePrefix="react-select"
       styles={customStyles}
       menuPlacement={menuPlacement}
-      menuPortalTarget={document.body}
+      menuPortalTarget={
+        typeof document !== "undefined" ? document.body : undefined
+      }
     />
   );
 };
