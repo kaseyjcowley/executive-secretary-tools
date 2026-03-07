@@ -2,23 +2,23 @@
 
 import { useMemo, useState } from "react";
 import members from "@/data/members.json";
-import { Contact, ContactGroup, MessageType } from "@/types/messages";
+import {
+  Contact,
+  ContactGroup,
+  MessageType,
+  MessageScenario,
+} from "@/types/messages";
 import { getAvailableMessageTypes } from "@/utils/template-loader";
 import { formatMemberDisplayNames } from "@/utils/format-member-display";
-import { generateGroupMessage } from "@/utils/group-message";
-import { MemberSelector } from "@/components/MemberSelector";
+import { classifyScenario, generateMessage } from "@/utils/message-generator";
 import { TemplateSelector } from "@/components/TemplateSelector";
-import { TimeSelector } from "@/components/TimeSelector";
 import { MessagePreview } from "@/components/MessagePreview";
-import { CHURCH_END_TIME } from "@/constants";
 
 interface GroupCardProps {
   group: ContactGroup;
   contacts: Contact[];
   onUnmerge: (groupId: string) => void;
 }
-
-const INITIAL_MEMBER_ID = -1;
 
 export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
   const groupContacts = useMemo(
@@ -31,13 +31,12 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
     [groupContacts],
   );
 
-  const [selectedMemberIds, setSelectedMemberIds] = useState<number[]>([
-    INITIAL_MEMBER_ID,
-  ]);
-  const [selectedTime, setSelectedTime] = useState(CHURCH_END_TIME);
-  const [memberTemplateIds, setMemberTemplateIds] = useState<
+  const [recipients, setRecipients] = useState<Contact[]>([]);
+  const [subjects, setSubjects] = useState<Contact[]>([]);
+  const [subjectTemplateMap, setSubjectTemplateMap] = useState<
     Record<string, string>
   >({});
+  const [selectedMemberIds, setSelectedMemberIds] = useState<number[]>([]);
 
   const messageTypes = getAvailableMessageTypes();
 
@@ -63,26 +62,64 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
     [selectedMemberIds],
   );
 
-  const displayNames = useMemo(
-    () => formatMemberDisplayNames(selectedMembers),
-    [selectedMembers],
-  );
-
-  const nameVariable = displayNames.join(" & ");
-
   const phoneNumbers = useMemo(() => {
     return selectedMembers.map((m) => m.phone).filter((p): p is string => !!p);
   }, [selectedMembers]);
 
-  const getContactTemplateId = (contactName: string): string | undefined => {
-    return memberTemplateIds[contactName];
+  const canShowPreview = useMemo(() => {
+    return (
+      recipients.length > 0 &&
+      recipients.length <= 2 &&
+      subjects.length > 0 &&
+      Object.keys(subjectTemplateMap).length === subjects.length
+    );
+  }, [recipients, subjects, subjectTemplateMap]);
+
+  const templatePreview = useMemo(() => {
+    if (!canShowPreview) {
+      return "";
+    }
+
+    const appointmentTypes = new Map<string, Contact[]>();
+    subjects.forEach((subject) => {
+      const templateId = subjectTemplateMap[subject.name];
+      if (templateId) {
+        const existing = appointmentTypes.get(templateId) || [];
+        appointmentTypes.set(templateId, [...existing, subject]);
+      }
+    });
+
+    const scenario: MessageScenario = {
+      type: classifyScenario(recipients, subjects),
+      recipients,
+      subjects,
+      appointmentTypes,
+    };
+
+    return generateMessage(scenario);
+  }, [canShowPreview, recipients, subjects, subjectTemplateMap]);
+
+  const toggleRecipient = (contact: Contact) => {
+    const isRecipient = recipients.some((r) => r.name === contact.name);
+    if (isRecipient) {
+      setRecipients(recipients.filter((r) => r.name !== contact.name));
+    } else {
+      if (recipients.length < 2) {
+        setRecipients([...recipients, contact]);
+      }
+    }
   };
 
-  const handleTemplateChange = (contactName: string, templateId: string) => {
-    setMemberTemplateIds((prev) => ({
-      ...prev,
-      [contactName]: templateId,
-    }));
+  const toggleSubject = (contact: Contact) => {
+    const isSubject = subjects.some((s) => s.name === contact.name);
+    if (isSubject) {
+      setSubjects(subjects.filter((s) => s.name !== contact.name));
+      const newMap = { ...subjectTemplateMap };
+      delete newMap[contact.name];
+      setSubjectTemplateMap(newMap);
+    } else {
+      setSubjects([...subjects, contact]);
+    }
   };
 
   const getAppointmentType = (contact: Contact): string => {
@@ -91,113 +128,121 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
       : contact.labels?.name || "Appointment";
   };
 
-  const handleAddMember = () => {
-    if (selectedMemberIds.length < 2) {
-      setSelectedMemberIds([...selectedMemberIds, INITIAL_MEMBER_ID]);
-    }
-  };
-
-  const handleRemoveMember = (index: number) => {
-    setSelectedMemberIds(selectedMemberIds.filter((_, i) => i !== index));
-  };
-
-  const handleChangeMember = (index: number, memberId: number | undefined) => {
-    if (memberId === undefined) {
-      setSelectedMemberIds(selectedMemberIds.filter((_, i) => i !== index));
-    } else {
-      setSelectedMemberIds(
-        selectedMemberIds.map((id, i) => (i === index ? memberId : id)),
-      );
-    }
-  };
-
-  const templatePreview = useMemo(() => {
-    return generateGroupMessage({
-      recipientNames: nameVariable,
-      time: selectedTime,
-      templateIds: memberTemplateIds,
-      members: groupContacts,
-    });
-  }, [nameVariable, selectedTime, memberTemplateIds, groupContacts]);
-
   return (
     <div className="border border-slate-300 p-4 overflow-hidden">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Left Section */}
-        <div className="grid grid-rows-[auto_auto] gap-2">
-          {/* Row 1: Group title, recipients */}
-          <div>
-            <div className="text-lg font-semibold text-slate-900 mb-3">
-              Group: {groupNames}
-            </div>
+        <div className="space-y-4">
+          <div className="text-lg font-semibold text-slate-900 mb-3">
+            Group: {groupNames}
+          </div>
 
-            <div className="flex flex-row gap-3 items-center mb-3">
-              <span className="text-sm text-slate-600 flex-shrink-0">
-                Recipients:
-              </span>
-              <div className="flex-grow">
-                <MemberSelector
-                  selectedMemberIds={selectedMemberIds}
-                  onAddMember={handleAddMember}
-                  onRemoveMember={handleRemoveMember}
-                  onChangeMember={handleChangeMember}
-                />
-              </div>
+          <div className="mb-4 p-3 bg-blue-50 rounded border border-blue-200">
+            <label className="block text-sm font-semibold text-blue-900 mb-2">
+              Step 1: Select Message Recipients (max 2)
+            </label>
+            <p className="text-xs text-blue-700 mb-3">
+              Who will receive this message?
+            </p>
+            <div className="space-y-2">
+              {groupContacts.map((contact) => (
+                <label
+                  key={contact.name}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={recipients.some((r) => r.name === contact.name)}
+                    disabled={
+                      !recipients.some((r) => r.name === contact.name) &&
+                      recipients.length >= 2
+                    }
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        toggleRecipient(contact);
+                      } else {
+                        toggleRecipient(contact);
+                      }
+                    }}
+                    className="w-4 h-4"
+                  />
+                  <span className="text-slate-700">{contact.name}</span>
+                </label>
+              ))}
             </div>
           </div>
 
-          {/* Row 2: Time selector, members list with template selectors */}
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-sm text-slate-600 flex-shrink-0">
-                Time:
-              </span>
-              <TimeSelector
-                selectedTime={selectedTime}
-                onChange={setSelectedTime}
-              />
+          <div className="mb-4 p-3 bg-green-50 rounded border border-green-200">
+            <label className="block text-sm font-semibold text-green-900 mb-2">
+              Step 2: Configure Appointment Subjects
+            </label>
+            <p className="text-xs text-green-700 mb-3">
+              Who are the appointments for? Select a template for each.
+            </p>
+            <div className="space-y-3">
+              {groupContacts.map((contact) => (
+                <div key={contact.name} className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={subjects.some((s) => s.name === contact.name)}
+                    onChange={(e) => {
+                      toggleSubject(contact);
+                    }}
+                    className="w-4 h-4"
+                  />
+                  <span className="flex-1 text-slate-700">{contact.name}</span>
+                  {subjects.some((s) => s.name === contact.name) && (
+                    <TemplateSelector
+                      selectedTemplateId={subjectTemplateMap[contact.name]}
+                      onChange={(id) => {
+                        setSubjectTemplateMap({
+                          ...subjectTemplateMap,
+                          [contact.name]: id,
+                        });
+                      }}
+                      categories={categories}
+                    />
+                  )}
+                </div>
+              ))}
             </div>
-
-            <div className="border-t border-slate-200 pt-3">
-              <div className="text-sm font-medium text-slate-700 mb-2">
-                Members:
-              </div>
-              <div className="space-y-3">
-                {groupContacts.map((contact) => (
-                  <div key={contact.name} className="flex flex-col gap-1">
-                    <span className="text-slate-900">
-                      • {contact.name} - {getAppointmentType(contact)}
-                    </span>
-                    <div className="ml-4">
-                      <TemplateSelector
-                        selectedTemplateId={getContactTemplateId(contact.name)}
-                        onChange={(id) =>
-                          handleTemplateChange(contact.name, id)
-                        }
-                        categories={categories}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <button
-              onClick={() => onUnmerge(group.id)}
-              className="text-sm text-slate-600 hover:text-slate-800 underline mt-3"
-            >
-              Unmerge
-            </button>
           </div>
+
+          <button
+            onClick={() => onUnmerge(group.id)}
+            className="text-sm text-slate-600 hover:text-slate-800 underline mt-3"
+          >
+            Unmerge
+          </button>
         </div>
 
-        {/* Right Section: Message Preview */}
         <div className="flex justify-end">
-          <div className="w-[500px]">
-            <MessagePreview
-              templatePreview={templatePreview}
-              phoneNumbers={phoneNumbers}
-            />
+          <div className="w-full">
+            <h3 className="text-sm font-semibold text-slate-900 mb-3">
+              Message Preview
+            </h3>
+            {canShowPreview ? (
+              <MessagePreview
+                templatePreview={templatePreview}
+                phoneNumbers={phoneNumbers}
+              />
+            ) : (
+              <div className="p-4 bg-slate-100 rounded border border-slate-300 text-slate-600 text-sm">
+                <p className="font-medium mb-2">
+                  Complete the steps above to see preview:
+                </p>
+                <ul className="list-disc list-inside space-y-1">
+                  {recipients.length === 0 && <li>Select 1-2 recipients</li>}
+                  {subjects.length === 0 && (
+                    <li>Select appointment subjects</li>
+                  )}
+                  {subjects.length > 0 &&
+                    Object.keys(subjectTemplateMap).length <
+                      subjects.length && (
+                      <li>Choose templates for all subjects</li>
+                    )}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </div>

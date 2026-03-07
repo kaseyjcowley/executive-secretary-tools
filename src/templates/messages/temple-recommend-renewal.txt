@@ -1,1 +1,1 @@
-Hello {{name}}! Our records indicate your temple recommend expires at the end of the month. The Bishopric has times this Sunday for recommend renewals. If you would like to get on our schedule to renew, please let me know!
+Hello {{greeting}}! Our records indicate that {{appointmentSummary}}. The Bishopric has times this Sunday for recommend renewals. If you would like to get on our schedule to renew, please let me know!

@@ -52,10 +52,10 @@ function getSummary(
   }
 
   if (recipientsAreSubjects) {
-    return summary.pluralSubjects;
+    return summary.pluralRecipients;
   }
 
-  return summary.pluralOther;
+  return summary.pluralSubjects;
 }
 
 export function generateGroupMessage(context: GroupMessageContext): string {

@@ -1,0 +1,48 @@
+export function formatNameList(names: string[]): string {
+  if (names.length === 0) return "";
+  if (names.length === 1) return names[0];
+  if (names.length === 2) return `${names[0]} and ${names[1]}`;
+  const allButLast = names.slice(0, -1).join(", ");
+  return `${allButLast}, and ${names[names.length - 1]}`;
+}
+
+export function getPossessive(name: string): string {
+  if (!name) return "";
+  if (name.endsWith("s")) return `${name}'`;
+  return `${name}'s`;
+}
+
+export function pluralize(word: string, count: number): string {
+  if (count === 1) return word;
+  if (word.endsWith("s") || word.endsWith("sh") || word.endsWith("ch")) {
+    return `${word}es`;
+  }
+  return `${word}s`;
+}
+
+export function getPronoun(isRecipient: boolean, count: number): string {
+  return isRecipient ? "your" : "their";
+}
+
+export function conjugateVerb(verb: string, count: number): string {
+  if (count === 1) {
+    if (
+      verb.endsWith("s") ||
+      verb.endsWith("sh") ||
+      verb.endsWith("ch") ||
+      verb.endsWith("x") ||
+      verb.endsWith("z")
+    ) {
+      return `${verb}es`;
+    }
+    if (
+      verb.endsWith("y") &&
+      !["a", "e", "i", "o", "u"].includes(verb[verb.length - 2])
+    ) {
+      return `${verb.slice(0, -1)}ies`;
+    }
+    if (verb === "have") return "has";
+    return `${verb}s`;
+  }
+  return verb;
+}

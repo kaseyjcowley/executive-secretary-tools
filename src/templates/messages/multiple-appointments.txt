@@ -1,0 +1,5 @@
+Hello {{greeting}}! Our records indicate the following appointments are needed:
+
+{{bulletList}}
+
+The Bishopric has times this Sunday. If you would like to get on our schedule, please let me know!
