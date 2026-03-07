@@ -257,7 +257,10 @@ function getAppointmentSummary(scenario: MessageScenario): string {
   }
 
   if (!recipientsAreSubjects && subjects.length > 0) {
-    const subjectNames = subjects.map((s) => s.name);
+    const subjectNames = subjects.map((s) => {
+      const parts = s.name.split(",");
+      return parts.length > 1 ? parts[1].trim() : s.name;
+    });
     const formattedNames = formatNameList(subjectNames);
     const possessive = getPossessive(formattedNames);
     summaryText = summaryText.replace(/\btheir\b/gi, possessive);
@@ -271,8 +274,10 @@ function buildSubjectList(subjects: Contact[]): SubjectItem[] {
     const templateId = getTemplateIdForContact(subject);
     const summary = appointmentSummaries[templateId];
 
+    const firstName = subject.name.split(",")[1]?.trim() || subject.name;
+
     return {
-      name: subject.name,
+      name: firstName,
       appointmentType: templateId,
       summary: summary?.listFormat || "appointment needed",
     };
