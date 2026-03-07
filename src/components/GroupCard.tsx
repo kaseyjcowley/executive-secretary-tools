@@ -9,8 +9,8 @@ import {
   MessageScenario,
 } from "@/types/messages";
 import { getAvailableMessageTypes } from "@/utils/template-loader";
-import { formatMemberDisplayNames } from "@/utils/format-member-display";
 import { classifyScenario, generateMessage } from "@/utils/message-generator";
+import { MemberSelector } from "@/components/MemberSelector";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { MessagePreview } from "@/components/MessagePreview";
 
@@ -19,6 +19,17 @@ interface GroupCardProps {
   contacts: Contact[];
   onUnmerge: (groupId: string) => void;
 }
+
+interface Member {
+  id: number;
+  name: string;
+  age: number;
+  gender: string;
+  phone: string;
+}
+
+const memberData = members as Member[];
+const INITIAL_MEMBER_ID = -1;
 
 export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
   const groupContacts = useMemo(
@@ -31,12 +42,14 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
     [groupContacts],
   );
 
-  const [recipients, setRecipients] = useState<Contact[]>([]);
+  const [recipientsAreSubjects, setRecipientsAreSubjects] = useState(false);
+  const [selectedRecipientMemberIds, setSelectedRecipientMemberIds] = useState<
+    number[]
+  >([INITIAL_MEMBER_ID]);
   const [subjects, setSubjects] = useState<Contact[]>([]);
   const [subjectTemplateMap, setSubjectTemplateMap] = useState<
     Record<string, string>
   >({});
-  const [selectedMemberIds, setSelectedMemberIds] = useState<number[]>([]);
 
   const messageTypes = getAvailableMessageTypes();
 
@@ -48,32 +61,52 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
     [messageTypes],
   );
 
-  const selectedMembers = useMemo(
-    () =>
-      members
-        .filter((m) => selectedMemberIds.includes(m.id))
-        .map((m) => ({
-          id: m.id,
-          name: m.name,
-          age: m.age,
-          gender: m.gender,
-          phone: m.phone,
-        })),
-    [selectedMemberIds],
-  );
+  const selectedRecipients = useMemo(() => {
+    if (recipientsAreSubjects) {
+      return subjects;
+    }
+    return memberData
+      .filter((m) => selectedRecipientMemberIds.includes(m.id))
+      .map((m) => {
+        const contact = groupContacts.find((c) => c.name === m.name);
+        return contact || ({ name: m.name, kind: "interview" } as Contact);
+      });
+  }, [
+    recipientsAreSubjects,
+    subjects,
+    selectedRecipientMemberIds,
+    groupContacts,
+  ]);
 
-  const phoneNumbers = useMemo(() => {
-    return selectedMembers.map((m) => m.phone).filter((p): p is string => !!p);
-  }, [selectedMembers]);
+  const recipientPhoneNumbers = useMemo(() => {
+    if (recipientsAreSubjects) {
+      return selectedRecipients
+        .map((r) => "phone" in r && r.phone)
+        .filter((p): p is string => !!p);
+    }
+    return memberData
+      .filter((m) => selectedRecipientMemberIds.includes(m.id))
+      .map((m) => m.phone)
+      .filter((p): p is string => !!p);
+  }, [recipientsAreSubjects, selectedRecipients, selectedRecipientMemberIds]);
 
   const canShowPreview = useMemo(() => {
+    const hasRecipients = recipientsAreSubjects
+      ? subjects.length > 0
+      : selectedRecipientMemberIds.filter((id) => id !== INITIAL_MEMBER_ID)
+          .length > 0;
+
     return (
-      recipients.length > 0 &&
-      recipients.length <= 2 &&
+      hasRecipients &&
       subjects.length > 0 &&
       Object.keys(subjectTemplateMap).length === subjects.length
     );
-  }, [recipients, subjects, subjectTemplateMap]);
+  }, [
+    recipientsAreSubjects,
+    subjects,
+    subjectTemplateMap,
+    selectedRecipientMemberIds,
+  ]);
 
   const templatePreview = useMemo(() => {
     if (!canShowPreview) {
@@ -90,23 +123,44 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
     });
 
     const scenario: MessageScenario = {
-      type: classifyScenario(recipients, subjects),
-      recipients,
+      type: classifyScenario(selectedRecipients, subjects),
+      recipients: selectedRecipients,
       subjects,
       appointmentTypes,
     };
 
     return generateMessage(scenario);
-  }, [canShowPreview, recipients, subjects, subjectTemplateMap]);
+  }, [canShowPreview, selectedRecipients, subjects, subjectTemplateMap]);
 
-  const toggleRecipient = (contact: Contact) => {
-    const isRecipient = recipients.some((r) => r.name === contact.name);
-    if (isRecipient) {
-      setRecipients(recipients.filter((r) => r.name !== contact.name));
+  const handleAddRecipient = () => {
+    if (selectedRecipientMemberIds.length < 2) {
+      setSelectedRecipientMemberIds([
+        ...selectedRecipientMemberIds,
+        INITIAL_MEMBER_ID,
+      ]);
+    }
+  };
+
+  const handleRemoveRecipient = (index: number) => {
+    setSelectedRecipientMemberIds(
+      selectedRecipientMemberIds.filter((_, i) => i !== index),
+    );
+  };
+
+  const handleChangeRecipient = (
+    index: number,
+    memberId: number | undefined,
+  ) => {
+    if (memberId === undefined) {
+      setSelectedRecipientMemberIds(
+        selectedRecipientMemberIds.filter((_, i) => i !== index),
+      );
     } else {
-      if (recipients.length < 2) {
-        setRecipients([...recipients, contact]);
-      }
+      setSelectedRecipientMemberIds(
+        selectedRecipientMemberIds.map((id, i) =>
+          i === index ? memberId : id,
+        ),
+      );
     }
   };
 
@@ -122,10 +176,11 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
     }
   };
 
-  const getAppointmentType = (contact: Contact): string => {
-    return contact.kind === "calling"
-      ? contact.calling
-      : contact.labels?.name || "Appointment";
+  const handleRecipientsAreSubjectsChange = (checked: boolean) => {
+    setRecipientsAreSubjects(checked);
+    if (checked) {
+      setSelectedRecipientMemberIds([INITIAL_MEMBER_ID]);
+    }
   };
 
   return (
@@ -138,37 +193,36 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
 
           <div className="mb-4 p-3 bg-blue-50 rounded border border-blue-200">
             <label className="block text-sm font-semibold text-blue-900 mb-2">
-              Step 1: Select Message Recipients (max 2)
+              Step 1: Select Message Recipients
             </label>
             <p className="text-xs text-blue-700 mb-3">
               Who will receive this message?
             </p>
-            <div className="space-y-2">
-              {groupContacts.map((contact) => (
-                <label
-                  key={contact.name}
-                  className="flex items-center gap-2 cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    checked={recipients.some((r) => r.name === contact.name)}
-                    disabled={
-                      !recipients.some((r) => r.name === contact.name) &&
-                      recipients.length >= 2
-                    }
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        toggleRecipient(contact);
-                      } else {
-                        toggleRecipient(contact);
-                      }
-                    }}
-                    className="w-4 h-4"
-                  />
-                  <span className="text-slate-700">{contact.name}</span>
-                </label>
-              ))}
-            </div>
+
+            <label className="flex items-center gap-2 cursor-pointer mb-3">
+              <input
+                type="checkbox"
+                checked={recipientsAreSubjects}
+                onChange={(e) =>
+                  handleRecipientsAreSubjectsChange(e.target.checked)
+                }
+                className="w-4 h-4"
+              />
+              <span className="text-slate-700">
+                Recipients are the same as subjects
+              </span>
+            </label>
+
+            {!recipientsAreSubjects && (
+              <div className="ml-6">
+                <MemberSelector
+                  selectedMemberIds={selectedRecipientMemberIds}
+                  onAddMember={handleAddRecipient}
+                  onRemoveMember={handleRemoveRecipient}
+                  onChangeMember={handleChangeRecipient}
+                />
+              </div>
+            )}
           </div>
 
           <div className="mb-4 p-3 bg-green-50 rounded border border-green-200">
@@ -184,9 +238,7 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
                   <input
                     type="checkbox"
                     checked={subjects.some((s) => s.name === contact.name)}
-                    onChange={(e) => {
-                      toggleSubject(contact);
-                    }}
+                    onChange={() => toggleSubject(contact)}
                     className="w-4 h-4"
                   />
                   <span className="flex-1 text-slate-700">{contact.name}</span>
@@ -223,7 +275,7 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
             {canShowPreview ? (
               <MessagePreview
                 templatePreview={templatePreview}
-                phoneNumbers={phoneNumbers}
+                phoneNumbers={recipientPhoneNumbers}
               />
             ) : (
               <div className="p-4 bg-slate-100 rounded border border-slate-300 text-slate-600 text-sm">
@@ -231,7 +283,15 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
                   Complete the steps above to see preview:
                 </p>
                 <ul className="list-disc list-inside space-y-1">
-                  {recipients.length === 0 && <li>Select 1-2 recipients</li>}
+                  {recipientsAreSubjects ? (
+                    subjects.length === 0 && (
+                      <li>Select appointment subjects</li>
+                    )
+                  ) : selectedRecipientMemberIds.filter(
+                      (id) => id !== INITIAL_MEMBER_ID,
+                    ).length === 0 ? (
+                    <li>Select message recipients</li>
+                  ) : null}
                   {subjects.length === 0 && (
                     <li>Select appointment subjects</li>
                   )}
