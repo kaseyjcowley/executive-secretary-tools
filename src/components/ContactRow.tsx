@@ -4,14 +4,9 @@ import { useMemo, useState } from "react";
 import members from "@/data/members.json";
 import { Contact, MessageType } from "@/types/messages";
 import { useMemberSelection } from "@/hooks/useMemberSelection";
-import {
-  getAvailableMessageTypes,
-  loadTemplateContent,
-} from "@/utils/template-loader";
-import { substituteTemplate } from "@/utils/template-substitution";
+import { useTemplatePreview } from "@/hooks/useTemplatePreview";
+import { getAvailableMessageTypes } from "@/utils/template-loader";
 import { formatMemberDisplayNames } from "@/utils/format-member-display";
-import { getBeforeOrAfterChurch } from "@/utils/time-utils";
-import { format, isSunday, parse, startOfTomorrow } from "date-fns";
 import { ContactInfo, ContactLabels } from "@/components/ContactInfo";
 import { MemberSelector } from "@/components/MemberSelector";
 import { TemplateSelector } from "@/components/TemplateSelector";
@@ -79,24 +74,13 @@ export const ContactRow = ({
     return selectedMembers.map((m) => m.phone).filter((p): p is string => !!p);
   }, [selectedMembers]);
 
-  // Determines if selected time is before or after church meetings end
-  const beforeOrAfterChurch = getBeforeOrAfterChurch(selectedTime);
-
   // Renders the template with all substituted variables
-  const templatePreview = selectedTemplateId
-    ? substituteTemplate(loadTemplateContent(selectedTemplateId), {
-        name: nameVariable,
-        // For callings, use the calling name; for interviews, use the label name
-        appointmentType:
-          contact.kind === "calling" ? contact.calling : contact.labels?.name,
-        // Display "tomorrow" if the appointment is Sunday, otherwise "Sunday"
-        date: isSunday(startOfTomorrow()) ? "tomorrow" : "Sunday",
-        // "before church" or "after church" based on selected time
-        "before-or-after-church": beforeOrAfterChurch,
-        // Format time in 12-hour format (e.g., "2:30 PM")
-        time: format(parse(selectedTime, "HH:mm", new Date()), "h:mm a"),
-      })
-    : "";
+  const templatePreview = useTemplatePreview({
+    selectedTemplateId,
+    selectedTime,
+    nameVariable,
+    contact,
+  });
 
   return (
     <div className="border border-slate-300 p-4 overflow-hidden">
