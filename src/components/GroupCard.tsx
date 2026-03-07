@@ -17,6 +17,7 @@ import {
 import { MemberSelector } from "@/components/MemberSelector";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { MessagePreview } from "@/components/MessagePreview";
+import { MEMBER_SELECTION } from "@/constants";
 
 interface GroupCardProps {
   group: ContactGroup;
@@ -25,7 +26,6 @@ interface GroupCardProps {
 }
 
 const memberData = members as Member[];
-const INITIAL_MEMBER_ID = -1;
 
 export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
   const groupContacts = useMemo(
@@ -41,7 +41,7 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
   const [recipientsAreSubjects, setRecipientsAreSubjects] = useState(false);
   const [selectedRecipientMemberIds, setSelectedRecipientMemberIds] = useState<
     number[]
-  >([INITIAL_MEMBER_ID]);
+  >([MEMBER_SELECTION.INITIAL_MEMBER_ID]);
   const [subjects, setSubjects] = useState<Contact[]>([]);
   const [subjectTemplateMap, setSubjectTemplateMap] = useState<
     Record<string, string>
@@ -89,8 +89,9 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
   const canShowPreview = useMemo(() => {
     const hasRecipients = recipientsAreSubjects
       ? subjects.length > 0
-      : selectedRecipientMemberIds.filter((id) => id !== INITIAL_MEMBER_ID)
-          .length > 0;
+      : selectedRecipientMemberIds.filter(
+          (id) => id !== MEMBER_SELECTION.INITIAL_MEMBER_ID,
+        ).length > 0;
 
     return (
       hasRecipients &&
@@ -136,10 +137,10 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
   }, [canShowPreview, selectedRecipients, subjects, subjectTemplateMap]);
 
   const handleAddRecipient = () => {
-    if (selectedRecipientMemberIds.length < 2) {
+    if (selectedRecipientMemberIds.length < MEMBER_SELECTION.MAX_RECIPIENTS) {
       setSelectedRecipientMemberIds([
         ...selectedRecipientMemberIds,
-        INITIAL_MEMBER_ID,
+        MEMBER_SELECTION.INITIAL_MEMBER_ID,
       ]);
     }
   };
@@ -182,7 +183,7 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
   const handleRecipientsAreSubjectsChange = (checked: boolean) => {
     setRecipientsAreSubjects(checked);
     if (checked) {
-      setSelectedRecipientMemberIds([INITIAL_MEMBER_ID]);
+      setSelectedRecipientMemberIds([MEMBER_SELECTION.INITIAL_MEMBER_ID]);
     }
   };
 
@@ -291,7 +292,7 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
                       <li>Select appointment subjects</li>
                     )
                   ) : selectedRecipientMemberIds.filter(
-                      (id) => id !== INITIAL_MEMBER_ID,
+                      (id) => id !== MEMBER_SELECTION.INITIAL_MEMBER_ID,
                     ).length === 0 ? (
                     <li>Select message recipients</li>
                   ) : null}

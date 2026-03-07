@@ -5,14 +5,12 @@ import {
   fetchInterviewCardsForContacts,
   fetchCallingCardsForContacts,
 } from "./requests";
-import { CallingStage } from "@/constants";
+import { CallingStage, TRELLO_LIST_IDS } from "@/constants";
 import { matchContact } from "@/utils/contact-fuzzy-match";
-
-const APPOINTMENT_INTERVIEW_LIST_IDS: string[] = ["698142f18c51336104b0ca17"];
 
 export async function getAppointmentContacts() {
   const interviewCards = await Promise.all(
-    APPOINTMENT_INTERVIEW_LIST_IDS.map((listId) =>
+    TRELLO_LIST_IDS.APPOINTMENT_INTERVIEWS.map((listId) =>
       fetchInterviewCardsForContacts(listId),
     ),
   );
@@ -20,11 +18,11 @@ export async function getAppointmentContacts() {
   const callingCards = await Promise.all([
     fetchCallingCardsForContacts(
       CallingStage.needsCallingExtended,
-      "69814029755d3899bbf4191c",
+      TRELLO_LIST_IDS.CALLINGS_NEEDS_EXTENSION,
     ),
     fetchCallingCardsForContacts(
       CallingStage.needsSettingApart,
-      "5f62bc2052e58c7dc5740b4f",
+      TRELLO_LIST_IDS.CALLINGS_NEEDS_SETTING_APART,
     ),
   ]);
 
