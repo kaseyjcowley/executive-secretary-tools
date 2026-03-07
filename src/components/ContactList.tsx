@@ -81,10 +81,6 @@ export const ContactList = ({ contacts }: Props) => {
     return <p className="text-slate-900 italic">No contacts to display</p>;
   }
 
-  if (!contacts || contacts.length === 0) {
-    return <p className="text-slate-900 italic">No contacts to display</p>;
-  }
-
   return (
     <div>
       {selectedIds.size > 0 && (
