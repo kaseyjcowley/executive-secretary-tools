@@ -43,6 +43,8 @@ const customStyles: StylesConfig<TypeAheadOption, false> = {
     ...base,
     zIndex: 50,
     overflowX: "hidden",
+    width: "max-content",
+    minWidth: "100%",
   }),
   menuList: (base) => ({
     ...base,
