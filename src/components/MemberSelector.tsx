@@ -54,7 +54,7 @@ export function MemberSelector({
                     option ? parseInt(option.value, 10) : undefined,
                   )
                 }
-                placeholder="Select member (or verify fuzzy match)"
+                placeholder="Select member"
                 menuPlacement="auto"
               />
             </div>

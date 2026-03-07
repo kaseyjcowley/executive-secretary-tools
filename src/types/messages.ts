@@ -30,3 +30,15 @@ export interface MessageType {
   templatePath: string;
   content: string;
 }
+
+export interface ContactGroup {
+  id: string;
+  memberIds: string[];
+  createdAt: Date;
+}
+
+export type ContactListItem = Contact | ContactGroup;
+
+export function isContactGroup(item: ContactListItem): item is ContactGroup {
+  return "memberIds" in item && !("kind" in item);
+}

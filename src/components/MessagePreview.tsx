@@ -8,7 +8,7 @@ export function MessagePreview({
   phoneNumbers,
 }: MessagePreviewProps) {
   return (
-    <div className="w-full md:w-[30rem] md:flex-shrink-0 relative">
+    <div className="md:w-[30rem] md:flex-shrink-0 relative">
       {templatePreview ? (
         <>
           {phoneNumbers.length > 0 && (
