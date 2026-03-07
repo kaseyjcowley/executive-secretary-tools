@@ -10,6 +10,10 @@ import {
 } from "@/types/messages";
 import { getAvailableMessageTypes } from "@/utils/template-loader";
 import { classifyScenario, generateMessage } from "@/utils/message-generator";
+import {
+  formatMemberDisplayNames,
+  Member,
+} from "@/utils/format-member-display";
 import { MemberSelector } from "@/components/MemberSelector";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { MessagePreview } from "@/components/MessagePreview";
@@ -18,14 +22,6 @@ interface GroupCardProps {
   group: ContactGroup;
   contacts: Contact[];
   onUnmerge: (groupId: string) => void;
-}
-
-interface Member {
-  id: number;
-  name: string;
-  age: number;
-  gender: string;
-  phone: string;
 }
 
 const memberData = members as Member[];
@@ -122,11 +118,18 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
       }
     });
 
+    const recipientMembers = selectedRecipients.map((r) => {
+      const member = memberData.find((m) => m.name === r.name);
+      return member || { id: 0, name: r.name, age: 0, gender: "", phone: "" };
+    });
+    const formattedRecipientNames = formatMemberDisplayNames(recipientMembers);
+
     const scenario: MessageScenario = {
       type: classifyScenario(selectedRecipients, subjects),
       recipients: selectedRecipients,
       subjects,
       appointmentTypes,
+      recipientNames: formattedRecipientNames,
     };
 
     return generateMessage(scenario);

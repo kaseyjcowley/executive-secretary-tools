@@ -97,13 +97,17 @@ export function classifyScenario(
 function buildTemplateVariables(
   scenario: MessageScenario,
 ): GroupTemplateVariables {
-  const { recipients, subjects, type } = scenario;
+  const { recipients, subjects, type, recipientNames } = scenario;
 
-  const recipientNames = recipients.map((r) => r.name);
+  const formattedNames =
+    recipientNames && recipientNames.length > 0
+      ? recipientNames
+      : recipients.map((r) => r.name);
+
   const greeting =
-    recipientNames.length === 1
-      ? recipientNames[0]
-      : formatNameList(recipientNames);
+    formattedNames.length === 1
+      ? formattedNames[0]
+      : formatNameList(formattedNames);
 
   const recipientsAreSubjects = recipients.every((r) =>
     subjects.some((s) => s.name === r.name),

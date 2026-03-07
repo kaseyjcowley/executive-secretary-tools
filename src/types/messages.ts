@@ -73,4 +73,5 @@ export interface MessageScenario {
   recipients: Contact[];
   subjects: Contact[];
   appointmentTypes: Map<string, Contact[]>;
+  recipientNames?: string[];
 }
