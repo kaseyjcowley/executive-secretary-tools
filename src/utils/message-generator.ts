@@ -247,15 +247,23 @@ function getAppointmentSummary(scenario: MessageScenario): string {
     scenario.subjects.some((s) => s.name === r.name),
   );
 
+  let summaryText: string;
   if (subjects.length === 1) {
-    return summary.singular;
+    summaryText = summary.singular;
+  } else if (recipientsAreSubjects) {
+    summaryText = summary.pluralRecipients;
+  } else {
+    summaryText = summary.pluralSubjects;
   }
 
-  if (recipientsAreSubjects) {
-    return summary.pluralRecipients;
+  if (!recipientsAreSubjects && subjects.length > 0) {
+    const subjectNames = subjects.map((s) => s.name);
+    const formattedNames = formatNameList(subjectNames);
+    const possessive = getPossessive(formattedNames);
+    summaryText = summaryText.replace(/\btheir\b/gi, possessive);
   }
 
-  return summary.pluralSubjects;
+  return summaryText;
 }
 
 function buildSubjectList(subjects: Contact[]): SubjectItem[] {
