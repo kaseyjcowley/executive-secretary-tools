@@ -12,6 +12,7 @@ import {
   appointmentSummaries,
   AppointmentSummary,
 } from "@/constants/appointment-summaries";
+import { CallingStage } from "@/constants";
 
 export function generateMessage(scenario: MessageScenario): string {
   try {
@@ -178,11 +179,50 @@ function generateListMessage(
 
 function getTemplateIdForContact(contact: Contact): string {
   if (contact.kind === "calling") {
-    return "extend-calling";
+    return contact.stage === CallingStage.needsCallingExtended
+      ? "extend-calling"
+      : "setting-apart";
   }
 
   if (contact.labels?.name) {
-    return contact.labels.name.toLowerCase().replace(/\s+/g, "-");
+    const labelName = contact.labels.name.toLowerCase();
+
+    if (labelName.includes("temple")) {
+      return "temple-recommend-renewal";
+    }
+
+    if (labelName.includes("welfare")) {
+      return "welfare-meeting";
+    }
+
+    if (labelName.includes("family")) {
+      return "family-council";
+    }
+
+    if (labelName.includes("bishop")) {
+      return "bishop-interview";
+    }
+
+    if (labelName.includes("first counselor")) {
+      return "first-counselor-interview";
+    }
+
+    if (labelName.includes("second counselor")) {
+      return "second-counselor-interview";
+    }
+
+    if (labelName.includes("setting apart")) {
+      return "setting-apart";
+    }
+
+    if (labelName.includes("follow")) {
+      return "follow-up";
+    }
+
+    const exactMatch = labelName.replace(/\s+/g, "-");
+    if (appointmentSummaries[exactMatch]) {
+      return exactMatch;
+    }
   }
 
   return "interview-reminder";
