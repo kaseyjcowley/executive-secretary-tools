@@ -120,8 +120,20 @@ function buildTemplateVariables(
   if (recipientsAreSubjects) {
     possessive = "your";
   } else {
-    const subjectNames = subjects.map((s) => s.name);
-    possessive = getPossessive(formatNameList(subjectNames));
+    const subjectNames = subjects.map((s) => {
+      const parts = s.name.split(",");
+      let firstName: string;
+      if (parts.length > 1) {
+        firstName = parts[1].trim();
+      } else {
+        const nameParts = s.name.split(" ");
+        firstName = nameParts[0];
+      }
+      return firstName;
+    });
+
+    const formattedSubjectNames = formatNameList(subjectNames);
+    possessive = getPossessive(formattedSubjectNames);
   }
 
   const appointmentSummary = getAppointmentSummary(scenario);
@@ -134,6 +146,10 @@ function buildTemplateVariables(
   const subjectList =
     type === "multiple-types" ? buildSubjectList(subjects) : undefined;
 
+  const schedulingPhrase = recipientsAreSubjects
+    ? "If you would like to get on our schedule to renew"
+    : "If you would like to get them on our schedule to renew";
+
   return {
     greeting,
     pronoun,
@@ -142,6 +158,7 @@ function buildTemplateVariables(
     subjectNames,
     subjectList,
     appointmentSummary,
+    schedulingPhrase,
   };
 }
 
@@ -248,22 +265,28 @@ function getAppointmentSummary(scenario: MessageScenario): string {
   );
 
   let summaryText: string;
-  if (subjects.length === 1) {
-    summaryText = summary.singular;
-  } else if (recipientsAreSubjects) {
-    summaryText = summary.pluralRecipients;
+  if (recipientsAreSubjects) {
+    summaryText =
+      subjects.length === 1 ? summary.singular : summary.pluralRecipients;
   } else {
-    summaryText = summary.pluralSubjects;
-  }
+    summaryText =
+      subjects.length === 1 ? summary.singular : summary.pluralSubjects;
 
-  if (!recipientsAreSubjects && subjects.length > 0) {
     const subjectNames = subjects.map((s) => {
       const parts = s.name.split(",");
-      return parts.length > 1 ? parts[1].trim() : s.name;
+      let firstName: string;
+      if (parts.length > 1) {
+        firstName = parts[1].trim();
+      } else {
+        const nameParts = s.name.split(" ");
+        firstName = nameParts[0];
+      }
+      return firstName;
     });
+
     const formattedNames = formatNameList(subjectNames);
     const possessive = getPossessive(formattedNames);
-    summaryText = summaryText.replace(/\btheir\b/gi, possessive);
+    summaryText = summaryText.replace(/\b(your|their)\b/gi, possessive);
   }
 
   return summaryText;
@@ -274,7 +297,14 @@ function buildSubjectList(subjects: Contact[]): SubjectItem[] {
     const templateId = getTemplateIdForContact(subject);
     const summary = appointmentSummaries[templateId];
 
-    const firstName = subject.name.split(",")[1]?.trim() || subject.name;
+    const parts = subject.name.split(",");
+    let firstName: string;
+    if (parts.length > 1) {
+      firstName = parts[1].trim();
+    } else {
+      const nameParts = subject.name.split(" ");
+      firstName = nameParts[0];
+    }
 
     return {
       name: firstName,

@@ -63,6 +63,7 @@ export interface GroupTemplateVariables {
   subjectNames?: string;
   subjectList?: SubjectItem[];
   appointmentSummary: string;
+  schedulingPhrase: string;
   time?: string;
   bulletList?: string;
   [key: string]: unknown;
