@@ -66,5 +66,3 @@ function formatName(id: string): string {
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ");
 }
-
-// ... include your autoSelectTemplate and LABEL_TO_TEMPLATE_MAP here
