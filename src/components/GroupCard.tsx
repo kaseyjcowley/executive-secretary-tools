@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import members from "@/data/members.json";
 import {
   Contact,
@@ -17,6 +17,8 @@ import {
 import { MemberSelector } from "@/components/MemberSelector";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { MessagePreview } from "@/components/MessagePreview";
+import { useGroupRecipients } from "@/hooks/useGroupRecipients";
+import { useGroupSubjects } from "@/hooks/useGroupSubjects";
 import { MEMBER_SELECTION } from "@/constants";
 
 interface GroupCardProps {
@@ -38,14 +40,24 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
     [groupContacts],
   );
 
-  const [recipientsAreSubjects, setRecipientsAreSubjects] = useState(false);
-  const [selectedRecipientMemberIds, setSelectedRecipientMemberIds] = useState<
-    number[]
-  >([MEMBER_SELECTION.INITIAL_MEMBER_ID]);
-  const [subjects, setSubjects] = useState<Contact[]>([]);
-  const [subjectTemplateMap, setSubjectTemplateMap] = useState<
-    Record<string, string>
-  >({});
+  const {
+    recipientsAreSubjects,
+    selectedRecipientMemberIds,
+    selectedRecipients,
+    recipientPhoneNumbers,
+    handleAddRecipient,
+    handleRemoveRecipient,
+    handleChangeRecipient,
+    handleRecipientsAreSubjectsChange,
+  } = useGroupRecipients(groupContacts);
+
+  const {
+    subjects,
+    subjectTemplateMap,
+    toggleSubject,
+    setTemplateForSubject,
+    canShowPreview,
+  } = useGroupSubjects();
 
   const messageTypes = getAvailableMessageTypes();
 
@@ -56,54 +68,6 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
     }),
     [messageTypes],
   );
-
-  const selectedRecipients = useMemo(() => {
-    if (recipientsAreSubjects) {
-      return subjects;
-    }
-    return memberData
-      .filter((m) => selectedRecipientMemberIds.includes(m.id))
-      .map((m) => {
-        const contact = groupContacts.find((c) => c.name === m.name);
-        return contact || ({ name: m.name, kind: "interview" } as Contact);
-      });
-  }, [
-    recipientsAreSubjects,
-    subjects,
-    selectedRecipientMemberIds,
-    groupContacts,
-  ]);
-
-  const recipientPhoneNumbers = useMemo(() => {
-    if (recipientsAreSubjects) {
-      return selectedRecipients
-        .map((r) => "phone" in r && r.phone)
-        .filter((p): p is string => !!p);
-    }
-    return memberData
-      .filter((m) => selectedRecipientMemberIds.includes(m.id))
-      .map((m) => m.phone)
-      .filter((p): p is string => !!p);
-  }, [recipientsAreSubjects, selectedRecipients, selectedRecipientMemberIds]);
-
-  const canShowPreview = useMemo(() => {
-    const hasRecipients = recipientsAreSubjects
-      ? subjects.length > 0
-      : selectedRecipientMemberIds.filter(
-          (id) => id !== MEMBER_SELECTION.INITIAL_MEMBER_ID,
-        ).length > 0;
-
-    return (
-      hasRecipients &&
-      subjects.length > 0 &&
-      Object.keys(subjectTemplateMap).length === subjects.length
-    );
-  }, [
-    recipientsAreSubjects,
-    subjects,
-    subjectTemplateMap,
-    selectedRecipientMemberIds,
-  ]);
 
   const templatePreview = useMemo(() => {
     if (!canShowPreview) {
@@ -135,57 +99,6 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
 
     return generateMessage(scenario);
   }, [canShowPreview, selectedRecipients, subjects, subjectTemplateMap]);
-
-  const handleAddRecipient = () => {
-    if (selectedRecipientMemberIds.length < MEMBER_SELECTION.MAX_RECIPIENTS) {
-      setSelectedRecipientMemberIds([
-        ...selectedRecipientMemberIds,
-        MEMBER_SELECTION.INITIAL_MEMBER_ID,
-      ]);
-    }
-  };
-
-  const handleRemoveRecipient = (index: number) => {
-    setSelectedRecipientMemberIds(
-      selectedRecipientMemberIds.filter((_, i) => i !== index),
-    );
-  };
-
-  const handleChangeRecipient = (
-    index: number,
-    memberId: number | undefined,
-  ) => {
-    if (memberId === undefined) {
-      setSelectedRecipientMemberIds(
-        selectedRecipientMemberIds.filter((_, i) => i !== index),
-      );
-    } else {
-      setSelectedRecipientMemberIds(
-        selectedRecipientMemberIds.map((id, i) =>
-          i === index ? memberId : id,
-        ),
-      );
-    }
-  };
-
-  const toggleSubject = (contact: Contact) => {
-    const isSubject = subjects.some((s) => s.name === contact.name);
-    if (isSubject) {
-      setSubjects(subjects.filter((s) => s.name !== contact.name));
-      const newMap = { ...subjectTemplateMap };
-      delete newMap[contact.name];
-      setSubjectTemplateMap(newMap);
-    } else {
-      setSubjects([...subjects, contact]);
-    }
-  };
-
-  const handleRecipientsAreSubjectsChange = (checked: boolean) => {
-    setRecipientsAreSubjects(checked);
-    if (checked) {
-      setSelectedRecipientMemberIds([MEMBER_SELECTION.INITIAL_MEMBER_ID]);
-    }
-  };
 
   return (
     <div className="border border-slate-300 p-4 overflow-hidden">
@@ -249,12 +162,7 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
                   {subjects.some((s) => s.name === contact.name) && (
                     <TemplateSelector
                       selectedTemplateId={subjectTemplateMap[contact.name]}
-                      onChange={(id) => {
-                        setSubjectTemplateMap({
-                          ...subjectTemplateMap,
-                          [contact.name]: id,
-                        });
-                      }}
+                      onChange={(id) => setTemplateForSubject(contact.name, id)}
                       categories={categories}
                     />
                   )}
