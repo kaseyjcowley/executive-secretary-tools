@@ -27,7 +27,7 @@ const fetchCards = async (
     { cache: "no-cache" },
   )
     .then((response) => response.json())
-    .catch((err) => console.error(err));
+    .catch((err) => console.error("Failed to fetch Trello cards:", err));
 
   return apiCards;
 };
