@@ -30,3 +30,49 @@ export interface MessageType {
   templatePath: string;
   content: string;
 }
+
+export interface ContactGroup {
+  id: string;
+  memberIds: string[];
+  createdAt: Date;
+}
+
+export type ContactListItem = Contact | ContactGroup;
+
+export function isContactGroup(item: ContactListItem): item is ContactGroup {
+  return "memberIds" in item && !("kind" in item);
+}
+
+export type ScenarioType =
+  | "single"
+  | "pair-recipients"
+  | "pair-subjects"
+  | "multiple-types";
+
+export interface SubjectItem {
+  name: string;
+  appointmentType: string;
+  summary: string;
+}
+
+export interface GroupTemplateVariables {
+  greeting: string;
+  pronoun: string;
+  verb: string;
+  possessive: string;
+  subjectNames?: string;
+  subjectList?: SubjectItem[];
+  appointmentSummary: string;
+  schedulingPhrase: string;
+  time?: string;
+  bulletList?: string;
+  [key: string]: unknown;
+}
+
+export interface MessageScenario {
+  type: ScenarioType;
+  recipients: Contact[];
+  subjects: Contact[];
+  appointmentTypes: Map<string, Contact[]>;
+  recipientNames?: string[];
+}

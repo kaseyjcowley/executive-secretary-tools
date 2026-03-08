@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@slack/bolt": "^3.14.0",
@@ -28,12 +30,19 @@
     "tailwindcss": "3.3.3"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "20.6.0",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
+    "@vitejs/plugin-react": "^5.1.4",
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
+    "jest-environment-jsdom": "^30.2.0",
+    "msw": "^2.12.10",
     "typescript": "5.2.2",
+    "vitest": "^4.0.18",
     "webpack-node-externals": "^3.0.0"
   }
 }

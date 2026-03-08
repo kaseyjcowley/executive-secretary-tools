@@ -87,3 +87,19 @@ export const REDIS_KEYS = {
   CONDUCTOR_CURRENT_INDEX: "church:conductors:currentIndex",
   CONDUCTOR_OVERRIDE: "church:conductors:override",
 } as const;
+
+// Trello List IDs for Appointment Messaging
+export const TRELLO_LIST_IDS = {
+  APPOINTMENT_INTERVIEWS: ["698142f18c51336104b0ca17"],
+  CALLINGS_NEEDS_EXTENSION: "69814029755d3899bbf4191c",
+  CALLINGS_NEEDS_SETTING_APART: "5f62bc2052e58c7dc5740b4f",
+  INTERVIEW_BOARD: ["698142f18c51336104b0ca18"],
+  CALLINGS_BOARD: ["6981402b631c5d579084983f"],
+  SETTING_APART_BOARD: ["6981403b91ce00795685a559", "5f62bc2052e58c7dc5740b4f"],
+} as const;
+
+// Member selection constants
+export const MEMBER_SELECTION = {
+  INITIAL_MEMBER_ID: -1,
+  MAX_RECIPIENTS: 2,
+} as const;

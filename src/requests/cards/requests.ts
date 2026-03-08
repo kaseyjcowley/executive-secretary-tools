@@ -10,7 +10,7 @@ import {
 
 import { ApiTrelloCard, CallingTrelloCard, InterviewTrelloCard } from "./types";
 
-import { CallingStage } from "@/constants";
+import { CallingStage, TRELLO_LIST_IDS } from "@/constants";
 
 const DEFAULT_CARD_FIELDS = ["id", "name", "due", "assigned", "idMembers"];
 
@@ -27,7 +27,7 @@ const fetchCards = async (
     { cache: "no-cache" },
   )
     .then((response) => response.json())
-    .catch((err) => console.error(err));
+    .catch((err) => console.error("Failed to fetch Trello cards:", err));
 
   return apiCards;
 };
@@ -93,23 +93,16 @@ export const fetchCallingCardsForContacts = async (
   )(apiCards);
 };
 
-const INTERVIEW_BOARD_LIST_IDS = ["698142f18c51336104b0ca18"];
-const CALLINGS_BOARD_LIST_IDS = ["6981402b631c5d579084983f"];
-const SETTING_APART_BOARD_LIST_IDS = [
-  "6981403b91ce00795685a559",
-  "5f62bc2052e58c7dc5740b4f",
-];
-
 // List IDs for appointment messaging system
 // Configure these directly as arrays of Trello list IDs
 export const fetchAllCardsGroupedByMember = async () =>
   await Promise.all([
-    ...INTERVIEW_BOARD_LIST_IDS.map(fetchInterviewCards),
-    ...CALLINGS_BOARD_LIST_IDS.map(
+    ...TRELLO_LIST_IDS.INTERVIEW_BOARD.map(fetchInterviewCards),
+    ...TRELLO_LIST_IDS.CALLINGS_BOARD.map(
       // @ts-expect-error - these types don't match up to what the API says is possible
       partial(fetchCallingCards, CallingStage.needsCallingExtended),
     ),
-    ...SETTING_APART_BOARD_LIST_IDS.map(
+    ...TRELLO_LIST_IDS.SETTING_APART_BOARD.map(
       // @ts-expect-error - these types don't match up to what the API says is possible
       partial(fetchCallingCards, CallingStage.needsSettingApart),
     ),
