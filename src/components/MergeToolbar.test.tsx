@@ -9,6 +9,7 @@ describe("MergeToolbar", () => {
     selectedCount: 0,
     onMerge: vi.fn(),
     onClearSelection: vi.fn(),
+    onMarkAsMessaged: vi.fn(),
   };
 
   it("does not render when no contacts are selected", () => {

@@ -8,6 +8,10 @@ vi.mock("@/requests/cards", () => ({
   getAppointmentContacts: vi.fn(),
 }));
 
+vi.mock("@/utils/get-messaged-contacts", () => ({
+  getMessagedContactIds: vi.fn().mockResolvedValue(new Set()),
+}));
+
 vi.mock("@/components/ContactList", () => ({
   ContactList: ({ contacts }: { contacts: Array<{ name: string }> }) => (
     <div data-testid="contact-list">
