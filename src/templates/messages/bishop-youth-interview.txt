@@ -1,1 +1,4 @@
-Hey {{recipients}}! {{verb}} {{subjects}} available Sunday at {{time}} for their annual interview with Bishop Preece?
+Hey {{recipients}}!
+
+
+{{verb}} {{subjects}} available Sunday at {{time}} for their annual interview with Bishop Preece?
