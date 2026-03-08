@@ -118,24 +118,25 @@ function buildTemplateVariables(
 
   const pronoun = getPronoun(recipientsAreSubjects, subjects.length);
 
+  const subjectFirstNames = subjects.map((s) => {
+    const parts = s.name.split(",");
+    let firstName: string;
+    if (parts.length > 1) {
+      firstName = parts[1].trim();
+    } else {
+      const nameParts = s.name.split(" ");
+      firstName = nameParts[0];
+    }
+    return firstName;
+  });
+
+  const formattedSubjectFirstNames = formatNameList(subjectFirstNames);
+
   let possessive: string;
   if (recipientsAreSubjects) {
     possessive = "your";
   } else {
-    const subjectNames = subjects.map((s) => {
-      const parts = s.name.split(",");
-      let firstName: string;
-      if (parts.length > 1) {
-        firstName = parts[1].trim();
-      } else {
-        const nameParts = s.name.split(" ");
-        firstName = nameParts[0];
-      }
-      return firstName;
-    });
-
-    const formattedSubjectNames = formatNameList(subjectNames);
-    possessive = getPossessive(formattedSubjectNames);
+    possessive = getPossessive(formattedSubjectFirstNames);
   }
 
   const appointmentSummary = getAppointmentSummary(scenario, templateIdFromMap);
@@ -154,15 +155,19 @@ function buildTemplateVariables(
     ? "If you would like to get on our schedule to renew"
     : "If you would like to get them on our schedule to renew";
 
+  const verb = subjects.length === 1 ? "is" : "are";
+
   return {
     greeting,
     pronoun,
     possessive,
-    verb: "",
+    verb,
     subjectNames,
     subjectList,
     appointmentSummary,
     schedulingPhrase,
+    recipients: greeting,
+    subjects: formattedSubjectFirstNames,
   };
 }
 

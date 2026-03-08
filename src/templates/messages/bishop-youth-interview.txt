@@ -1,3 +1,3 @@
-Hey {{name}}!
+Hey {{recipients}}!
 
-Are you available to meet with Bishop Preece on {{date}} at {{time}} for your annual interview with him?
+{{verb}} {{subjects}} available Sunday at {{time}} for their annual interview with Bishop Preece?
