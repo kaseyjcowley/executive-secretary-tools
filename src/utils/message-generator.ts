@@ -16,9 +16,8 @@ import { CallingStage } from "@/constants";
 
 export function generateMessage(scenario: MessageScenario): string {
   try {
-    const variables = buildTemplateVariables(scenario);
-
     if (scenario.type === "multiple-types") {
+      const variables = buildTemplateVariables(scenario);
       return generateListMessage(scenario, variables);
     }
 
@@ -33,6 +32,8 @@ export function generateMessage(scenario: MessageScenario): string {
     if (!template) {
       return `Error: Template "${templateId}" not found`;
     }
+
+    const variables = buildTemplateVariables(scenario, templateId);
 
     return substituteTemplate(template, variables);
   } catch (error) {
@@ -97,6 +98,7 @@ export function classifyScenario(
 
 function buildTemplateVariables(
   scenario: MessageScenario,
+  templateIdFromMap?: string,
 ): GroupTemplateVariables {
   const { recipients, subjects, type, recipientNames } = scenario;
 
@@ -136,7 +138,7 @@ function buildTemplateVariables(
     possessive = getPossessive(formattedSubjectNames);
   }
 
-  const appointmentSummary = getAppointmentSummary(scenario);
+  const appointmentSummary = getAppointmentSummary(scenario, templateIdFromMap);
 
   const subjectNames =
     !recipientsAreSubjects && subjects.length > 0
@@ -144,7 +146,9 @@ function buildTemplateVariables(
       : undefined;
 
   const subjectList =
-    type === "multiple-types" ? buildSubjectList(subjects) : undefined;
+    type === "multiple-types"
+      ? buildSubjectList(subjects, scenario.appointmentTypes)
+      : undefined;
 
   const schedulingPhrase = recipientsAreSubjects
     ? "If you would like to get on our schedule to renew"
@@ -245,14 +249,17 @@ function getTemplateIdForContact(contact: Contact): string {
   return "interview-reminder";
 }
 
-function getAppointmentSummary(scenario: MessageScenario): string {
+function getAppointmentSummary(
+  scenario: MessageScenario,
+  templateIdFromMap?: string,
+): string {
   const { subjects, type } = scenario;
 
   if (type === "multiple-types") {
     return "";
   }
 
-  const templateId = getTemplateIdForContact(subjects[0]);
+  const templateId = templateIdFromMap || getTemplateIdForContact(subjects[0]);
   const summary: AppointmentSummary | undefined =
     appointmentSummaries[templateId];
 
@@ -292,10 +299,17 @@ function getAppointmentSummary(scenario: MessageScenario): string {
   return summaryText;
 }
 
-function buildSubjectList(subjects: Contact[]): SubjectItem[] {
+function buildSubjectList(
+  subjects: Contact[],
+  appointmentTypes: Map<string, Contact[]>,
+): SubjectItem[] {
   return subjects.map((subject) => {
-    const templateId = getTemplateIdForContact(subject);
-    const summary = appointmentSummaries[templateId];
+    const templateId = Array.from(appointmentTypes.entries()).find(
+      ([, contacts]) => contacts.some((c) => c.name === subject.name),
+    )?.[0];
+
+    const resolvedTemplateId = templateId || getTemplateIdForContact(subject);
+    const summary = appointmentSummaries[resolvedTemplateId];
 
     const parts = subject.name.split(",");
     let firstName: string;
@@ -308,7 +322,7 @@ function buildSubjectList(subjects: Contact[]): SubjectItem[] {
 
     return {
       name: firstName,
-      appointmentType: templateId,
+      appointmentType: resolvedTemplateId,
       summary: summary?.listFormat || "appointment needed",
     };
   });

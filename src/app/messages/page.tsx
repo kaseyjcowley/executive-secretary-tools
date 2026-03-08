@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { ContactList } from "@/components/ContactList";
 import { sortContactsByLabel } from "@/utils/contact-ordering";
 import { getAppointmentContacts } from "@/requests/cards";
+import { getMessagedContactIds } from "@/utils/get-messaged-contacts";
 
 export default async function MessagesPage() {
   let contacts;
@@ -25,6 +26,8 @@ export default async function MessagesPage() {
   }
 
   const sortedContacts = sortContactsByLabel(contacts);
+  const contactNames = sortedContacts.map((c) => c.name);
+  const suppressedIds = await getMessagedContactIds(contactNames);
 
   return (
     <main className="p-2 md:p-24 flex flex-col space-y-10 overflow-x-hidden">
@@ -34,7 +37,7 @@ export default async function MessagesPage() {
       <Suspense
         fallback={<p className="text-slate-900">Loading contacts...</p>}
       >
-        <ContactList contacts={sortedContacts} />
+        <ContactList contacts={sortedContacts} suppressedIds={suppressedIds} />
       </Suspense>
     </main>
   );

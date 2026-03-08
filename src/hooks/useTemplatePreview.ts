@@ -21,6 +21,11 @@ export function useTemplatePreview({
   nameVariable,
   contact,
 }: UseTemplatePreviewOptions) {
+  const appointmentType =
+    contact.kind === "calling"
+      ? (contact as any).calling
+      : (contact as any).labels?.name;
+
   return useMemo(() => {
     if (!selectedTemplateId) {
       return "";
@@ -28,13 +33,25 @@ export function useTemplatePreview({
 
     const beforeOrAfterChurch = getBeforeOrAfterChurch(selectedTime);
 
-    return substituteTemplate(loadTemplateContent(selectedTemplateId), {
+    const templateVars = {
       name: nameVariable,
-      appointmentType:
-        contact.kind === "calling" ? contact.calling : contact.labels?.name,
+      greeting: nameVariable,
+      appointmentType,
+      appointmentSummary: appointmentType,
       date: formatAppointmentDate(),
       "before-or-after-church": beforeOrAfterChurch,
       time: formatTimeForDisplay(selectedTime),
-    });
-  }, [selectedTemplateId, selectedTime, nameVariable, contact]);
+    };
+
+    return substituteTemplate(
+      loadTemplateContent(selectedTemplateId),
+      templateVars,
+    );
+  }, [
+    selectedTemplateId,
+    selectedTime,
+    nameVariable,
+    contact,
+    appointmentType,
+  ]);
 }

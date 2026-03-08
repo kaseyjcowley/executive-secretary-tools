@@ -86,6 +86,7 @@ export const REDIS_KEYS = {
   CONDUCTOR_ROTATION: "church:conductors:rotation",
   CONDUCTOR_CURRENT_INDEX: "church:conductors:currentIndex",
   CONDUCTOR_OVERRIDE: "church:conductors:override",
+  MESSAGED_CONTACT_PREFIX: "church:messaged:",
 } as const;
 
 // Trello List IDs for Appointment Messaging

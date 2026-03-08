@@ -12,22 +12,39 @@ import { autoSelectTemplate } from "@/utils/template-matcher";
 import { ContactRow } from "./ContactRow";
 import { GroupCard } from "./GroupCard";
 import { MergeToolbar } from "./MergeToolbar";
+import { useMessagedContacts } from "@/hooks/useMessagedContacts";
+import { showMarkedToast } from "@/components/MarkAsMessagedToast";
 
 interface Props {
   contacts: Contact[];
+  suppressedIds?: Set<string>;
 }
 
-export const ContactList = ({ contacts }: Props) => {
+export const ContactList = ({
+  contacts,
+  suppressedIds: initialSuppressedIds,
+}: Props) => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [groups, setGroups] = useState<ContactGroup[]>([]);
+
+  const contactNames = useMemo(() => contacts.map((c) => c.name), [contacts]);
+  const { suppressedIds, markAsMessaged, unmarkContact } = useMessagedContacts({
+    contactIds: contactNames,
+    initialSuppressedIds,
+  });
+
+  const visibleContacts = useMemo(
+    () => contacts.filter((c) => !suppressedIds.has(c.name)),
+    [contacts, suppressedIds],
+  );
 
   const groupedContactNames = useMemo(() => {
     return new Set(groups.flatMap((g) => g.memberIds));
   }, [groups]);
 
   const ungroupedContacts = useMemo(
-    () => contacts.filter((c) => !groupedContactNames.has(c.name)),
-    [contacts, groupedContactNames],
+    () => visibleContacts.filter((c) => !groupedContactNames.has(c.name)),
+    [visibleContacts, groupedContactNames],
   );
 
   const listItems: ContactListItem[] = useMemo(() => {
@@ -51,9 +68,9 @@ export const ContactList = ({ contacts }: Props) => {
   }, []);
 
   const handleSelectAll = useCallback(() => {
-    const allUngroupedNames = ungroupedContacts.map((c) => c.name);
+    const allUngroupedNames = visibleContacts.map((c) => c.name);
     setSelectedIds(new Set(allUngroupedNames));
-  }, [ungroupedContacts]);
+  }, [visibleContacts]);
 
   const handleClearSelection = useCallback(() => {
     setSelectedIds(new Set());
@@ -77,6 +94,27 @@ export const ContactList = ({ contacts }: Props) => {
     setGroups((prev) => prev.filter((g) => g.id !== groupId));
   }, []);
 
+  const handleMarkAsMessaged = useCallback(async () => {
+    const selectedNames = Array.from(selectedIds);
+
+    try {
+      await markAsMessaged(selectedNames);
+      showMarkedToast({
+        contactNames: selectedNames,
+        onUndo: async () => {
+          try {
+            await Promise.all(selectedNames.map((name) => unmarkContact(name)));
+          } catch (error) {
+            console.error("Error undoing mark:", error);
+          }
+        },
+      });
+      setSelectedIds(new Set());
+    } catch (error) {
+      console.error("Error marking contacts:", error);
+    }
+  }, [selectedIds, markAsMessaged, unmarkContact]);
+
   if (!contacts || contacts.length === 0) {
     return <p className="text-slate-900 italic">No contacts to display</p>;
   }
@@ -88,10 +126,11 @@ export const ContactList = ({ contacts }: Props) => {
           selectedCount={selectedIds.size}
           onMerge={handleMerge}
           onClearSelection={handleClearSelection}
+          onMarkAsMessaged={handleMarkAsMessaged}
         />
       )}
 
-      {ungroupedContacts.length > 0 && selectedIds.size === 0 && (
+      {visibleContacts.length > 0 && selectedIds.size === 0 && (
         <div className="mb-4">
           <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
             <input
@@ -105,7 +144,7 @@ export const ContactList = ({ contacts }: Props) => {
               }}
               className="w-4 h-4 accent-blue-600"
             />
-            Select all ({ungroupedContacts.length} contacts)
+            Select all ({visibleContacts.length} contacts)
           </label>
         </div>
       )}

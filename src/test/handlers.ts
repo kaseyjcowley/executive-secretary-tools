@@ -94,4 +94,13 @@ export const handlers = [
       );
     },
   ),
+  http.get(`/api/messaged-status`, () => {
+    return HttpResponse.json({ messaged: [] });
+  }),
+  http.post(`/api/mark-messaged`, () => {
+    return HttpResponse.json({ ok: true, expiresInSeconds: 86400 });
+  }),
+  http.post(`/api/unmark-messaged`, () => {
+    return HttpResponse.json({ ok: true });
+  }),
 ];
