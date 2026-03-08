@@ -7,12 +7,22 @@ import {
   formatAppointmentDate,
   formatTimeForDisplay,
 } from "@/utils/date-formatters";
+import { formatNameList } from "@/utils/grammar";
 
 interface UseTemplatePreviewOptions {
   selectedTemplateId?: string;
   selectedTime: string;
   nameVariable: string;
   contact: Contact;
+}
+
+function extractFirstName(name: string): string {
+  const parts = name.split(",");
+  if (parts.length > 1) {
+    return parts[1].trim();
+  }
+  const nameParts = name.split(" ");
+  return nameParts[0];
 }
 
 export function useTemplatePreview({
@@ -32,6 +42,8 @@ export function useTemplatePreview({
     }
 
     const beforeOrAfterChurch = getBeforeOrAfterChurch(selectedTime);
+    const subjectFirstName = extractFirstName(contact.name);
+    const verb = "is";
 
     const templateVars = {
       name: nameVariable,
@@ -41,6 +53,9 @@ export function useTemplatePreview({
       date: formatAppointmentDate(),
       "before-or-after-church": beforeOrAfterChurch,
       time: formatTimeForDisplay(selectedTime),
+      recipients: nameVariable,
+      subjects: subjectFirstName,
+      verb,
     };
 
     return substituteTemplate(
