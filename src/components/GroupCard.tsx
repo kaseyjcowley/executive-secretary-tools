@@ -20,6 +20,7 @@ import { MessagePreview } from "@/components/MessagePreview";
 import { useGroupRecipients } from "@/hooks/useGroupRecipients";
 import { useGroupSubjects } from "@/hooks/useGroupSubjects";
 import { MEMBER_SELECTION } from "@/constants";
+import { IconUsers, IconX } from "@/components/ui/Icons";
 
 interface GroupCardProps {
   group: ContactGroup;
@@ -108,8 +109,11 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
           <div className="flex items-center gap-3 mb-4">
-            <div className="text-lg font-semibold text-gray-900">
-              Group: {groupNames}
+            <div className="flex items-center gap-2">
+              <IconUsers className="w-5 h-5 text-accent-500" />
+              <div className="text-lg font-semibold text-gray-900">
+                Group: {groupNames}
+              </div>
             </div>
             <div className="flex gap-1">
               {hasCalling && (

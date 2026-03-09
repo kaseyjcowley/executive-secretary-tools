@@ -3,6 +3,7 @@ import { ContactList } from "@/components/ContactList";
 import { sortContactsByLabel } from "@/utils/contact-ordering";
 import { getAppointmentContacts } from "@/requests/cards";
 import { getMessagedContactIds } from "@/utils/get-messaged-contacts";
+import { IconMail } from "@/components/ui/Icons";
 
 export default async function MessagesPage() {
   let contacts;
@@ -14,12 +15,19 @@ export default async function MessagesPage() {
       <main className="bg-gray-50 min-h-screen">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col space-y-8">
           <div className="mb-4">
-            <h1 className="text-3xl font-bold leading-none tracking-tight text-gray-900">
-              Appointment Messages
-            </h1>
-            <p className="mt-2 text-sm text-gray-600">
-              Manage and send appointment notifications to members
-            </p>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <IconMail className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold leading-none tracking-tight text-gray-900">
+                  Appointment Messages
+                </h1>
+                <p className="mt-2 text-sm text-gray-600">
+                  Manage and send appointment notifications to members
+                </p>
+              </div>
+            </div>
           </div>
           <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
             <p className="font-semibold">Error Loading Contacts</p>
@@ -40,12 +48,19 @@ export default async function MessagesPage() {
     <main className="bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col space-y-8">
         <div className="mb-4">
-          <h1 className="text-3xl font-bold leading-none tracking-tight text-gray-900">
-            Appointment Messages
-          </h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Manage and send appointment notifications to members
-          </p>
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <IconMail className="w-6 h-6 text-blue-600" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold leading-none tracking-tight text-gray-900">
+                Appointment Messages
+              </h1>
+              <p className="mt-2 text-sm text-gray-600">
+                Manage and send appointment notifications to members
+              </p>
+            </div>
+          </div>
         </div>
         <Suspense
           fallback={
