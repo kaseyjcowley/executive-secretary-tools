@@ -114,18 +114,18 @@ export function useTemplatePreview({
               : "If you would like to get them on our schedule to renew"
           : "If you would like to get them on our schedule to renew";
 
-    const setApartPhrase =
+    const availabilityQuestion =
       recipientsAreSubjects && recipientMembers.length > 0
-        ? "to be set apart for your new calling"
+        ? `Are you available ${formatAppointmentDate()} ${beforeOrAfterChurch} at ${formatTimeForDisplay(selectedTime)} to be set apart for your new calling?`
         : subjectMembers.length === 1
-          ? `to set apart ${formattedSubjects} for ${
+          ? `Is ${formattedSubjects} available ${formatAppointmentDate()} ${beforeOrAfterChurch} at ${formatTimeForDisplay(selectedTime)} to be set apart for ${
               subjectMembers[0].gender === "M"
                 ? "his"
                 : subjectMembers[0].gender === "F"
                   ? "her"
                   : "their"
-            } new calling`
-          : `to set apart ${formattedSubjects} for their new callings`;
+            } new calling?`
+          : `Are ${formattedSubjects} available ${formatAppointmentDate()} ${beforeOrAfterChurch} at ${formatTimeForDisplay(selectedTime)} to be set apart for their new callings?`;
 
     const templateVars = {
       name: recipientNameVariable,
@@ -145,7 +145,7 @@ export function useTemplatePreview({
         verb === "are"
           ? "temple recommends expire"
           : "temple recommend expires",
-      setApartPhrase,
+      availabilityQuestion,
       calling: appointmentType,
     };
 
