@@ -140,7 +140,10 @@ export function useTemplatePreview({
       pronoun,
       possessive,
       verb,
-      availabilityVerb: pronoun === "you" ? "Are" : verb,
+      availabilityVerb:
+        pronoun === "you"
+          ? "Are"
+          : verb.charAt(0).toUpperCase() + verb.slice(1),
       schedulingPhrase,
       recommendPhrase:
         verb === "are"
