@@ -14,6 +14,7 @@ import { GroupCard } from "./GroupCard";
 import { MergeToolbar } from "./MergeToolbar";
 import { useMessagedContacts } from "@/hooks/useMessagedContacts";
 import { showMarkedToast } from "@/components/MarkAsMessagedToast";
+import { IconUsers, IconCheck } from "@/components/ui/Icons";
 
 interface Props {
   contacts: Contact[];
@@ -116,7 +117,22 @@ export const ContactList = ({
   }, [selectedIds, markAsMessaged, unmarkContact]);
 
   if (!contacts || contacts.length === 0) {
-    return <p className="text-slate-900 italic">No contacts to display</p>;
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <IconUsers className="w-8 h-8 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            No Contacts Found
+          </h3>
+          <p className="text-gray-600 max-w-sm mx-auto">
+            There are no contacts available for messaging at this time. Check
+            back later or add new contacts.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -148,6 +164,22 @@ export const ContactList = ({
               Select all ({visibleContacts.length} contacts)
             </span>
           </label>
+        </div>
+      )}
+
+      {visibleContacts.length === 0 && contacts.length > 0 && (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <IconCheck className="w-8 h-8 text-success-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              All Done!
+            </h3>
+            <p className="text-gray-600 max-w-sm mx-auto">
+              You&apos;ve messaged all {contacts.length} contacts. Great job!
+            </p>
+          </div>
         </div>
       )}
 
