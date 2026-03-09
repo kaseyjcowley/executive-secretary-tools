@@ -1,6 +1,6 @@
 import members from "@/data/members.json";
 import { TypeAhead, TypeAheadOption } from "@/components/ui/TypeAhead";
-import { IconX } from "@/components/ui/Icons";
+import { IconX, IconPlus } from "@/components/ui/Icons";
 
 interface MemberSelectorProps {
   selectedMemberIds: number[];
@@ -64,10 +64,10 @@ export function MemberSelector({
               <button
                 type="button"
                 onClick={() => onRemoveMember(index)}
-                className="text-slate-500 hover:text-red-600 p-0.5"
+                className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors duration-200"
                 aria-label="Remove member"
               >
-                <IconX />
+                <IconX className="w-4 h-4" />
               </button>
             )}
           </div>
@@ -77,10 +77,11 @@ export function MemberSelector({
         <button
           type="button"
           onClick={onAddMember}
-          className="self-stretch px-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded border border-slate-300 text-lg leading-none flex items-center justify-center"
+          className="self-stretch px-3 py-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg border border-gray-300 hover:border-blue-300 text-sm font-medium flex items-center gap-1.5 transition-all duration-200"
           aria-label="Add another recipient"
         >
-          +
+          <IconPlus className="w-4 h-4" />
+          Add
         </button>
       )}
     </div>

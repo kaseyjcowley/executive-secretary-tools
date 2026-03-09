@@ -5,7 +5,11 @@ import { Contact, MessageType } from "@/types/messages";
 import { useRecipientSubjectSelection } from "@/hooks/useRecipientSubjectSelection";
 import { useTemplatePreview } from "@/hooks/useTemplatePreview";
 import { getAvailableMessageTypes } from "@/utils/template-loader";
-import { ContactInfo, ContactLabels } from "@/components/ContactInfo";
+import {
+  ContactInfo,
+  ContactLabels,
+  ContactTypeBadge,
+} from "@/components/ContactInfo";
 import { MemberSelector } from "@/components/MemberSelector";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { TimeSelector } from "@/components/TimeSelector";
@@ -72,8 +76,14 @@ export const ContactRow = ({
     contact,
   });
 
+  const isCalling = contact.kind === "calling";
+
   return (
-    <div className="border border-slate-300 p-2 md:p-4 overflow-hidden">
+    <div
+      className={`bg-white rounded-lg shadow-sm border border-gray-200 border-t-4 p-4 md:p-6 overflow-hidden transition-all duration-200 ${
+        isCalling ? "border-t-purple-500" : "border-t-blue-500"
+      } ${isSelected ? "ring-2 ring-blue-500 ring-offset-2 shadow-md scale-[1.01]" : "hover:shadow-md hover:-translate-y-0.5"}`}
+    >
       <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] md:grid-rows-4 gap-2 md:gap-4">
         <div className="grid grid-rows-[auto_auto_auto] gap-2 md:row-start-1 md:row-end-4">
           <div className="grid grid-cols-[auto_auto] gap-2 md:gap-3 justify-start">
@@ -84,22 +94,25 @@ export const ContactRow = ({
                 onChange={(e) => onSelect?.(contact.name, e.target.checked)}
                 disabled={isInGroup}
                 title={isInGroup ? "Already part of a group" : undefined}
-                className="w-4 h-4 accent-blue-600 cursor-pointer"
+                className="w-5 h-5 accent-blue-600 cursor-pointer rounded border-gray-300 hover:ring-2 hover:ring-blue-300 transition-all duration-200"
               />
             </div>
             <div className="flex flex-col">
-              <h3 className="text-lg font-semibold text-slate-900 break-words">
+              <h3 className="text-lg font-semibold text-gray-900 break-words">
                 {contact.kind === "calling"
                   ? `${contact.name} as ${contact.calling}`
                   : contact.name}
               </h3>
-              <ContactLabels contact={contact} />
+              <div className="flex flex-wrap gap-2 mt-1">
+                <ContactTypeBadge contact={contact} />
+                <ContactLabels contact={contact} />
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-1 gap-3">
             <div className="min-w-[120px]">
-              <span className="text-xs text-slate-500 block mb-1">
+              <span className="text-xs text-gray-500 block mb-1 font-medium">
                 Recipient:
               </span>
               <MemberSelector
@@ -112,7 +125,7 @@ export const ContactRow = ({
             </div>
 
             <div className="flex items-center gap-2">
-              <label className="flex items-center gap-2 text-sm text-slate-700">
+              <label className="flex items-center gap-2 text-sm text-gray-700">
                 <input
                   type="checkbox"
                   checked={recipientsAreSubjects}
@@ -125,7 +138,7 @@ export const ContactRow = ({
 
             {!recipientsAreSubjects && (
               <div className="min-w-[120px]">
-                <span className="text-xs text-slate-500 block mb-1">
+                <span className="text-xs text-gray-500 block mb-1 font-medium">
                   Subject:
                 </span>
                 <MemberSelector
@@ -139,7 +152,7 @@ export const ContactRow = ({
             )}
           </div>
 
-          <div className="grid grid-cols-[auto_auto] gap-2 md:gap-3 justify-start">
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-[auto_auto] gap-2 md:gap-3 justify-start">
             <div className="min-w-[150px]">
               <TemplateSelector
                 selectedTemplateId={selectedTemplateId}
@@ -147,7 +160,7 @@ export const ContactRow = ({
                 categories={categories}
               />
             </div>
-            <div>
+            <div className="sm:mt-0">
               <TimeSelector
                 selectedTime={selectedTime}
                 onChange={setSelectedTime}
@@ -157,7 +170,7 @@ export const ContactRow = ({
         </div>
 
         <div className="grid md:row-start-1 md:row-span-4">
-          <div className="min-h-full">
+          <div className="min-h-full mt-4 md:mt-0">
             <MessagePreview
               templatePreview={templatePreview}
               phoneNumbers={phoneNumbers}
