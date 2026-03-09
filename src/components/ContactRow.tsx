@@ -152,7 +152,7 @@ export const ContactRow = ({
             )}
           </div>
 
-          <div className="mt-4 md:mt-0 grid grid-cols-1 sm:grid-cols-[auto_auto] gap-2 md:gap-3 justify-start">
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-[auto_auto] gap-2 md:gap-3 justify-start">
             <div className="min-w-[150px]">
               <TemplateSelector
                 selectedTemplateId={selectedTemplateId}

@@ -24,7 +24,7 @@ export function MessagePreview({
             </a>
           )}
           <div
-            className={`p-4 bg-gray-50 rounded-lg border-2 border-gray-200 text-gray-800 whitespace-pre-wrap text-sm font-mono md:h-full ${phoneNumbers.length > 0 ? "pt-6" : ""}`}
+            className={`p-4 bg-gray-50 rounded-lg border-2 border-gray-200 text-gray-800 whitespace-pre-wrap text-sm font-mono md:h-full`}
             dangerouslySetInnerHTML={{
               __html: templatePreview.replace(/\\n/g, "<br />"),
             }}
