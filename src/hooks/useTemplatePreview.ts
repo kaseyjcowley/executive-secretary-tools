@@ -140,6 +140,7 @@ export function useTemplatePreview({
       pronoun,
       possessive,
       verb,
+      availabilityVerb: pronoun === "you" ? "Are" : verb,
       schedulingPhrase,
       recommendPhrase:
         verb === "are"
