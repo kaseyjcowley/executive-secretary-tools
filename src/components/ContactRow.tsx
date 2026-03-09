@@ -80,9 +80,9 @@ export const ContactRow = ({
 
   return (
     <div
-      className={`bg-white rounded-lg shadow-sm border border-gray-200 border-t-4 p-4 md:p-6 overflow-hidden hover:shadow-md transition-shadow duration-200 ${
+      className={`bg-white rounded-lg shadow-sm border border-gray-200 border-t-4 p-4 md:p-6 overflow-hidden transition-all duration-200 ${
         isCalling ? "border-t-purple-500" : "border-t-blue-500"
-      }`}
+      } ${isSelected ? "ring-2 ring-blue-500 ring-offset-2 shadow-md scale-[1.01]" : "hover:shadow-md hover:-translate-y-0.5"}`}
     >
       <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] md:grid-rows-4 gap-2 md:gap-4">
         <div className="grid grid-rows-[auto_auto_auto] gap-2 md:row-start-1 md:row-end-4">
@@ -94,7 +94,7 @@ export const ContactRow = ({
                 onChange={(e) => onSelect?.(contact.name, e.target.checked)}
                 disabled={isInGroup}
                 title={isInGroup ? "Already part of a group" : undefined}
-                className="w-4 h-4 accent-blue-600 cursor-pointer"
+                className="w-5 h-5 accent-blue-600 cursor-pointer rounded border-gray-300 hover:ring-2 hover:ring-blue-300 transition-all duration-200"
               />
             </div>
             <div className="flex flex-col">

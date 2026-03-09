@@ -104,7 +104,7 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
   const hasInterview = groupContacts.some((c) => c.kind === "interview");
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 border-t-4 border-t-accent-500 p-6 overflow-hidden hover:shadow-md transition-shadow duration-200">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 border-t-4 border-t-accent-500 p-6 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
           <div className="flex items-center gap-3 mb-4">
@@ -125,7 +125,7 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
             </div>
           </div>
 
-          <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+          <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100 hover:bg-blue-100 transition-colors duration-200">
             <label className="block text-sm font-semibold text-blue-900 mb-2">
               Step 1: Select Message Recipients
             </label>
@@ -140,7 +140,7 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
                 onChange={(e) =>
                   handleRecipientsAreSubjectsChange(e.target.checked)
                 }
-                className="w-4 h-4 accent-blue-600"
+                className="w-4 h-4 accent-blue-600 rounded border-blue-300"
               />
               <span className="text-gray-700">
                 Recipients are the same as subjects
@@ -159,7 +159,7 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
             )}
           </div>
 
-          <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-100">
+          <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-100 hover:bg-green-100 transition-colors duration-200">
             <label className="block text-sm font-semibold text-green-900 mb-2">
               Step 2: Configure Appointment Subjects
             </label>
@@ -173,7 +173,7 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
                     type="checkbox"
                     checked={subjects.some((s) => s.name === contact.name)}
                     onChange={() => toggleSubject(contact)}
-                    className="w-4 h-4 accent-green-600"
+                    className="w-4 h-4 accent-green-600 rounded border-green-300"
                   />
                   <span className="flex-1 text-gray-700">{contact.name}</span>
                   {subjects.some((s) => s.name === contact.name) && (
@@ -190,7 +190,7 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
 
           <button
             onClick={() => onUnmerge(group.id)}
-            className="text-sm text-gray-500 hover:text-gray-700 underline mt-4"
+            className="text-sm text-gray-500 hover:text-gray-700 underline mt-4 hover:no-underline transition-all duration-200"
           >
             Unmerge
           </button>
