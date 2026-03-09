@@ -83,12 +83,13 @@ export const ContactRow = ({
   });
 
   return (
-    <div className="border border-slate-300 p-4 overflow-hidden">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_500px] gap-4">
-        {/* Left Section */}
-        <div className="grid grid-rows-2 gap-2">
-          {/* Row 1: checkbox, name, member selector */}
-          <div className="flex flex-row gap-3 items-start">
+    <div className="border border-slate-300 p-2 md:p-4 overflow-hidden">
+      {/* Outer row: 2/3 left, 1/3 right on desktop, stacks on mobile */}
+      <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] md:grid-rows-4 gap-2 md:gap-4">
+        {/* Left Section: three sub-rows */}
+        <div className="grid grid-rows-[auto_auto_auto] gap-2 md:row-start-1 md:row-end-4">
+          {/* Sub-row 1: checkbox, contact name */}
+          <div className="grid grid-cols-[auto_auto] gap-2 md:gap-3 justify-start">
             <div className="pt-1">
               <input
                 type="checkbox"
@@ -99,13 +100,20 @@ export const ContactRow = ({
                 className="w-4 h-4 accent-blue-600 cursor-pointer"
               />
             </div>
-            <div className="flex-shrink-0 pt-0.5">
-              <ContactInfo contact={contact} />
-            </div>
-            <div className="flex-shrink-0 pt-0.5">
+            {/* Contact name with label as tagline */}
+            <div className="flex flex-col">
+              <h3 className="text-lg font-semibold text-slate-900 break-words">
+                {contact.kind === "calling"
+                  ? `${contact.name} as ${contact.calling}`
+                  : contact.name}
+              </h3>
               <ContactLabels contact={contact} />
             </div>
-            <div className="flex-grow">
+          </div>
+
+          {/* Sub-row 2: member selector (full width) */}
+          <div className="grid grid-cols-1">
+            <div className="min-w-[120px]">
               <MemberSelector
                 selectedMemberIds={selectedMemberIds}
                 onAddMember={addMember}
@@ -115,26 +123,32 @@ export const ContactRow = ({
             </div>
           </div>
 
-          {/* Row 2: template selector, time selector */}
-          <div className="flex flex-row gap-3 items-start">
-            <TemplateSelector
-              selectedTemplateId={selectedTemplateId}
-              onChange={setSelectedTemplateId}
-              categories={categories}
-            />
-            <TimeSelector
-              selectedTime={selectedTime}
-              onChange={setSelectedTime}
-            />
+          {/* Sub-row 3: template selector, time selector */}
+          <div className="grid grid-cols-[auto_auto] gap-2 md:gap-3 justify-start">
+            <div className="min-w-[150px]">
+              <TemplateSelector
+                selectedTemplateId={selectedTemplateId}
+                onChange={setSelectedTemplateId}
+                categories={categories}
+              />
+            </div>
+            <div>
+              <TimeSelector
+                selectedTime={selectedTime}
+                onChange={setSelectedTime}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Right Section: Message Preview */}
-        <div className="flex justify-self-end">
-          <MessagePreview
-            templatePreview={templatePreview}
-            phoneNumbers={phoneNumbers}
-          />
+        {/* Right Section: Message Preview - fills full height */}
+        <div className="grid md:row-start-1 md:row-span-4">
+          <div className="min-h-full">
+            <MessagePreview
+              templatePreview={templatePreview}
+              phoneNumbers={phoneNumbers}
+            />
+          </div>
         </div>
       </div>
     </div>
