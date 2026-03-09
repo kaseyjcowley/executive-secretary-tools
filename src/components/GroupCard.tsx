@@ -100,12 +100,29 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
     return generateMessage(scenario);
   }, [canShowPreview, selectedRecipients, subjects, subjectTemplateMap]);
 
+  const hasCalling = groupContacts.some((c) => c.kind === "calling");
+  const hasInterview = groupContacts.some((c) => c.kind === "interview");
+
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 border-t-4 border-t-accent-500 p-6 overflow-hidden hover:shadow-md transition-shadow duration-200">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
-          <div className="text-lg font-semibold text-gray-900 mb-4">
-            Group: {groupNames}
+          <div className="flex items-center gap-3 mb-4">
+            <div className="text-lg font-semibold text-gray-900">
+              Group: {groupNames}
+            </div>
+            <div className="flex gap-1">
+              {hasCalling && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700">
+                  Calling
+                </span>
+              )}
+              {hasInterview && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                  Interview
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">

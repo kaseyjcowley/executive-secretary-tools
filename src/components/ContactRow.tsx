@@ -5,7 +5,11 @@ import { Contact, MessageType } from "@/types/messages";
 import { useRecipientSubjectSelection } from "@/hooks/useRecipientSubjectSelection";
 import { useTemplatePreview } from "@/hooks/useTemplatePreview";
 import { getAvailableMessageTypes } from "@/utils/template-loader";
-import { ContactInfo, ContactLabels } from "@/components/ContactInfo";
+import {
+  ContactInfo,
+  ContactLabels,
+  ContactTypeBadge,
+} from "@/components/ContactInfo";
 import { MemberSelector } from "@/components/MemberSelector";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { TimeSelector } from "@/components/TimeSelector";
@@ -72,8 +76,14 @@ export const ContactRow = ({
     contact,
   });
 
+  const isCalling = contact.kind === "calling";
+
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 border-t-4 border-t-blue-500 p-4 md:p-6 overflow-hidden hover:shadow-md transition-shadow duration-200">
+    <div
+      className={`bg-white rounded-lg shadow-sm border border-gray-200 border-t-4 p-4 md:p-6 overflow-hidden hover:shadow-md transition-shadow duration-200 ${
+        isCalling ? "border-t-purple-500" : "border-t-blue-500"
+      }`}
+    >
       <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] md:grid-rows-4 gap-2 md:gap-4">
         <div className="grid grid-rows-[auto_auto_auto] gap-2 md:row-start-1 md:row-end-4">
           <div className="grid grid-cols-[auto_auto] gap-2 md:gap-3 justify-start">
@@ -93,7 +103,10 @@ export const ContactRow = ({
                   ? `${contact.name} as ${contact.calling}`
                   : contact.name}
               </h3>
-              <ContactLabels contact={contact} />
+              <div className="flex flex-wrap gap-2 mt-1">
+                <ContactTypeBadge contact={contact} />
+                <ContactLabels contact={contact} />
+              </div>
             </div>
           </div>
 

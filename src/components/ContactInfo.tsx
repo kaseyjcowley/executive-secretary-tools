@@ -4,6 +4,21 @@ interface ContactInfoProps {
   contact: Contact;
 }
 
+export function ContactTypeBadge({ contact }: ContactInfoProps) {
+  const isCalling = contact.kind === "calling";
+  return (
+    <span
+      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mt-1 ${
+        isCalling
+          ? "bg-purple-100 text-purple-700"
+          : "bg-blue-100 text-blue-700"
+      }`}
+    >
+      {isCalling ? "Calling" : "Interview"}
+    </span>
+  );
+}
+
 export function ContactInfo({ contact }: ContactInfoProps) {
   return (
     <span className="font-semibold text-gray-900 break-words">
