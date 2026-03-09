@@ -146,6 +146,18 @@ export function useTemplatePreview({
           ? "temple recommends expire"
           : "temple recommend expires",
       availabilityQuestion,
+      interviewAvailability:
+        recipientsAreSubjects && recipientMembers.length > 0
+          ? `Are you available Sunday at ${formatTimeForDisplay(selectedTime)} for your annual interview with Bishop Preece?`
+          : subjectMembers.length === 1
+            ? `Is ${formattedSubjects} available Sunday at ${formatTimeForDisplay(selectedTime)} for ${
+                subjectMembers[0].gender === "M"
+                  ? "his"
+                  : subjectMembers[0].gender === "F"
+                    ? "her"
+                    : "their"
+              } annual interview with Bishop Preece?`
+            : `Are ${formattedSubjects} available Sunday at ${formatTimeForDisplay(selectedTime)} for their annual interviews with Bishop Preece?`,
       calling: appointmentType,
     };
 
