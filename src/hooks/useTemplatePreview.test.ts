@@ -24,6 +24,15 @@ vi.mock("@/utils/time-utils", () => ({
   getBeforeOrAfterChurch: vi.fn(() => "after church"),
 }));
 
+vi.mock("@/data/members.json", () => ({
+  default: [
+    { id: 1, name: "Smith, John", age: 40, gender: "M", phone: "555-0001" },
+    { id: 2, name: "Johnson, Jane", age: 35, gender: "F", phone: "555-0002" },
+    { id: 3, name: "Williams, Bob", age: 45, gender: "M", phone: "555-0003" },
+    { id: 4, name: "Brown, Alice", age: 30, gender: "F", phone: "555-0004" },
+  ],
+}));
+
 describe("useTemplatePreview", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -43,7 +52,9 @@ describe("useTemplatePreview", () => {
       useTemplatePreview({
         selectedTemplateId: "temple-recommend-renewal",
         selectedTime: "12:30",
-        nameVariable: "Brother Smith",
+        recipientMemberIds: [1],
+        subjectMemberIds: [1],
+        recipientsAreSubjects: true,
         contact: mockContact,
       }),
     );
@@ -69,13 +80,15 @@ describe("useTemplatePreview", () => {
       useTemplatePreview({
         selectedTemplateId: "interview-reminder",
         selectedTime: "14:00",
-        nameVariable: "Sister Jones",
+        recipientMemberIds: [2],
+        subjectMemberIds: [2],
+        recipientsAreSubjects: true,
         contact: mockContact,
       }),
     );
 
     const output = result.current;
-    expect(output).toContain("Sister Jones");
+    expect(output).toContain("Sister Johnson");
     expect(output).toContain("Youth interview");
     expect(output).not.toContain("{{name}}");
     expect(output).not.toContain("{{appointmentType}}");
@@ -96,13 +109,15 @@ describe("useTemplatePreview", () => {
       useTemplatePreview({
         selectedTemplateId: "temple-recommend-renewal",
         selectedTime: "12:30",
-        nameVariable: "Brother Brown",
+        recipientMemberIds: [3],
+        subjectMemberIds: [3],
+        recipientsAreSubjects: true,
         contact: mockContact,
       }),
     );
 
     const output = result.current;
-    expect(output).toContain("Brother Brown");
+    expect(output).toContain("Brother Williams");
     expect(output).toContain("Ward Mission Leader");
     expect(output).not.toContain("{{greeting}}");
     expect(output).not.toContain("{{appointmentSummary}}");

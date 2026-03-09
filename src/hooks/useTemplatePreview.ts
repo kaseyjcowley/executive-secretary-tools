@@ -8,11 +8,18 @@ import {
   formatTimeForDisplay,
 } from "@/utils/date-formatters";
 import { formatNameList } from "@/utils/grammar";
+import { formatMemberDisplayNames } from "@/utils/format-member-display";
+import members from "@/data/members.json";
+import { Member } from "@/utils/format-member-display";
+
+const memberData = members as Member[];
 
 interface UseTemplatePreviewOptions {
   selectedTemplateId?: string;
   selectedTime: string;
-  nameVariable: string;
+  recipientMemberIds: number[];
+  subjectMemberIds: number[];
+  recipientsAreSubjects: boolean;
   contact: Contact;
 }
 
@@ -25,10 +32,18 @@ function extractFirstName(name: string): string {
   return nameParts[0];
 }
 
+function formatFirstNames(memberIds: number[]): string {
+  const members = memberData.filter((m) => memberIds.includes(m.id));
+  const firstNames = members.map((m) => extractFirstName(m.name));
+  return formatNameList(firstNames);
+}
+
 export function useTemplatePreview({
   selectedTemplateId,
   selectedTime,
-  nameVariable,
+  recipientMemberIds,
+  subjectMemberIds,
+  recipientsAreSubjects,
   contact,
 }: UseTemplatePreviewOptions) {
   const appointmentType =
@@ -42,19 +57,59 @@ export function useTemplatePreview({
     }
 
     const beforeOrAfterChurch = getBeforeOrAfterChurch(selectedTime);
-    const subjectFirstName = extractFirstName(contact.name);
-    const verb = "is";
+
+    const recipientMembers = memberData.filter((m) =>
+      (recipientMemberIds || []).includes(m.id),
+    );
+    const subjectMembers = memberData.filter((m) =>
+      (subjectMemberIds || []).includes(m.id),
+    );
+
+    const formattedRecipients = formatMemberDisplayNames(recipientMembers);
+    const recipientNameVariable = formattedRecipients.join(" & ");
+
+    let formattedSubjects: string;
+    let pronoun: string;
+    let possessive: string;
+    let verb: string;
+
+    const effectiveSubjectCount = subjectMembers.length;
+
+    if (recipientsAreSubjects && recipientMembers.length > 0) {
+      formattedSubjects = recipientMembers.length === 1 ? "you" : "you all";
+      pronoun = "you";
+      possessive = "your";
+      verb = "are";
+    } else if (subjectMembers.length === 1) {
+      formattedSubjects = extractFirstName(subjectMembers[0].name);
+      const gender = subjectMembers[0].gender;
+      pronoun = gender === "M" ? "he" : gender === "F" ? "she" : "they";
+      possessive = gender === "M" ? "his" : gender === "F" ? "hers" : "their";
+      verb = "is";
+    } else if (subjectMembers.length > 1) {
+      formattedSubjects = formatFirstNames(subjectMemberIds);
+      pronoun = "they";
+      possessive = "their";
+      verb = "are";
+    } else {
+      formattedSubjects = "";
+      pronoun = "";
+      possessive = "";
+      verb = "";
+    }
 
     const templateVars = {
-      name: nameVariable,
-      greeting: nameVariable,
+      name: recipientNameVariable,
+      greeting: recipientNameVariable,
       appointmentType,
       appointmentSummary: appointmentType,
       date: formatAppointmentDate(),
       "before-or-after-church": beforeOrAfterChurch,
       time: formatTimeForDisplay(selectedTime),
-      recipients: nameVariable,
-      subjects: subjectFirstName,
+      recipients: recipientNameVariable,
+      subjects: formattedSubjects,
+      pronoun,
+      possessive,
       verb,
     };
 
@@ -65,7 +120,9 @@ export function useTemplatePreview({
   }, [
     selectedTemplateId,
     selectedTime,
-    nameVariable,
+    recipientMemberIds,
+    subjectMemberIds,
+    recipientsAreSubjects,
     contact,
     appointmentType,
   ]);
