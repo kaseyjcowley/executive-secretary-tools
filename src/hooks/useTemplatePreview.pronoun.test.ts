@@ -283,7 +283,7 @@ describe("useTemplatePreview", () => {
       expect(output).not.toContain("{{verb}}");
     });
 
-    it("should use 'are' when recipient = subject (regardless of count)", async () => {
+    it("should use 'is' for singular recipient = subject, 'are' for plural", async () => {
       const { result: singularResult } = renderHook(() =>
         useTemplatePreview({
           selectedTemplateId: "interview-reminder",
@@ -295,8 +295,8 @@ describe("useTemplatePreview", () => {
         }),
       );
 
-      expect(singularResult.current).toContain(" are ");
-      expect(singularResult.current).not.toContain(" is ");
+      expect(singularResult.current).toContain(" is ");
+      expect(singularResult.current).not.toContain(" are ");
 
       const { result: pluralResult } = renderHook(() =>
         useTemplatePreview({
