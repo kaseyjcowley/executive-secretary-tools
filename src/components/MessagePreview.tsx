@@ -8,7 +8,7 @@ export function MessagePreview({
   phoneNumbers,
 }: MessagePreviewProps) {
   return (
-    <div className="md:w-[30rem] md:flex-shrink-0 relative">
+    <div className="md:w-full md:min-w-[33%] md:h-full relative">
       {templatePreview ? (
         <>
           {phoneNumbers.length > 0 && (
@@ -22,7 +22,7 @@ export function MessagePreview({
             </a>
           )}
           <div
-            className={`p-3 bg-slate-50 rounded border border-slate-200 text-slate-800 whitespace-pre-wrap text-sm ${phoneNumbers.length > 0 ? "pt-5" : ""}`}
+            className={`p-3 bg-slate-50 rounded border border-slate-200 text-slate-800 whitespace-pre-wrap text-sm md:h-full ${phoneNumbers.length > 0 ? "pt-5" : ""}`}
             dangerouslySetInnerHTML={{
               __html: templatePreview.replace(/\\n/g, "<br />"),
             }}
