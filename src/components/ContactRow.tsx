@@ -152,7 +152,7 @@ export const ContactRow = ({
             )}
           </div>
 
-          <div className="grid grid-cols-[auto_auto] gap-2 md:gap-3 justify-start">
+          <div className="mt-4 md:mt-0 grid grid-cols-1 sm:grid-cols-[auto_auto] gap-2 md:gap-3 justify-start">
             <div className="min-w-[150px]">
               <TemplateSelector
                 selectedTemplateId={selectedTemplateId}
@@ -160,7 +160,7 @@ export const ContactRow = ({
                 categories={categories}
               />
             </div>
-            <div>
+            <div className="sm:mt-0">
               <TimeSelector
                 selectedTime={selectedTime}
                 onChange={setSelectedTime}
@@ -170,7 +170,7 @@ export const ContactRow = ({
         </div>
 
         <div className="grid md:row-start-1 md:row-span-4">
-          <div className="min-h-full">
+          <div className="min-h-full mt-4 md:mt-0">
             <MessagePreview
               templatePreview={templatePreview}
               phoneNumbers={phoneNumbers}
