@@ -114,6 +114,19 @@ export function useTemplatePreview({
               : "If you would like to get them on our schedule to renew"
           : "If you would like to get them on our schedule to renew";
 
+    const setApartPhrase =
+      recipientsAreSubjects && recipientMembers.length > 0
+        ? "to be set apart for your new calling"
+        : subjectMembers.length === 1
+          ? `to set apart ${formattedSubjects} for ${
+              subjectMembers[0].gender === "M"
+                ? "his"
+                : subjectMembers[0].gender === "F"
+                  ? "her"
+                  : "their"
+            } new calling`
+          : `to set apart ${formattedSubjects} for their new callings`;
+
     const templateVars = {
       name: recipientNameVariable,
       greeting: recipientNameVariable,
@@ -132,6 +145,8 @@ export function useTemplatePreview({
         verb === "are"
           ? "temple recommends expire"
           : "temple recommend expires",
+      setApartPhrase,
+      calling: appointmentType,
     };
 
     return substituteTemplate(
