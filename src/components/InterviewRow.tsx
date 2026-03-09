@@ -9,26 +9,36 @@ interface Props {
 }
 
 export const InterviewRow = ({ card }: Props) => {
+  const isCalling = card.kind === "calling";
+
   return (
-    <tr key={card.name} className="odd:bg-white even:bg-slate-50">
-      <td className="border border-slate-500 p-2">{card.name}</td>
-      <td className="border border-slate-500 p-2">
-        {formatDate(utcToZonedTime(card.due, "America/Denver"), "h:mmaaa")}
-      </td>
-      <td className="border border-slate-500 p-2">
-        {(() => {
-          switch (card.kind) {
-            case "calling": {
-              return card.stage === CallingStage.needsCallingExtended
-                ? `Calling as ${card.calling}`
-                : `Setting apart as ${card.calling}`;
-            }
-            case "interview": {
-              return card.labels?.name ?? "Interview";
-            }
-          }
-        })()}
-      </td>
-    </tr>
+    <div className="max-w-3xl flex flex-col sm:flex-row gap-2 sm:gap-4 p-2 sm:p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md hover:border-gray-300 transition-all duration-200">
+      <div className="flex flex-col items-start gap-1 min-w-0">
+        <span
+          className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+            isCalling
+              ? "bg-purple-100 text-purple-700"
+              : "bg-blue-100 text-blue-700"
+          }`}
+        >
+          {isCalling ? "Calling" : "Interview"}
+        </span>
+        <div className="text-gray-900 font-medium text-sm sm:text-base truncate">
+          {card.name}
+        </div>
+        <div className="text-gray-500 text-xs">
+          {isCalling
+            ? card.stage === CallingStage.needsCallingExtended
+              ? `Calling as ${card.calling}`
+              : `Setting apart as ${card.calling}`
+            : (card.labels?.name ?? "Interview")}
+        </div>
+      </div>
+      <div className="flex items-center shrink-0">
+        <span className="text-gray-500 font-mono text-xs sm:text-sm whitespace-nowrap">
+          {formatDate(utcToZonedTime(card.due, "America/Denver"), "h:mmaaa")}
+        </span>
+      </div>
+    </div>
   );
 };
