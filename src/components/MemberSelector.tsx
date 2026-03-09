@@ -7,6 +7,7 @@ interface MemberSelectorProps {
   onAddMember: () => void;
   onRemoveMember: (index: number) => void;
   onChangeMember: (index: number, memberId: number | undefined) => void;
+  maxMembers?: number;
 }
 
 interface Member {
@@ -24,6 +25,7 @@ export function MemberSelector({
   onAddMember,
   onRemoveMember,
   onChangeMember,
+  maxMembers = 2,
 }: MemberSelectorProps) {
   const availableMembers = memberData.filter(
     (m) => !selectedMemberIds.includes(m.id) || m.id === selectedMemberIds[0],
@@ -71,7 +73,7 @@ export function MemberSelector({
           </div>
         );
       })}
-      {selectedMemberIds.length < 2 && (
+      {selectedMemberIds.length < maxMembers && (
         <button
           type="button"
           onClick={onAddMember}

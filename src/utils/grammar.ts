@@ -6,6 +6,13 @@ export function formatNameList(names: string[]): string {
   return `${allButLast}, and ${names[names.length - 1]}`;
 }
 
+export function arraysEqual(a: number[], b: number[]): boolean {
+  if (a.length !== b.length) return false;
+  const sortedA = [...a].sort();
+  const sortedB = [...b].sort();
+  return sortedA.every((val, idx) => val === sortedB[idx]);
+}
+
 export function getPossessive(name: string): string {
   if (!name) return "";
   if (name.endsWith("s")) return `${name}'`;
