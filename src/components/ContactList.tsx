@@ -131,8 +131,8 @@ export const ContactList = ({
       )}
 
       {visibleContacts.length > 0 && selectedIds.size === 0 && (
-        <div className="mb-4">
-          <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
+        <div className="mb-6 p-3 bg-white rounded-lg border border-gray-200 shadow-sm">
+          <label className="flex items-center gap-3 text-sm text-gray-600 cursor-pointer">
             <input
               type="checkbox"
               onChange={(e) => {
@@ -142,9 +142,11 @@ export const ContactList = ({
                   handleClearSelection();
                 }
               }}
-              className="w-4 h-4 accent-blue-600"
+              className="w-4 h-4 accent-blue-600 rounded"
             />
-            Select all ({visibleContacts.length} contacts)
+            <span className="font-medium">
+              Select all ({visibleContacts.length} contacts)
+            </span>
           </label>
         </div>
       )}

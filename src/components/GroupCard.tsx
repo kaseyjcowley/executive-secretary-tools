@@ -101,14 +101,14 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
   }, [canShowPreview, selectedRecipients, subjects, subjectTemplateMap]);
 
   return (
-    <div className="border border-slate-300 p-4 overflow-hidden">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 border-t-4 border-t-accent-500 p-6 overflow-hidden hover:shadow-md transition-shadow duration-200">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
-          <div className="text-lg font-semibold text-slate-900 mb-3">
+          <div className="text-lg font-semibold text-gray-900 mb-4">
             Group: {groupNames}
           </div>
 
-          <div className="mb-4 p-3 bg-blue-50 rounded border border-blue-200">
+          <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
             <label className="block text-sm font-semibold text-blue-900 mb-2">
               Step 1: Select Message Recipients
             </label>
@@ -123,9 +123,9 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
                 onChange={(e) =>
                   handleRecipientsAreSubjectsChange(e.target.checked)
                 }
-                className="w-4 h-4"
+                className="w-4 h-4 accent-blue-600"
               />
-              <span className="text-slate-700">
+              <span className="text-gray-700">
                 Recipients are the same as subjects
               </span>
             </label>
@@ -142,7 +142,7 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
             )}
           </div>
 
-          <div className="mb-4 p-3 bg-green-50 rounded border border-green-200">
+          <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-100">
             <label className="block text-sm font-semibold text-green-900 mb-2">
               Step 2: Configure Appointment Subjects
             </label>
@@ -156,9 +156,9 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
                     type="checkbox"
                     checked={subjects.some((s) => s.name === contact.name)}
                     onChange={() => toggleSubject(contact)}
-                    className="w-4 h-4"
+                    className="w-4 h-4 accent-green-600"
                   />
-                  <span className="flex-1 text-slate-700">{contact.name}</span>
+                  <span className="flex-1 text-gray-700">{contact.name}</span>
                   {subjects.some((s) => s.name === contact.name) && (
                     <TemplateSelector
                       selectedTemplateId={subjectTemplateMap[contact.name]}
@@ -173,7 +173,7 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
 
           <button
             onClick={() => onUnmerge(group.id)}
-            className="text-sm text-slate-600 hover:text-slate-800 underline mt-3"
+            className="text-sm text-gray-500 hover:text-gray-700 underline mt-4"
           >
             Unmerge
           </button>
@@ -181,7 +181,7 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
 
         <div className="flex justify-end">
           <div className="w-full">
-            <h3 className="text-sm font-semibold text-slate-900 mb-3">
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">
               Message Preview
             </h3>
             {canShowPreview ? (
@@ -190,7 +190,7 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
                 phoneNumbers={recipientPhoneNumbers}
               />
             ) : (
-              <div className="p-4 bg-slate-100 rounded border border-slate-300 text-slate-600 text-sm">
+              <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-600 text-sm">
                 <p className="font-medium mb-2">
                   Complete the steps above to see preview:
                 </p>

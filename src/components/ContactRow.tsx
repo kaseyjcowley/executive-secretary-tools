@@ -73,7 +73,7 @@ export const ContactRow = ({
   });
 
   return (
-    <div className="border border-slate-300 p-2 md:p-4 overflow-hidden">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 border-t-4 border-t-blue-500 p-4 md:p-6 overflow-hidden hover:shadow-md transition-shadow duration-200">
       <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] md:grid-rows-4 gap-2 md:gap-4">
         <div className="grid grid-rows-[auto_auto_auto] gap-2 md:row-start-1 md:row-end-4">
           <div className="grid grid-cols-[auto_auto] gap-2 md:gap-3 justify-start">
@@ -88,7 +88,7 @@ export const ContactRow = ({
               />
             </div>
             <div className="flex flex-col">
-              <h3 className="text-lg font-semibold text-slate-900 break-words">
+              <h3 className="text-lg font-semibold text-gray-900 break-words">
                 {contact.kind === "calling"
                   ? `${contact.name} as ${contact.calling}`
                   : contact.name}
@@ -97,9 +97,9 @@ export const ContactRow = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-1 gap-3">
             <div className="min-w-[120px]">
-              <span className="text-xs text-slate-500 block mb-1">
+              <span className="text-xs text-gray-500 block mb-1 font-medium">
                 Recipient:
               </span>
               <MemberSelector
@@ -112,7 +112,7 @@ export const ContactRow = ({
             </div>
 
             <div className="flex items-center gap-2">
-              <label className="flex items-center gap-2 text-sm text-slate-700">
+              <label className="flex items-center gap-2 text-sm text-gray-700">
                 <input
                   type="checkbox"
                   checked={recipientsAreSubjects}
@@ -125,7 +125,7 @@ export const ContactRow = ({
 
             {!recipientsAreSubjects && (
               <div className="min-w-[120px]">
-                <span className="text-xs text-slate-500 block mb-1">
+                <span className="text-xs text-gray-500 block mb-1 font-medium">
                   Subject:
                 </span>
                 <MemberSelector

@@ -6,7 +6,7 @@ interface ContactInfoProps {
 
 export function ContactInfo({ contact }: ContactInfoProps) {
   return (
-    <span className="font-semibold text-slate-900 break-words">
+    <span className="font-semibold text-gray-900 break-words">
       {contact.kind === "calling"
         ? `${contact.name} as ${contact.calling}`
         : contact.name}
@@ -16,6 +16,8 @@ export function ContactInfo({ contact }: ContactInfoProps) {
 
 export function ContactLabels({ contact }: ContactInfoProps) {
   return "labels" in contact && contact.labels?.name ? (
-    <span className="text-sm text-slate-600">{contact.labels.name}</span>
+    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700 mt-1">
+      {contact.labels.name}
+    </span>
   ) : null;
 }
