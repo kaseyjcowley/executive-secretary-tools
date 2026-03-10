@@ -137,7 +137,7 @@ export default function YouthQueuePage() {
           Youth Visitation Queue
         </h1>
 
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-2">
           <a
             href="/youth/new"
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
@@ -352,7 +352,7 @@ function YouthCard({
           )}
         </div>
 
-        <div className="flex gap-2 ml-4">
+        <div className="flex flex-wrap gap-2 ml-4">
           {!youth.scheduled && (
             <button
               onClick={onSchedule}
