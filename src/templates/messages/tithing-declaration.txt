@@ -1,1 +1,1 @@
-Hello {{name}}, this is a reminder of your tithing declaration appointment with Bishop Preece on {{date}} at {{time}}. See you then!
+Hello {{recipients}}, this is a reminder of your tithing declaration appointment with Bishop Preece on {{date}} at {{time}}. See you then!
