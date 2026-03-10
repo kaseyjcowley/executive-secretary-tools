@@ -7,7 +7,7 @@ import {
   formatAppointmentDate,
   formatTimeForDisplay,
 } from "@/utils/date-formatters";
-import { formatNameList } from "@/utils/grammar";
+import { formatNameList, getPossessive } from "@/utils/grammar";
 import { formatMemberDisplayNames } from "@/utils/format-member-display";
 import members from "@/data/members.json";
 import { Member } from "@/utils/format-member-display";
@@ -26,7 +26,8 @@ interface UseTemplatePreviewOptions {
 function extractFirstName(name: string): string {
   const parts = name.split(",");
   if (parts.length > 1) {
-    return parts[1].trim();
+    const firstName = parts[1].trim().split(" ")[0];
+    return firstName;
   }
   const nameParts = name.split(" ");
   return nameParts[0];
@@ -79,17 +80,21 @@ export function useTemplatePreview({
       formattedSubjects = recipientMembers.length === 1 ? "you" : "you all";
       pronoun = "you";
       possessive = "your";
-      verb = "are";
+      verb = recipientMembers.length === 1 ? "is" : "are";
     } else if (subjectMembers.length === 1) {
       formattedSubjects = extractFirstName(subjectMembers[0].name);
-      const gender = subjectMembers[0].gender;
-      pronoun = gender === "M" ? "he" : gender === "F" ? "she" : "they";
-      possessive = gender === "M" ? "his" : gender === "F" ? "hers" : "their";
+      pronoun =
+        subjectMembers[0].gender === "M"
+          ? "he"
+          : subjectMembers[0].gender === "F"
+            ? "she"
+            : "they";
+      possessive = getPossessive(formattedSubjects);
       verb = "is";
     } else if (subjectMembers.length > 1) {
       formattedSubjects = formatFirstNames(subjectMemberIds);
       pronoun = "they";
-      possessive = "their";
+      possessive = getPossessive(formattedSubjects);
       verb = "are";
     } else {
       formattedSubjects = "";
@@ -98,19 +103,66 @@ export function useTemplatePreview({
       verb = "";
     }
 
+    const schedulingPhrase =
+      recipientsAreSubjects && recipientMembers.length > 0
+        ? "If you would like to get on our schedule to renew"
+        : subjectMembers.length === 1
+          ? subjectMembers[0].gender === "M"
+            ? "If you would like to get him on our schedule to renew"
+            : subjectMembers[0].gender === "F"
+              ? "If you would like to get her on our schedule to renew"
+              : "If you would like to get them on our schedule to renew"
+          : "If you would like to get them on our schedule to renew";
+
+    const availabilityQuestion =
+      recipientsAreSubjects && recipientMembers.length > 0
+        ? `Are you available ${formatAppointmentDate()} ${beforeOrAfterChurch} at ${formatTimeForDisplay(selectedTime)} to be set apart for your new calling?`
+        : subjectMembers.length === 1
+          ? `Is ${formattedSubjects} available ${formatAppointmentDate()} ${beforeOrAfterChurch} at ${formatTimeForDisplay(selectedTime)} to be set apart for ${
+              subjectMembers[0].gender === "M"
+                ? "his"
+                : subjectMembers[0].gender === "F"
+                  ? "her"
+                  : "their"
+            } new calling?`
+          : `Are ${formattedSubjects} available ${formatAppointmentDate()} ${beforeOrAfterChurch} at ${formatTimeForDisplay(selectedTime)} to be set apart for their new callings?`;
+
     const templateVars = {
       name: recipientNameVariable,
       greeting: recipientNameVariable,
+      recipients: recipientNameVariable,
       appointmentType,
       appointmentSummary: appointmentType,
       date: formatAppointmentDate(),
       "before-or-after-church": beforeOrAfterChurch,
       time: formatTimeForDisplay(selectedTime),
-      recipients: recipientNameVariable,
       subjects: formattedSubjects,
       pronoun,
       possessive,
       verb,
+      availabilityVerb:
+        pronoun === "you"
+          ? "Are"
+          : verb.charAt(0).toUpperCase() + verb.slice(1),
+      schedulingPhrase,
+      recommendPhrase:
+        verb === "are"
+          ? "temple recommends expire"
+          : "temple recommend expires",
+      availabilityQuestion,
+      interviewAvailability:
+        recipientsAreSubjects && recipientMembers.length > 0
+          ? `Are you available Sunday at ${formatTimeForDisplay(selectedTime)} for your annual interview with Bishop Preece?`
+          : subjectMembers.length === 1
+            ? `Is ${formattedSubjects} available Sunday at ${formatTimeForDisplay(selectedTime)} for ${
+                subjectMembers[0].gender === "M"
+                  ? "his"
+                  : subjectMembers[0].gender === "F"
+                    ? "her"
+                    : "their"
+              } annual interview with Bishop Preece?`
+            : `Are ${formattedSubjects} available Sunday at ${formatTimeForDisplay(selectedTime)} for their annual interviews with Bishop Preece?`,
+      calling: appointmentType,
     };
 
     return substituteTemplate(
