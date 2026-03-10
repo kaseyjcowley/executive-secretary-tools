@@ -87,6 +87,8 @@ export const REDIS_KEYS = {
   CONDUCTOR_CURRENT_INDEX: "church:conductors:currentIndex",
   CONDUCTOR_OVERRIDE: "church:conductors:override",
   MESSAGED_CONTACT_PREFIX: "church:messaged:",
+  YOUTH_HASH_PREFIX: "youth:",
+  YOUTH_QUEUE: "youth:queue",
 } as const;
 
 // Trello List IDs for Appointment Messaging
@@ -97,6 +99,8 @@ export const TRELLO_LIST_IDS = {
   INTERVIEW_BOARD: ["698142f18c51336104b0ca18"],
   CALLINGS_BOARD: ["6981402b631c5d579084983f"],
   SETTING_APART_BOARD: ["6981403b91ce00795685a559", "5f62bc2052e58c7dc5740b4f"],
+  YOUTH_VISITS_TO_SCHEDULE: "698142f18c51336104b0ca17",
+  YOUTH_VISITS_COMPLETE: "698142f18c51336104b0ca19",
 } as const;
 
 // Member selection constants

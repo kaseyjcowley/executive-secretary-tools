@@ -19,6 +19,7 @@
     "fuse.js": "^7.1.0",
     "googleapis": "^144.0.0",
     "ioredis": "^5.6.0",
+    "nanoid": "^5.1.6",
     "next": "13.4.19",
     "nodemailer": "^6.10.0",
     "postcss": "8.4.29",
