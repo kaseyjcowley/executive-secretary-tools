@@ -1,5 +1,3 @@
-import { cookies } from "next/headers";
-import { timingSafeEqual } from "crypto";
 import redis from "@/utils/redis";
 
 async function getRedisData() {
@@ -31,39 +29,7 @@ async function getRedisData() {
   return { keys: keys.sort(), data };
 }
 
-function UnauthorizedState() {
-  return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-      <div className="bg-gray-800 rounded-lg p-8 max-w-md w-full">
-        <h1 className="text-xl font-bold text-red-400 mb-4">Unauthorized</h1>
-        <p className="text-gray-400">
-          Invalid or missing authentication token.
-        </p>
-      </div>
-    </div>
-  );
-}
-
 export default async function RedisPage() {
-  const authToken = cookies().get("internal_auth")?.value;
-  const expectedToken = process.env.INTERNAL_TOOL_TOKEN;
-
-  let isAuthorized = false;
-  if (authToken && expectedToken && authToken.length === expectedToken.length) {
-    try {
-      isAuthorized = timingSafeEqual(
-        Buffer.from(authToken),
-        Buffer.from(expectedToken),
-      );
-    } catch {
-      isAuthorized = false;
-    }
-  }
-
-  if (!isAuthorized) {
-    return <UnauthorizedState />;
-  }
-
   const { keys, data } = await getRedisData();
 
   return (
