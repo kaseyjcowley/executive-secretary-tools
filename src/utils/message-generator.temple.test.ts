@@ -63,7 +63,7 @@ vi.mock("@/constants/appointment-summaries", () => ({
 }));
 
 describe("Temple Recommend Renewal single contact", () => {
-  it("generates message for single contact - NO appointmentSummaries mock", () => {
+  it("generates message for single contact - NO appointmentSummaries mock", async () => {
     const contact = createInterviewContact("John Smith", {
       id: "1",
       name: "Temple",
@@ -76,7 +76,7 @@ describe("Temple Recommend Renewal single contact", () => {
       appointmentTypes: new Map([["temple-recommend-renewal", [contact]]]),
     };
 
-    const result = generateMessage(scenario);
+    const result = await generateMessage(scenario);
     console.log("Generated message (single):", result);
     expect(result).toBeDefined();
   });
@@ -92,7 +92,7 @@ describe("Temple Recommend Renewal single contact", () => {
     expect(result).toBe("single");
   });
 
-  it("full flow: classify then generate", () => {
+  it("full flow: classify then generate", async () => {
     const contact = createInterviewContact("John Smith", {
       id: "1",
       name: "Temple",
@@ -108,12 +108,12 @@ describe("Temple Recommend Renewal single contact", () => {
       appointmentTypes: new Map([["temple-recommend-renewal", [contact]]]),
     };
 
-    const result = generateMessage(scenario);
+    const result = await generateMessage(scenario);
     console.log("Generated message (full flow):", result);
     expect(result).toBeDefined();
   });
 
-  it("generates message for pair-subjects (different recipient and subject)", () => {
+  it("generates message for pair-subjects (different recipient and subject)", async () => {
     const recipient = createInterviewContact("Bishop John");
     const subject = createInterviewContact("Jane Smith", {
       id: "1",
@@ -128,12 +128,12 @@ describe("Temple Recommend Renewal single contact", () => {
       recipientNames: ["Bishop John"],
     };
 
-    const result = generateMessage(scenario);
+    const result = await generateMessage(scenario);
     console.log("Generated message (pair-subjects):", result);
     expect(result).toBeDefined();
   });
 
-  it("generates message when template ID not in appointmentSummaries", () => {
+  it("generates message when template ID not in appointmentSummaries", async () => {
     const contact = createInterviewContact("John Smith", {
       id: "1",
       name: "Some Unknown Type",
@@ -146,12 +146,12 @@ describe("Temple Recommend Renewal single contact", () => {
       appointmentTypes: new Map([["some-unknown-type", [contact]]]),
     };
 
-    const result = generateMessage(scenario);
+    const result = await generateMessage(scenario);
     console.log("Generated message (unknown type):", result);
     expect(result).toBeDefined();
   });
 
-  it("uses wrong template ID key in Map", () => {
+  it("uses wrong template ID key in Map", async () => {
     const contact = createInterviewContact("John Smith", {
       id: "1",
       name: "Temple",
@@ -164,12 +164,12 @@ describe("Temple Recommend Renewal single contact", () => {
       appointmentTypes: new Map([["temple", [contact]]]),
     };
 
-    const result = generateMessage(scenario);
+    const result = await generateMessage(scenario);
     console.log("Generated message (wrong key 'temple'):", result);
     expect(result).toBeDefined();
   });
 
-  it("MISMATCH: Map has 'temple-recommend-renewal' but contact label doesn't match", () => {
+  it("MISMATCH: Map has 'temple-recommend-renewal' but contact label doesn't match", async () => {
     const contact = createInterviewContact("John Smith", {
       id: "1",
       name: "Bishop Interview",
@@ -182,7 +182,7 @@ describe("Temple Recommend Renewal single contact", () => {
       appointmentTypes: new Map([["temple-recommend-renewal", [contact]]]),
     };
 
-    const result = generateMessage(scenario);
+    const result = await generateMessage(scenario);
     console.log("Generated message (MISMATCH):", result);
     expect(result).toBeDefined();
   });
@@ -196,7 +196,7 @@ describe("Temple Recommend Renewal single contact", () => {
     expect(result).toContain("undefined");
   });
 
-  it("multiple-types: mismatch between Map key and contact labels", () => {
+  it("multiple-types: mismatch between Map key and contact labels", async () => {
     const recipient = createInterviewContact("Bishop John");
     const subjects = [
       createInterviewContact("Jane Smith", { id: "1", name: "Temple" }),
@@ -214,12 +214,12 @@ describe("Temple Recommend Renewal single contact", () => {
       recipientNames: ["Bishop John"],
     };
 
-    const result = generateMessage(scenario);
+    const result = await generateMessage(scenario);
     console.log("Generated message (multiple-types mismatch):", result);
     expect(result).toBeDefined();
   });
 
-  it("multiple-types: uses Map keys not contact labels for summary", () => {
+  it("multiple-types: uses Map keys not contact labels for summary", async () => {
     const recipient = createInterviewContact("Bishop John");
     const subjects = [
       createInterviewContact("Jane Smith", {
@@ -240,7 +240,7 @@ describe("Temple Recommend Renewal single contact", () => {
       recipientNames: ["Bishop John"],
     };
 
-    const result = generateMessage(scenario);
+    const result = await generateMessage(scenario);
     console.log("Generated message (Map keys mismatch with labels):", result);
 
     // The Map says: Jane should be temple-recommend-renewal, Bob should be welfare-meeting

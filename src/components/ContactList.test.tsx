@@ -43,7 +43,7 @@ vi.mock("@/utils/template-loader", () => ({
 describe("ContactList", () => {
   it("renders empty message when no contacts provided", () => {
     render(<ContactList contacts={[]} />);
-    expect(screen.getByText("No contacts to display")).toBeInTheDocument();
+    expect(screen.getByText("No Contacts Found")).toBeInTheDocument();
   });
 
   it("renders contacts when provided", () => {

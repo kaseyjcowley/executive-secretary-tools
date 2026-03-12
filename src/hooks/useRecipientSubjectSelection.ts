@@ -1,10 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { matchContact } from "@/utils/contact-fuzzy-match";
 import { MEMBER_SELECTION } from "@/constants";
-import members from "@/data/members.json";
-import { Member } from "@/utils/format-member-display";
-
-const memberData = members as Member[];
+import { useMemberPhoneNumbers } from "./useMemberPhoneNumbers";
 
 export interface UseRecipientSubjectSelectionOptions {
   contactName: string;
@@ -105,19 +102,8 @@ export function useRecipientSubjectSelection({
     );
   }, [recipientsAreSubjects, recipientMemberIds, subjectMemberIds]);
 
-  const recipientPhoneNumbers = useMemo(() => {
-    return memberData
-      .filter((m) => recipientMemberIds.includes(m.id))
-      .map((m) => m.phone)
-      .filter((p): p is string => !!p);
-  }, [recipientMemberIds]);
-
-  const subjectPhoneNumbers = useMemo(() => {
-    return memberData
-      .filter((m) => subjectMemberIds.includes(m.id))
-      .map((m) => m.phone)
-      .filter((p): p is string => !!p);
-  }, [subjectMemberIds]);
+  const recipientPhoneNumbers = useMemberPhoneNumbers(recipientMemberIds);
+  const subjectPhoneNumbers = useMemberPhoneNumbers(subjectMemberIds);
 
   return {
     recipientMemberIds,
