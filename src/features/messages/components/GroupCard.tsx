@@ -14,14 +14,13 @@ import {
   formatMemberDisplayNames,
   Member,
 } from "@/utils/format-member-display";
-import { MemberSelector } from "@/features/messages/components/MemberSelector";
-import { TemplateSelector } from "@/features/messages/components/TemplateSelector";
-import { MessagePreview } from "@/features/messages/components/MessagePreview";
 import { useGroupRecipients } from "@/features/messages/hooks/useGroupRecipients";
 import { useGroupSubjects } from "@/features/messages/hooks/useGroupSubjects";
 import { useMessagePreview } from "@/features/messages/hooks/useMessagePreview";
-import { MEMBER_SELECTION } from "@/constants";
-import { IconUsers, IconX } from "@/components/ui/Icons";
+import { GroupHeader } from "./GroupHeader";
+import { GroupRecipientStep } from "./GroupRecipientStep";
+import { GroupSubjectStep } from "./GroupSubjectStep";
+import { GroupPreview } from "./GroupPreview";
 
 interface GroupCardProps {
   group: ContactGroup;
@@ -119,96 +118,33 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
       ],
     });
 
-  const hasCalling = groupContacts.some((c) => c.kind === "calling");
-  const hasInterview = groupContacts.some((c) => c.kind === "interview");
-
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 border-t-4 border-t-accent-500 p-6 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="flex items-center gap-2">
-              <IconUsers className="w-5 h-5 text-accent-500" />
-              <div className="text-lg font-semibold text-gray-900">
-                Group: {groupNames}
-              </div>
-            </div>
-            <div className="flex gap-1">
-              {hasCalling && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700">
-                  Calling
-                </span>
-              )}
-              {hasInterview && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
-                  Interview
-                </span>
-              )}
-            </div>
-          </div>
+          <GroupHeader
+            groupNames={groupNames}
+            contacts={groupContacts}
+            onUnmerge={() => onUnmerge(group.id)}
+          />
 
-          <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100 hover:bg-blue-100 transition-colors duration-200">
-            <label className="block text-sm font-semibold text-blue-900 mb-2">
-              Step 1: Select Message Recipients
-            </label>
-            <p className="text-xs text-blue-700 mb-3">
-              Who will receive this message?
-            </p>
+          <GroupRecipientStep
+            recipientsAreSubjects={recipientsAreSubjects}
+            selectedRecipientMemberIds={selectedRecipientMemberIds}
+            onRecipientsAreSubjectsChange={handleRecipientsAreSubjectsChange}
+            onAddRecipient={handleAddRecipient}
+            onRemoveRecipient={handleRemoveRecipient}
+            onChangeRecipient={handleChangeRecipient}
+          />
 
-            <label className="flex items-center gap-2 cursor-pointer mb-3">
-              <input
-                type="checkbox"
-                checked={recipientsAreSubjects}
-                onChange={(e) =>
-                  handleRecipientsAreSubjectsChange(e.target.checked)
-                }
-                className="w-4 h-4 accent-blue-600 rounded border-blue-300"
-              />
-              <span className="text-gray-700">
-                Recipients are the same as subjects
-              </span>
-            </label>
-
-            {!recipientsAreSubjects && (
-              <div className="ml-6">
-                <MemberSelector
-                  selectedMemberIds={selectedRecipientMemberIds}
-                  onAddMember={handleAddRecipient}
-                  onRemoveMember={handleRemoveRecipient}
-                  onChangeMember={handleChangeRecipient}
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-100 hover:bg-green-100 transition-colors duration-200">
-            <label className="block text-sm font-semibold text-green-900 mb-2">
-              Step 2: Configure Appointment Subjects
-            </label>
-            <p className="text-xs text-green-700 mb-3">
-              Who are the appointments for? Select a template for each.
-            </p>
-            <div className="space-y-3">
-              {groupContacts.map((contact) => (
-                <div key={contact.name} className="flex items-center gap-3">
-                  <input
-                    type="checkbox"
-                    checked={subjects.some((s) => s.name === contact.name)}
-                    onChange={() => toggleSubject(contact)}
-                    className="w-4 h-4 accent-green-600 rounded border-green-300"
-                  />
-                  <span className="flex-1 text-gray-700">{contact.name}</span>
-                  {subjects.some((s) => s.name === contact.name) && (
-                    <TemplateSelector
-                      selectedTemplateId={subjectTemplateMap[contact.name]}
-                      onChange={(id) => setTemplateForSubject(contact.name, id)}
-                      categories={categories}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+          <GroupSubjectStep
+            groupContacts={groupContacts}
+            subjects={subjects}
+            subjectTemplateMap={subjectTemplateMap}
+            categories={categories}
+            onToggleSubject={toggleSubject}
+            onSetTemplateForSubject={setTemplateForSubject}
+          />
 
           <button
             onClick={() => onUnmerge(group.id)}
@@ -219,53 +155,18 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
         </div>
 
         <div className="flex justify-end">
-          <div className="w-full">
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">
-              Message Preview
-            </h3>
-            {canShowPreview ? (
-              <>
-                {canGenerate && !templatePreview && !isLoadingPreview && (
-                  <button
-                    onClick={generatePreview}
-                    className="w-full mb-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
-                  >
-                    Generate Message
-                  </button>
-                )}
-                <MessagePreview
-                  templatePreview={templatePreview}
-                  phoneNumbers={recipientPhoneNumbers}
-                  isLoading={isLoadingPreview}
-                />
-              </>
-            ) : (
-              <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-600 text-sm">
-                <p className="font-medium mb-2">
-                  Complete the steps above to see preview:
-                </p>
-                <ul className="list-disc list-inside space-y-1">
-                  {recipientsAreSubjects ? (
-                    subjects.length === 0 && (
-                      <li>Select appointment subjects</li>
-                    )
-                  ) : selectedRecipientMemberIds.filter(
-                      (id) => id !== MEMBER_SELECTION.INITIAL_MEMBER_ID,
-                    ).length === 0 ? (
-                    <li>Select message recipients</li>
-                  ) : null}
-                  {subjects.length === 0 && (
-                    <li>Select appointment subjects</li>
-                  )}
-                  {subjects.length > 0 &&
-                    Object.keys(subjectTemplateMap).length <
-                      subjects.length && (
-                      <li>Choose templates for all subjects</li>
-                    )}
-                </ul>
-              </div>
-            )}
-          </div>
+          <GroupPreview
+            canShowPreview={canShowPreview}
+            canGenerate={canGenerate}
+            templatePreview={templatePreview}
+            isLoadingPreview={isLoadingPreview}
+            recipientPhoneNumbers={recipientPhoneNumbers}
+            selectedRecipientMemberIds={selectedRecipientMemberIds}
+            subjects={subjects}
+            subjectTemplateMap={subjectTemplateMap}
+            recipientsAreSubjects={recipientsAreSubjects}
+            onGeneratePreview={generatePreview}
+          />
         </div>
       </div>
     </div>
