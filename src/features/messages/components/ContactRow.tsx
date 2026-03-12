@@ -11,18 +11,13 @@ import {
   Member,
 } from "@/utils/format-member-display";
 import members from "@/data/members.json";
-import {
-  ContactInfo,
-  ContactLabels,
-  ContactTypeBadge,
-} from "@/features/messages/components/ContactInfo";
-import { MemberSelector } from "@/features/messages/components/MemberSelector";
-import { TemplateSelector } from "@/features/messages/components/TemplateSelector";
-import { TimeSelector } from "@/features/messages/components/TimeSelector";
-import { MessagePreview } from "@/features/messages/components/MessagePreview";
 import { CHURCH_END_TIME, MEMBER_SELECTION } from "@/constants";
 import { getBeforeOrAfterChurch } from "@/utils/time-utils";
 import { formatTimeForDisplay } from "@/utils/date-formatters";
+import { ContactRowHeader } from "./ContactRowHeader";
+import { ContactMemberSelector } from "./ContactMemberSelector";
+import { ContactTemplateSelector } from "./ContactTemplateSelector";
+import { ContactPreview } from "./ContactPreview";
 
 const memberData = members as Member[];
 
@@ -41,8 +36,9 @@ export const ContactRow = ({
   onSelect,
   isInGroup,
 }: Props) => {
-  const [selectedTemplateId, setSelectedTemplateId] =
-    useState(initialTemplateId);
+  const [selectedTemplateId, setSelectedTemplateId] = useState(
+    initialTemplateId || "",
+  );
 
   const [selectedTime, setSelectedTime] = useState(CHURCH_END_TIME);
 
@@ -92,13 +88,15 @@ export const ContactRow = ({
     [subjectMemberIds],
   );
 
-  const canShowPreview =
-    selectedTemplateId && (recipientsAreSubjects || validSubjects.length > 0);
+  const canShowPreview = Boolean(
+    selectedTemplateId && (recipientsAreSubjects || validSubjects.length > 0),
+  );
 
-  const canGenerate =
+  const canGenerate = Boolean(
     canShowPreview &&
-    (recipientsAreSubjects || validSubjects.length > 0) &&
-    (recipientsAreSubjects ? validRecipients.length > 0 : true);
+      (recipientsAreSubjects || validSubjects.length > 0) &&
+      (recipientsAreSubjects ? validRecipients.length > 0 : true),
+  );
 
   const buildScenario = useCallback((): MessageScenario | null => {
     if (!canGenerate) return null;
@@ -171,106 +169,44 @@ export const ContactRow = ({
     >
       <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] md:grid-rows-4 gap-2 md:gap-4">
         <div className="grid grid-rows-[auto_auto_auto] gap-2 md:row-start-1 md:row-end-4">
-          <div className="grid grid-cols-[auto_auto] gap-2 md:gap-3 justify-start">
-            <div className="pt-1">
-              <input
-                type="checkbox"
-                checked={isSelected ?? false}
-                onChange={(e) => onSelect?.(contact.name, e.target.checked)}
-                disabled={isInGroup}
-                title={isInGroup ? "Already part of a group" : undefined}
-                className="w-5 h-5 accent-blue-600 cursor-pointer rounded border-gray-300 hover:ring-2 hover:ring-blue-300 transition-all duration-200"
-              />
-            </div>
-            <div className="flex flex-col">
-              <h3 className="text-lg font-semibold text-gray-900 break-words">
-                {contact.kind === "calling"
-                  ? `${contact.name} as ${contact.calling}`
-                  : contact.name}
-              </h3>
-              <div className="flex flex-wrap gap-2 mt-1">
-                <ContactTypeBadge contact={contact} />
-                <ContactLabels contact={contact} />
-              </div>
-            </div>
-          </div>
+          <ContactRowHeader
+            contact={contact}
+            isSelected={isSelected}
+            isInGroup={isInGroup}
+            onSelect={onSelect}
+          />
 
-          <div className="grid grid-cols-1 gap-3">
-            <div className="min-w-[120px]">
-              <span className="text-xs text-gray-500 block mb-1 font-medium">
-                Recipient:
-              </span>
-              <MemberSelector
-                selectedMemberIds={recipientMemberIds}
-                onAddMember={addRecipient}
-                onRemoveMember={removeRecipient}
-                onChangeMember={changeRecipient}
-                maxMembers={2}
-              />
-            </div>
+          <ContactMemberSelector
+            recipientMemberIds={recipientMemberIds}
+            subjectMemberIds={subjectMemberIds}
+            recipientsAreSubjects={recipientsAreSubjects}
+            onRecipientsAreSubjectsChange={setRecipientsAreSubjects}
+            onAddRecipient={addRecipient}
+            onRemoveRecipient={removeRecipient}
+            onChangeRecipient={changeRecipient}
+            onAddSubject={addSubject}
+            onRemoveSubject={removeSubject}
+            onChangeSubject={changeSubject}
+          />
 
-            <div className="flex items-center gap-2">
-              <label className="flex items-center gap-2 text-sm text-gray-700">
-                <input
-                  type="checkbox"
-                  checked={recipientsAreSubjects}
-                  onChange={(e) => setRecipientsAreSubjects(e.target.checked)}
-                  className="w-4 h-4 accent-blue-600"
-                />
-                Recipients are subjects
-              </label>
-            </div>
-
-            {!recipientsAreSubjects && (
-              <div className="min-w-[120px]">
-                <span className="text-xs text-gray-500 block mb-1 font-medium">
-                  Subject:
-                </span>
-                <MemberSelector
-                  selectedMemberIds={subjectMemberIds}
-                  onAddMember={addSubject}
-                  onRemoveMember={removeSubject}
-                  onChangeMember={changeSubject}
-                  maxMembers={10}
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-[auto_auto] gap-2 md:gap-3 justify-start">
-            <div className="min-w-[150px]">
-              <TemplateSelector
-                selectedTemplateId={selectedTemplateId}
-                onChange={setSelectedTemplateId}
-                categories={categories}
-              />
-            </div>
-            <div className="sm:mt-0">
-              <TimeSelector
-                selectedTime={selectedTime}
-                onChange={setSelectedTime}
-              />
-            </div>
-          </div>
+          <ContactTemplateSelector
+            selectedTemplateId={selectedTemplateId}
+            selectedTime={selectedTime}
+            categories={categories}
+            onTemplateChange={setSelectedTemplateId}
+            onTimeChange={setSelectedTime}
+          />
         </div>
 
         <div className="grid md:row-start-1 md:row-span-4">
-          <div className="min-h-full mt-4 md:mt-0">
-            {canGenerate && !templatePreview && !isLoadingPreview && (
-              <button
-                onClick={generatePreview}
-                className="w-full mb-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
-              >
-                Generate Message
-              </button>
-            )}
-            <MessagePreview
-              templatePreview={templatePreview}
-              phoneNumbers={phoneNumbers}
-              isReady={validRecipients.length > 0}
-              isLoading={isLoadingPreview}
-            />
-          </div>
+          <ContactPreview
+            canGenerate={canGenerate}
+            templatePreview={templatePreview}
+            isLoadingPreview={isLoadingPreview}
+            phoneNumbers={phoneNumbers}
+            validRecipientsCount={validRecipients.length}
+            onGeneratePreview={generatePreview}
+          />
         </div>
       </div>
     </div>
