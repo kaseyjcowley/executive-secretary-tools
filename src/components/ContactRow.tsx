@@ -1,10 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Contact, MessageType } from "@/types/messages";
+import { useMemo, useState, useEffect } from "react";
+import { Contact, MessageType, MessageScenario } from "@/types/messages";
 import { useRecipientSubjectSelection } from "@/hooks/useRecipientSubjectSelection";
-import { useTemplatePreview } from "@/hooks/useTemplatePreview";
 import { getAvailableMessageTypes } from "@/utils/template-loader";
+import { classifyScenario, generateMessage } from "@/utils/message-generator";
+import {
+  formatMemberDisplayNames,
+  Member,
+} from "@/utils/format-member-display";
+import members from "@/data/members.json";
 import {
   ContactInfo,
   ContactLabels,
@@ -14,7 +19,11 @@ import { MemberSelector } from "@/components/MemberSelector";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { TimeSelector } from "@/components/TimeSelector";
 import { MessagePreview } from "@/components/MessagePreview";
-import { CHURCH_END_TIME } from "@/constants";
+import { CHURCH_END_TIME, MEMBER_SELECTION } from "@/constants";
+import { getBeforeOrAfterChurch } from "@/utils/time-utils";
+import { formatTimeForDisplay } from "@/utils/date-formatters";
+
+const memberData = members as Member[];
 
 interface Props {
   contact: Contact;
@@ -67,14 +76,102 @@ export const ContactRow = ({
     ? recipientPhoneNumbers
     : recipientPhoneNumbers;
 
-  const templatePreview = useTemplatePreview({
-    selectedTemplateId,
-    selectedTime,
-    recipientMemberIds,
-    subjectMemberIds,
+  const [templatePreview, setTemplatePreview] = useState("");
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+
+  const validRecipients = useMemo(
+    () =>
+      recipientMemberIds.filter(
+        (id) => id !== MEMBER_SELECTION.INITIAL_MEMBER_ID,
+      ),
+    [recipientMemberIds],
+  );
+  const validSubjects = useMemo(
+    () =>
+      subjectMemberIds.filter(
+        (id) => id !== MEMBER_SELECTION.INITIAL_MEMBER_ID,
+      ),
+    [subjectMemberIds],
+  );
+
+  const canShowPreview =
+    selectedTemplateId && (recipientsAreSubjects || validSubjects.length > 0);
+
+  const canGenerate =
+    canShowPreview &&
+    (recipientsAreSubjects || validSubjects.length > 0) &&
+    (recipientsAreSubjects ? validRecipients.length > 0 : true);
+
+  const generatePreview = () => {
+    if (!canGenerate) return;
+
+    const controller = new AbortController();
+    setIsLoadingPreview(true);
+
+    const recipientMembers = memberData.filter((m) =>
+      validRecipients.includes(m.id),
+    );
+    const subjectMembers = recipientsAreSubjects
+      ? recipientMembers
+      : memberData.filter((m) => validSubjects.includes(m.id));
+
+    const createContact = (name: string, gender?: string): Contact => {
+      const contact = {
+        name,
+        gender,
+        kind: "interview" as const,
+        labels: { id: selectedTemplateId, name: selectedTemplateId },
+        due: "",
+        idMembers: "",
+        assigned: undefined,
+      };
+      return contact as Contact;
+    };
+
+    const recipients = recipientMembers.map((m) =>
+      createContact(m.name, m.gender),
+    );
+    const subjects = subjectMembers.map((m) => createContact(m.name, m.gender));
+
+    const beforeOrAfterChurch = getBeforeOrAfterChurch(selectedTime);
+    const formattedTime = formatTimeForDisplay(selectedTime);
+
+    const scenario: MessageScenario = {
+      type: classifyScenario(recipients, subjects),
+      recipients,
+      subjects,
+      appointmentTypes: new Map([[selectedTemplateId, subjects]]),
+      recipientsAreSubjects,
+      selectedTime: formattedTime,
+      beforeOrAfterChurch,
+    };
+
+    generateMessage(scenario, controller.signal)
+      .then((message) => {
+        if (message) {
+          setTemplatePreview(message);
+        }
+        setIsLoadingPreview(false);
+      })
+      .catch((error) => {
+        if (error instanceof Error && error.name !== "AbortError") {
+          console.error("Error generating message:", error);
+          setTemplatePreview("Unable to generate message. Please try again.");
+        }
+        setIsLoadingPreview(false);
+      });
+  };
+
+  useEffect(() => {
+    setTemplatePreview("");
+    setIsLoadingPreview(false);
+  }, [
+    canShowPreview,
+    validRecipients,
+    validSubjects,
     recipientsAreSubjects,
-    contact,
-  });
+    selectedTemplateId,
+  ]);
 
   const isCalling = contact.kind === "calling";
 
@@ -171,9 +268,19 @@ export const ContactRow = ({
 
         <div className="grid md:row-start-1 md:row-span-4">
           <div className="min-h-full mt-4 md:mt-0">
+            {canGenerate && !templatePreview && !isLoadingPreview && (
+              <button
+                onClick={generatePreview}
+                className="w-full mb-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+              >
+                Generate Message
+              </button>
+            )}
             <MessagePreview
               templatePreview={templatePreview}
               phoneNumbers={phoneNumbers}
+              isReady={validRecipients.length > 0}
+              isLoading={isLoadingPreview}
             />
           </div>
         </div>

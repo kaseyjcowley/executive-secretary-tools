@@ -7,14 +7,24 @@ import {
 } from "@/types/messages";
 import { loadTemplateContent } from "./template-loader";
 import { substituteTemplate } from "./template-substitution";
-import { formatNameList, getPossessive, getPronoun } from "./grammar";
+import {
+  formatNameList,
+  getPossessive,
+  getPronoun,
+  getPossessiveForNameList,
+} from "./grammar";
 import {
   appointmentSummaries,
   AppointmentSummary,
 } from "@/constants/appointment-summaries";
 import { CallingStage } from "@/constants";
 
-export function generateMessage(scenario: MessageScenario): string {
+const LLM_API_URL = "/api/llm";
+
+export async function generateMessage(
+  scenario: MessageScenario,
+  signal?: AbortSignal,
+): Promise<string> {
   try {
     if (scenario.type === "multiple-types") {
       const variables = buildTemplateVariables(scenario);
@@ -27,16 +37,53 @@ export function generateMessage(scenario: MessageScenario): string {
       return "Error: No appointment type selected";
     }
 
-    const template = loadTemplateContent(templateId);
-
-    if (!template) {
-      return `Error: Template "${templateId}" not found`;
+    if (templateId === "multiple-appointments") {
+      const template = loadTemplateContent(templateId);
+      if (!template) {
+        return `Error: Template "${templateId}" not found`;
+      }
+      const variables = buildTemplateVariables(scenario, templateId);
+      return substituteTemplate(template, variables);
     }
 
-    const variables = buildTemplateVariables(scenario, templateId);
+    const simplifiedData = buildSimplifiedData(scenario, templateId);
 
-    return substituteTemplate(template, variables);
+    const response = await fetch(LLM_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        job: "format-sms",
+        payload: {
+          templateName: templateId,
+          data: simplifiedData,
+        },
+      }),
+      signal,
+    });
+
+    if (!response.ok) {
+      console.error(
+        "[message-generator] LLM API response error:",
+        response.status,
+        response.statusText,
+      );
+      return "Unable to generate message. Please try again.";
+    }
+
+    const { result, error } = await response.json();
+
+    if (error) {
+      console.error("LLM API error:", error);
+      return "Unable to generate message. Please try again.";
+    }
+
+    const message =
+      result?.message || "Unable to generate message. Please try again.";
+    return message;
   } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") {
+      return "";
+    }
     return `Error generating message: ${
       error instanceof Error ? error.message : "Unknown error"
     }`;
@@ -133,10 +180,13 @@ function buildTemplateVariables(
   const formattedSubjectFirstNames = formatNameList(subjectFirstNames);
 
   let possessive: string;
+  let subjectsWithPossessive: string;
   if (recipientsAreSubjects) {
     possessive = "your";
+    subjectsWithPossessive = formattedSubjectFirstNames;
   } else {
-    possessive = getPossessive(formattedSubjectFirstNames);
+    possessive = getPossessiveForNameList(subjectFirstNames);
+    subjectsWithPossessive = possessive;
   }
 
   const appointmentSummary = getAppointmentSummary(scenario, templateIdFromMap);
@@ -157,6 +207,12 @@ function buildTemplateVariables(
 
   const verb = subjects.length === 1 ? "is" : "are";
 
+  const subjectNoun =
+    subjects.length === 1 ? "temple recommend" : "temple recommends";
+  const subjectsPhrase = recipientsAreSubjects
+    ? formattedSubjectFirstNames
+    : `${subjectsWithPossessive} ${subjectNoun}`;
+
   return {
     greeting,
     pronoun,
@@ -167,8 +223,56 @@ function buildTemplateVariables(
     appointmentSummary,
     schedulingPhrase,
     recipients: greeting,
-    subjects: formattedSubjectFirstNames,
+    subjects: subjectsWithPossessive,
+    subjectsPhrase,
   };
+}
+
+function buildSimplifiedData(
+  scenario: MessageScenario,
+  templateId: string,
+): Record<string, unknown> {
+  const {
+    recipients,
+    subjects,
+    recipientsAreSubjects: recipientsAreSubjectsFromScenario,
+    selectedTime,
+  } = scenario;
+
+  const recipientsAreSubjects =
+    recipientsAreSubjectsFromScenario !== undefined
+      ? recipientsAreSubjectsFromScenario
+      : recipients.every((r) => subjects.some((s) => s.name === r.name));
+
+  const recipientStrings = recipients.map((r) => {
+    const parts = r.name.split(",");
+    const lastName = parts[0]?.trim() || r.name;
+    const gender = (r as any).gender || "M";
+    const title = gender === "M" ? "Brother" : "Sister";
+    return `${title} ${lastName} (${gender})`;
+  });
+
+  const result: Record<string, unknown> = {
+    template: loadTemplateContent(templateId).replace(/^TEMPLATE:\s*/, ""),
+    recipients: recipientStrings,
+  };
+
+  if (!recipientsAreSubjects && subjects.length > 0) {
+    const subjectStrings = subjects.map((s) => {
+      const parts = s.name.split(",");
+      const firstName = parts[1]?.trim()?.split(" ")[0] || s.name.split(" ")[0];
+      const gender = (s as any).gender || "M";
+      return `${firstName} (${gender})`;
+    });
+    result.subjects = subjectStrings;
+  }
+
+  if (selectedTime) {
+    result.meetingTime = selectedTime;
+    result.churchEndTime = "12:30";
+  }
+
+  return result;
 }
 
 function generateListMessage(

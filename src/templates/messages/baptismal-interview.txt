@@ -1,1 +1,1 @@
-Hello {{recipients}}, {{availabilityVerb}} {{subjects}} available {{date}} {{before-or-after-church}} at {{time}} for {{possessive}} baptismal interview with Bishop Preece?
+TEMPLATE: "Hello {recipients}, are you available Sunday after church at {time} for your baptismal interview with {withWhom}?"

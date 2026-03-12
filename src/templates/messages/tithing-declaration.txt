@@ -1,1 +1,1 @@
-Hello {{recipients}}, this is a reminder of your tithing declaration appointment with Bishop Preece on {{date}} at {{time}}. See you then!
+TEMPLATE: "Hello {recipients}, this is a reminder of your tithing declaration appointment with {withWhom} on {date} at {time}. See you then!"

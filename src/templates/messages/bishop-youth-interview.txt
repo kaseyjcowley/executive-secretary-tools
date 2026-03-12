@@ -1,3 +1,1 @@
-Hey {{recipients}}!
-
-{{interviewAvailability}}
+TEMPLATE: Hello {recipients}, {verbPhrase} available Sunday at {time} to meet with Bishop Preece for {possessive} annual interview?

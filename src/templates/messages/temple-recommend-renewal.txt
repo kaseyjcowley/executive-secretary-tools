@@ -1,1 +1,1 @@
-Hello {{recipients}}! Our records indicate that {{possessive}} {{recommendPhrase}} at the end of this month. The Bishopric has times this Sunday for recommend renewals. {{schedulingPhrase}}, please let me know!
+TEMPLATE: Hello {recipients}, our records indicate that {subjectsPhrase} expires at the end of this month. The Bishopric has times this Sunday for recommend renewals. If youd like to get {pronoun} on the schedule, please let me know!

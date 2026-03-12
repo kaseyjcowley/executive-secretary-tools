@@ -13,6 +13,39 @@ export function arraysEqual(a: number[], b: number[]): boolean {
   return sortedA.every((val, idx) => val === sortedB[idx]);
 }
 
+export function getPossessiveForm(name: string): string {
+  if (!name) return "";
+  if (name.endsWith("s")) return `${name}'`;
+  return `${name}'s`;
+}
+
+export function getPluralPossessiveForm(name: string): string {
+  if (!name) return "";
+  return `${name}'s`;
+}
+
+export function getPossessiveForNameList(names: string[]): string {
+  if (names.length === 0) return "";
+  if (names.length === 1) return getPossessiveForm(names[0]);
+
+  const allButLast = names.slice(0, -1);
+  const lastName = names[names.length - 1];
+
+  let formattedLast: string;
+  if (names.length >= 3) {
+    formattedLast = getPluralPossessiveForm(lastName);
+  } else {
+    formattedLast = getPossessiveForm(lastName);
+  }
+
+  if (names.length === 2) {
+    return `${allButLast[0]} and ${formattedLast}`;
+  }
+
+  const allButLastFormatted = allButLast.join(", ");
+  return `${allButLastFormatted}, and ${formattedLast}`;
+}
+
 export function getPossessive(name: string): string {
   if (!name) return "";
   if (name.endsWith("s")) return `${name}'`;
