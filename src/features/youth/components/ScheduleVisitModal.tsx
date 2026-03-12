@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { VisitTypeSelector } from "@/components/VisitTypeSelector";
+import { VisitTypeSelector } from "@/features/youth/components/VisitTypeSelector";
 import { YOUTH_VISIT_TYPES } from "@/constants/youth-visit-types";
 import toast from "react-hot-toast";
 
