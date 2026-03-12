@@ -10,8 +10,12 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn() {
-      return true;
+    async signIn({ user }) {
+      if (!process.env.ALLOWED_EMAIL) {
+        console.warn("ALLOWED_EMAIL not configured - sign-in denied");
+        return false;
+      }
+      return user.email === process.env.ALLOWED_EMAIL;
     },
     async session({ session }) {
       return session;

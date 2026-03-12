@@ -14,7 +14,6 @@ export interface FormatSmsInput {
     date?: string;
     time?: string;
     withWhom?: string;
-    calling?: string;
   };
 }
 
@@ -35,7 +34,6 @@ export const formatSmsJob: LlmJob<FormatSmsInput, FormatSmsOutput> = {
       date,
       time,
       withWhom,
-      calling,
     } = input.data;
 
     const { text } = await generateText({
@@ -54,7 +52,6 @@ export const formatSmsJob: LlmJob<FormatSmsInput, FormatSmsOutput> = {
         date && `DATE: ${date}`,
         time && `TIME: ${time}`,
         withWhom && `WITH WHOM: ${withWhom}`,
-        calling && `CALLING: ${calling}`,
       ]
         .filter(Boolean)
         .join("\n"),
