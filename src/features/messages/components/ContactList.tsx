@@ -12,7 +12,7 @@ import { autoSelectTemplate } from "@/utils/template-matcher";
 import { ContactRow } from "./ContactRow";
 import { GroupCard } from "./GroupCard";
 import { MergeToolbar } from "./MergeToolbar";
-import { useMessagedContacts } from "@/features/messages/hooks/useMessagedContacts";
+import { useMessagedStatus } from "@/features/messages/hooks/useMessagedStatus";
 import { showMarkedToast } from "@/features/messages/components/MarkAsMessagedToast";
 import { IconUsers, IconCheck } from "@/components/ui/Icons";
 
@@ -29,7 +29,7 @@ export const ContactList = ({
   const [groups, setGroups] = useState<ContactGroup[]>([]);
 
   const contactNames = useMemo(() => contacts.map((c) => c.name), [contacts]);
-  const { suppressedIds, markAsMessaged, unmarkContact } = useMessagedContacts({
+  const { suppressedIds, markAsMessaged, unmarkContact } = useMessagedStatus({
     contactIds: contactNames,
     initialSuppressedIds,
   });

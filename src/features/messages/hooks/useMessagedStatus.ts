@@ -1,21 +1,21 @@
 import { useState, useEffect, useCallback } from "react";
 
-interface UseMessagedContactsOptions {
+interface UseMessagedStatusOptions {
   contactIds: string[];
   initialSuppressedIds?: Set<string>;
 }
 
-interface UseMessagedContactsReturn {
+interface UseMessagedStatusReturn {
   suppressedIds: Set<string>;
   markAsMessaged: (contactIds: string[]) => Promise<void>;
   unmarkContact: (contactId: string) => Promise<void>;
   isLoading: boolean;
 }
 
-export function useMessagedContacts({
+export function useMessagedStatus({
   contactIds,
   initialSuppressedIds,
-}: UseMessagedContactsOptions): UseMessagedContactsReturn {
+}: UseMessagedStatusOptions): UseMessagedStatusReturn {
   const [suppressedIds, setSuppressedIds] = useState<Set<string>>(
     initialSuppressedIds || new Set(),
   );
