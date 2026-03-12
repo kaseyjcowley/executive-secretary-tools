@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import members from "@/data/members.json";
 import {
   Contact,
@@ -70,10 +70,16 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
     [messageTypes],
   );
 
-  const templatePreview = useMemo(() => {
-    if (!canShowPreview) {
-      return "";
-    }
+  const [templatePreview, setTemplatePreview] = useState("");
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+
+  const canGenerate = canShowPreview;
+
+  const generatePreview = () => {
+    if (!canGenerate) return;
+
+    const controller = new AbortController();
+    setIsLoadingPreview(true);
 
     const appointmentTypes = new Map<string, Contact[]>();
     subjects.forEach((subject) => {
@@ -96,10 +102,35 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
       subjects,
       appointmentTypes,
       recipientNames: formattedRecipientNames,
+      recipientsAreSubjects,
     };
 
-    return generateMessage(scenario);
-  }, [canShowPreview, selectedRecipients, subjects, subjectTemplateMap]);
+    generateMessage(scenario, controller.signal)
+      .then((message) => {
+        if (message) {
+          setTemplatePreview(message);
+        }
+        setIsLoadingPreview(false);
+      })
+      .catch((error) => {
+        if (error instanceof Error && error.name !== "AbortError") {
+          console.error("Error generating message:", error);
+          setTemplatePreview("Unable to generate message. Please try again.");
+        }
+        setIsLoadingPreview(false);
+      });
+  };
+
+  useEffect(() => {
+    setTemplatePreview("");
+    setIsLoadingPreview(false);
+  }, [
+    canShowPreview,
+    selectedRecipients,
+    subjects,
+    subjectTemplateMap,
+    recipientsAreSubjects,
+  ]);
 
   const hasCalling = groupContacts.some((c) => c.kind === "calling");
   const hasInterview = groupContacts.some((c) => c.kind === "interview");
@@ -206,10 +237,21 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
               Message Preview
             </h3>
             {canShowPreview ? (
-              <MessagePreview
-                templatePreview={templatePreview}
-                phoneNumbers={recipientPhoneNumbers}
-              />
+              <>
+                {canGenerate && !templatePreview && !isLoadingPreview && (
+                  <button
+                    onClick={generatePreview}
+                    className="w-full mb-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+                  >
+                    Generate Message
+                  </button>
+                )}
+                <MessagePreview
+                  templatePreview={templatePreview}
+                  phoneNumbers={recipientPhoneNumbers}
+                  isLoading={isLoadingPreview}
+                />
+              </>
             ) : (
               <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-600 text-sm">
                 <p className="font-medium mb-2">

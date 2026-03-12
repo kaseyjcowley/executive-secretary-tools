@@ -104,4 +104,7 @@ export interface MessageScenario {
   subjects: Contact[];
   appointmentTypes: Map<string, Contact[]>;
   recipientNames?: string[];
+  recipientsAreSubjects?: boolean;
+  selectedTime?: string;
+  beforeOrAfterChurch?: string;
 }

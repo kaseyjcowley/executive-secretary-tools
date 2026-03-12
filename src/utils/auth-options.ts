@@ -10,8 +10,8 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user }) {
-      return user.email === process.env.ALLOWED_EMAIL;
+    async signIn() {
+      return true;
     },
     async session({ session }) {
       return session;

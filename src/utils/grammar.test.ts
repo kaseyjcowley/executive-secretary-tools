@@ -5,6 +5,7 @@ import {
   pluralize,
   getPronoun,
   conjugateVerb,
+  getPossessiveForNameList,
 } from "@/utils/grammar";
 
 describe("grammar utilities", () => {
@@ -135,6 +136,40 @@ describe("grammar utilities", () => {
 
     it("handles 'have' as special case", () => {
       expect(conjugateVerb("have", 1)).toBe("has");
+    });
+  });
+
+  describe("getPossessiveForNameList", () => {
+    it("returns empty string for empty array", () => {
+      expect(getPossessiveForNameList([])).toBe("");
+    });
+
+    it("returns possessive form for single name", () => {
+      expect(getPossessiveForNameList(["John"])).toBe("John's");
+    });
+
+    it("returns possessive form for two names (only last name possessive)", () => {
+      expect(getPossessiveForNameList(["John", "Jane"])).toBe(
+        "John and Jane's",
+      );
+    });
+
+    it("returns plural possessive for three or more names (only last name plural)", () => {
+      expect(getPossessiveForNameList(["John", "Jane", "Bob"])).toBe(
+        "John, Jane, and Bob's",
+      );
+    });
+
+    it("handles names ending in s correctly", () => {
+      expect(getPossessiveForNameList(["Jones", "Chris"])).toBe(
+        "Jones and Chris'",
+      );
+    });
+
+    it("handles four names correctly", () => {
+      expect(getPossessiveForNameList(["John", "Jane", "Bob", "Alice"])).toBe(
+        "John, Jane, Bob, and Alice's",
+      );
     });
   });
 });
