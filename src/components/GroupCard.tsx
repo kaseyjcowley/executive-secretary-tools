@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useCallback } from "react";
 import members from "@/data/members.json";
 import {
   Contact,
@@ -9,7 +9,7 @@ import {
   MessageScenario,
 } from "@/types/messages";
 import { getAvailableMessageTypes } from "@/utils/template-loader";
-import { classifyScenario, generateMessage } from "@/utils/message-generator";
+import { classifyScenario } from "@/utils/message-generator";
 import {
   formatMemberDisplayNames,
   Member,
@@ -19,6 +19,7 @@ import { TemplateSelector } from "@/components/TemplateSelector";
 import { MessagePreview } from "@/components/MessagePreview";
 import { useGroupRecipients } from "@/hooks/useGroupRecipients";
 import { useGroupSubjects } from "@/hooks/useGroupSubjects";
+import { useMessagePreview } from "@/hooks/useMessagePreview";
 import { MEMBER_SELECTION } from "@/constants";
 import { IconUsers, IconX } from "@/components/ui/Icons";
 
@@ -70,16 +71,10 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
     [messageTypes],
   );
 
-  const [templatePreview, setTemplatePreview] = useState("");
-  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
-
   const canGenerate = canShowPreview;
 
-  const generatePreview = () => {
-    if (!canGenerate) return;
-
-    const controller = new AbortController();
-    setIsLoadingPreview(true);
+  const buildScenario = useCallback((): MessageScenario | null => {
+    if (!canGenerate) return null;
 
     const appointmentTypes = new Map<string, Contact[]>();
     subjects.forEach((subject) => {
@@ -96,7 +91,7 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
     });
     const formattedRecipientNames = formatMemberDisplayNames(recipientMembers);
 
-    const scenario: MessageScenario = {
+    return {
       type: classifyScenario(selectedRecipients, subjects),
       recipients: selectedRecipients,
       subjects,
@@ -104,33 +99,25 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
       recipientNames: formattedRecipientNames,
       recipientsAreSubjects,
     };
-
-    generateMessage(scenario, controller.signal)
-      .then((message) => {
-        if (message) {
-          setTemplatePreview(message);
-        }
-        setIsLoadingPreview(false);
-      })
-      .catch((error) => {
-        if (error instanceof Error && error.name !== "AbortError") {
-          console.error("Error generating message:", error);
-          setTemplatePreview("Unable to generate message. Please try again.");
-        }
-        setIsLoadingPreview(false);
-      });
-  };
-
-  useEffect(() => {
-    setTemplatePreview("");
-    setIsLoadingPreview(false);
   }, [
-    canShowPreview,
-    selectedRecipients,
+    canGenerate,
     subjects,
     subjectTemplateMap,
+    selectedRecipients,
     recipientsAreSubjects,
   ]);
+
+  const { templatePreview, isLoadingPreview, generatePreview } =
+    useMessagePreview({
+      buildScenario,
+      resetDependencies: [
+        canShowPreview,
+        selectedRecipients,
+        subjects,
+        subjectTemplateMap,
+        recipientsAreSubjects,
+      ],
+    });
 
   const hasCalling = groupContacts.some((c) => c.kind === "calling");
   const hasInterview = groupContacts.some((c) => c.kind === "interview");

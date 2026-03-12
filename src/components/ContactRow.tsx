@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { Contact, MessageType, MessageScenario } from "@/types/messages";
 import { useRecipientSubjectSelection } from "@/hooks/useRecipientSubjectSelection";
+import { useMessagePreview } from "@/hooks/useMessagePreview";
 import { getAvailableMessageTypes } from "@/utils/template-loader";
-import { classifyScenario, generateMessage } from "@/utils/message-generator";
+import { classifyScenario } from "@/utils/message-generator";
 import {
   formatMemberDisplayNames,
   Member,
@@ -76,9 +77,6 @@ export const ContactRow = ({
     ? recipientPhoneNumbers
     : recipientPhoneNumbers;
 
-  const [templatePreview, setTemplatePreview] = useState("");
-  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
-
   const validRecipients = useMemo(
     () =>
       recipientMemberIds.filter(
@@ -102,11 +100,8 @@ export const ContactRow = ({
     (recipientsAreSubjects || validSubjects.length > 0) &&
     (recipientsAreSubjects ? validRecipients.length > 0 : true);
 
-  const generatePreview = () => {
-    if (!canGenerate) return;
-
-    const controller = new AbortController();
-    setIsLoadingPreview(true);
+  const buildScenario = useCallback((): MessageScenario | null => {
+    if (!canGenerate) return null;
 
     const recipientMembers = memberData.filter((m) =>
       validRecipients.includes(m.id),
@@ -136,7 +131,7 @@ export const ContactRow = ({
     const beforeOrAfterChurch = getBeforeOrAfterChurch(selectedTime);
     const formattedTime = formatTimeForDisplay(selectedTime);
 
-    const scenario: MessageScenario = {
+    return {
       type: classifyScenario(recipients, subjects),
       recipients,
       subjects,
@@ -145,33 +140,26 @@ export const ContactRow = ({
       selectedTime: formattedTime,
       beforeOrAfterChurch,
     };
-
-    generateMessage(scenario, controller.signal)
-      .then((message) => {
-        if (message) {
-          setTemplatePreview(message);
-        }
-        setIsLoadingPreview(false);
-      })
-      .catch((error) => {
-        if (error instanceof Error && error.name !== "AbortError") {
-          console.error("Error generating message:", error);
-          setTemplatePreview("Unable to generate message. Please try again.");
-        }
-        setIsLoadingPreview(false);
-      });
-  };
-
-  useEffect(() => {
-    setTemplatePreview("");
-    setIsLoadingPreview(false);
   }, [
-    canShowPreview,
+    canGenerate,
     validRecipients,
     validSubjects,
     recipientsAreSubjects,
     selectedTemplateId,
+    selectedTime,
   ]);
+
+  const { templatePreview, isLoadingPreview, generatePreview } =
+    useMessagePreview({
+      buildScenario,
+      resetDependencies: [
+        canShowPreview,
+        validRecipients,
+        validSubjects,
+        recipientsAreSubjects,
+        selectedTemplateId,
+      ],
+    });
 
   const isCalling = contact.kind === "calling";
 
