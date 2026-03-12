@@ -6,7 +6,7 @@ import { ContactRow } from "@/features/messages/components/ContactRow";
 import { createInterviewContact, createCallingContact } from "@/test/factories";
 import { CallingStage } from "@/constants";
 
-vi.mock("@/utils/template-loader", () => ({
+vi.mock("@/features/messages/utils/template-loader", () => ({
   getAvailableMessageTypes: () => [
     {
       id: "interview-reminder",
@@ -80,16 +80,19 @@ vi.mock("@/data/members.json", () => ({
   ],
 }));
 
-vi.mock("@/utils/message-generator", () => ({
+vi.mock("@/features/messages/utils/message-generator", () => ({
   classifyScenario: vi.fn(() => "single-type"),
   generateMessage: vi.fn(),
 }));
 
-vi.mock("@/utils/date-formatters", () => ({
+vi.mock("@/lib/utils/date-formatters", () => ({
   formatTimeForDisplay: vi.fn(() => "6:00 PM"),
 }));
 
-import { generateMessage, classifyScenario } from "@/utils/message-generator";
+import {
+  generateMessage,
+  classifyScenario,
+} from "@/features/messages/utils/message-generator";
 import { MEMBER_SELECTION } from "@/constants";
 
 describe("ContactRow", () => {

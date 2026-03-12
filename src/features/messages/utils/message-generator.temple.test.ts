@@ -1,10 +1,13 @@
 import { describe, it, expect, vi } from "vitest";
-import { generateMessage, classifyScenario } from "@/utils/message-generator";
-import { substituteTemplate } from "@/utils/template-substitution";
+import {
+  generateMessage,
+  classifyScenario,
+} from "@/features/messages/utils/message-generator";
+import { substituteTemplate } from "@/features/messages/utils/template-substitution";
 import { MessageScenario } from "@/types/messages";
 import { createInterviewContact } from "@/test/factories";
 
-vi.mock("@/utils/template-loader", () => ({
+vi.mock("@/features/messages/utils/template-loader", () => ({
   getAvailableMessageTypes: () => [
     {
       id: "temple-recommend-renewal",

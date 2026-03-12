@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
-import { generateMessage } from "@/utils/message-generator";
+import { generateMessage } from "@/features/messages/utils/message-generator";
 import { MessageScenario } from "@/types/messages";
 import { createInterviewContact } from "@/test/factories";
 
-vi.mock("@/utils/template-loader", () => ({
+vi.mock("@/features/messages/utils/template-loader", () => ({
   getAvailableMessageTypes: () => [],
   loadTemplateContent: vi.fn((id: string) => {
     const templates: Record<string, string> = {

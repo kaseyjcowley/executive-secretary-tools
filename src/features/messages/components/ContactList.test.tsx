@@ -6,7 +6,7 @@ import { ContactList } from "@/features/messages/components/ContactList";
 import { createInterviewContact, createCallingContact } from "@/test/factories";
 import { CallingStage } from "@/constants";
 
-vi.mock("@/utils/template-loader", () => ({
+vi.mock("@/features/messages/utils/template-loader", () => ({
   getAvailableMessageTypes: () => [
     {
       id: "interview-reminder",

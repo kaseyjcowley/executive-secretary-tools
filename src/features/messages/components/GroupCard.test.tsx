@@ -5,7 +5,7 @@ import React from "react";
 import { GroupCard } from "@/features/messages/components/GroupCard";
 import { createInterviewContact, createContactGroup } from "@/test/factories";
 
-vi.mock("@/utils/template-loader", () => ({
+vi.mock("@/features/messages/utils/template-loader", () => ({
   getAvailableMessageTypes: () => [
     {
       id: "interview-reminder",

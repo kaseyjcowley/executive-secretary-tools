@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { getClosestSunday } from "@/utils/dates";
+import { getClosestSunday } from "@/lib/utils/dates";
 import { IconClock } from "@/components/ui/Icons";
 
 export function InterviewsHeader() {

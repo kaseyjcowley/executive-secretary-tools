@@ -8,8 +8,8 @@ import {
   MessageType,
   MessageScenario,
 } from "@/types/messages";
-import { getAvailableMessageTypes } from "@/utils/template-loader";
-import { classifyScenario } from "@/utils/message-generator";
+import { getAvailableMessageTypes } from "@/features/messages/utils/template-loader";
+import { classifyScenario } from "@/features/messages/utils/message-generator";
 import {
   formatMemberDisplayNames,
   Member,

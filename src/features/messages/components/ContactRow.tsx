@@ -4,16 +4,16 @@ import { useMemo, useState, useCallback } from "react";
 import { Contact, MessageType, MessageScenario } from "@/types/messages";
 import { useRecipientSubjectSelection } from "@/features/messages/hooks/useRecipientSubjectSelection";
 import { useMessagePreview } from "@/features/messages/hooks/useMessagePreview";
-import { getAvailableMessageTypes } from "@/utils/template-loader";
-import { classifyScenario } from "@/utils/message-generator";
+import { getAvailableMessageTypes } from "@/features/messages/utils/template-loader";
+import { classifyScenario } from "@/features/messages/utils/message-generator";
 import {
   formatMemberDisplayNames,
   Member,
 } from "@/utils/format-member-display";
 import members from "@/data/members.json";
 import { CHURCH_END_TIME, MEMBER_SELECTION } from "@/constants";
-import { getBeforeOrAfterChurch } from "@/utils/time-utils";
-import { formatTimeForDisplay } from "@/utils/date-formatters";
+import { getBeforeOrAfterChurch } from "@/lib/utils/time-utils";
+import { formatTimeForDisplay } from "@/lib/utils/date-formatters";
 import { ContactRowHeader } from "./ContactRowHeader";
 import { ContactMemberSelector } from "./ContactMemberSelector";
 import { ContactTemplateSelector } from "./ContactTemplateSelector";

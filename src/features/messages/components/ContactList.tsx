@@ -7,8 +7,8 @@ import {
   ContactListItem,
   isContactGroup,
 } from "@/types/messages";
-import { getAvailableMessageTypes } from "@/utils/template-loader";
-import { autoSelectTemplate } from "@/utils/template-matcher";
+import { getAvailableMessageTypes } from "@/features/messages/utils/template-loader";
+import { autoSelectTemplate } from "@/features/messages/utils/template-matcher";
 import { ContactRow } from "./ContactRow";
 import { GroupCard } from "./GroupCard";
 import { MergeToolbar } from "./MergeToolbar";
