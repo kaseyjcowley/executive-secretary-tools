@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import toast from "react-hot-toast";
+import { useState } from "react";
 import { ScheduleVisitModal } from "@/features/youth/components/ScheduleVisitModal";
 import { EditLastSeenModal } from "@/features/youth/components/EditLastSeenModal";
 import { YouthCard } from "@/features/youth/components/YouthCard";
+import { useYouthQueue } from "@/features/youth/hooks/useYouthQueue";
 import type { Youth } from "@/types/youth";
 
 export default function YouthQueuePage() {
-  const [queue, setQueue] = useState<Youth[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { queue, isLoading, refetch, sync, resetUnseen, removeYouth } =
+    useYouthQueue();
   const [scheduleModal, setScheduleModal] = useState<{
     isOpen: boolean;
     youthId: string;
@@ -19,93 +19,6 @@ export default function YouthQueuePage() {
     isOpen: boolean;
     youth: Youth;
   } | null>(null);
-
-  useEffect(() => {
-    fetchQueue();
-  }, []);
-
-  const fetchQueue = async () => {
-    try {
-      const response = await fetch("/api/queue");
-      const data = await response.json();
-      setQueue(data.queue);
-    } catch (error) {
-      toast.error("Failed to load queue");
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSync = async () => {
-    const toastId = toast.loading("Syncing with Trello...");
-
-    try {
-      const response = await fetch("/api/youth/sync", { method: "POST" });
-      const data = await response.json();
-
-      toast.dismiss(toastId);
-
-      if (data.markedVisited.length > 0) {
-        toast.success(
-          `Marked ${data.markedVisited.length} as visited: ${data.markedVisited.join(", ")}`,
-        );
-        fetchQueue();
-      } else {
-        toast.success("No visits completed since last sync");
-      }
-
-      if (data.errors.length > 0) {
-        toast.error(`Errors: ${data.errors.join(", ")}`);
-      }
-    } catch (error) {
-      toast.dismiss(toastId);
-      toast.error("Failed to sync");
-      console.error(error);
-    }
-  };
-
-  const handleResetUnseen = async () => {
-    if (
-      !confirm(
-        "Reset all recently added youth to 'never seen'? This will mark them as overdue.",
-      )
-    ) {
-      return;
-    }
-
-    try {
-      const response = await fetch("/api/youth/reset-unseen", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ minutesAgo: 60 }),
-      });
-      const data = await response.json();
-
-      if (data.reset > 0) {
-        toast.success(`Reset ${data.reset} youth to never seen`);
-        fetchQueue();
-      } else {
-        toast.success(data.message || "No youth to reset");
-      }
-    } catch (error) {
-      toast.error("Failed to reset");
-      console.error(error);
-    }
-  };
-
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Remove ${name} from the queue?`)) return;
-
-    try {
-      await fetch(`/api/youth/${id}`, { method: "DELETE" });
-      toast.success(`${name} removed from queue`);
-      fetchQueue();
-    } catch (error) {
-      toast.error("Failed to delete");
-      console.error(error);
-    }
-  };
 
   const getDaysOverdue = (youth: Youth): number => {
     const sixMonthsAgo = Date.now() - 180 * 24 * 60 * 60 * 1000;
@@ -151,7 +64,7 @@ export default function YouthQueuePage() {
             Import
           </a>
           <button
-            onClick={handleSync}
+            onClick={sync}
             className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
           >
             Sync with Trello
@@ -196,7 +109,7 @@ export default function YouthQueuePage() {
                   })
                 }
                 onEdit={() => setEditModal({ isOpen: true, youth })}
-                onDelete={() => handleDelete(youth.id, youth.name)}
+                onDelete={() => removeYouth(youth.id, youth.name)}
               />
             ))}
           </div>
@@ -221,7 +134,7 @@ export default function YouthQueuePage() {
                   })
                 }
                 onEdit={() => setEditModal({ isOpen: true, youth })}
-                onDelete={() => handleDelete(youth.id, youth.name)}
+                onDelete={() => removeYouth(youth.id, youth.name)}
               />
             ))}
           </div>
@@ -246,7 +159,7 @@ export default function YouthQueuePage() {
                   })
                 }
                 onEdit={() => setEditModal({ isOpen: true, youth })}
-                onDelete={() => handleDelete(youth.id, youth.name)}
+                onDelete={() => removeYouth(youth.id, youth.name)}
               />
             ))}
           </div>
@@ -269,7 +182,7 @@ export default function YouthQueuePage() {
         <ScheduleVisitModal
           youthId={scheduleModal.youthId}
           youthName={scheduleModal.youthName}
-          onSuccess={fetchQueue}
+          onSuccess={refetch}
           onClose={() => setScheduleModal(null)}
         />
       )}
@@ -279,7 +192,7 @@ export default function YouthQueuePage() {
           youthId={editModal.youth.id}
           youthName={editModal.youth.name}
           currentLastSeen={editModal.youth.lastSeenAt}
-          onSuccess={fetchQueue}
+          onSuccess={refetch}
           onClose={() => setEditModal(null)}
         />
       )}
