@@ -12,8 +12,8 @@ import { autoSelectTemplate } from "@/utils/template-matcher";
 import { ContactRow } from "./ContactRow";
 import { GroupCard } from "./GroupCard";
 import { MergeToolbar } from "./MergeToolbar";
-import { useMessagedContacts } from "@/hooks/useMessagedContacts";
-import { showMarkedToast } from "@/components/MarkAsMessagedToast";
+import { useMessagedContacts } from "@/features/messages/hooks/useMessagedContacts";
+import { showMarkedToast } from "@/features/messages/components/MarkAsMessagedToast";
 import { IconUsers, IconCheck } from "@/components/ui/Icons";
 
 interface Props {

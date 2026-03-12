@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { TemplateSelector } from "@/components/TemplateSelector";
+import { TemplateSelector } from "@/features/messages/components/TemplateSelector";
 import { MessageType, Category } from "@/types/messages";
 
 describe("TemplateSelector", () => {

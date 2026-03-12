@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { MessagePreview } from "@/components/MessagePreview";
+import { MessagePreview } from "@/features/messages/components/MessagePreview";
 
 describe("MessagePreview", () => {
   it("should show loading spinner when isLoading is true", () => {

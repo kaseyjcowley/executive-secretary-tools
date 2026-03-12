@@ -14,12 +14,12 @@ import {
   formatMemberDisplayNames,
   Member,
 } from "@/utils/format-member-display";
-import { MemberSelector } from "@/components/MemberSelector";
-import { TemplateSelector } from "@/components/TemplateSelector";
-import { MessagePreview } from "@/components/MessagePreview";
-import { useGroupRecipients } from "@/hooks/useGroupRecipients";
-import { useGroupSubjects } from "@/hooks/useGroupSubjects";
-import { useMessagePreview } from "@/hooks/useMessagePreview";
+import { MemberSelector } from "@/features/messages/components/MemberSelector";
+import { TemplateSelector } from "@/features/messages/components/TemplateSelector";
+import { MessagePreview } from "@/features/messages/components/MessagePreview";
+import { useGroupRecipients } from "@/features/messages/hooks/useGroupRecipients";
+import { useGroupSubjects } from "@/features/messages/hooks/useGroupSubjects";
+import { useMessagePreview } from "@/features/messages/hooks/useMessagePreview";
 import { MEMBER_SELECTION } from "@/constants";
 import { IconUsers, IconX } from "@/components/ui/Icons";
 

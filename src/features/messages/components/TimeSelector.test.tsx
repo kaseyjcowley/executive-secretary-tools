@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { TimeSelector } from "@/components/TimeSelector";
+import { TimeSelector } from "@/features/messages/components/TimeSelector";
 
 describe("TimeSelector", () => {
   it("should render before church times", () => {

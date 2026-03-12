@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
-import { ContactList } from "@/components/ContactList";
+import { ContactList } from "@/features/messages/components/ContactList";
 import { createInterviewContact, createCallingContact } from "@/test/factories";
 import { CallingStage } from "@/constants";
 

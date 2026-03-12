@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
-import { ContactRow } from "@/components/ContactRow";
+import { ContactRow } from "@/features/messages/components/ContactRow";
 import { createInterviewContact, createCallingContact } from "@/test/factories";
 import { CallingStage } from "@/constants";
 
@@ -54,7 +54,7 @@ vi.mock("@/utils/time-utils", () => ({
   getBeforeOrAfterChurch: vi.fn(() => "after church"),
 }));
 
-vi.mock("@/hooks/useMemberSelection", () => ({
+vi.mock("@/features/messages/hooks/useMemberSelection", () => ({
   useMemberSelection: vi.fn(() => ({
     selectedMemberIds: [-1],
     addMember: vi.fn(),

@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
-import { GroupCard } from "@/components/GroupCard";
+import { GroupCard } from "@/features/messages/components/GroupCard";
 import { createInterviewContact, createContactGroup } from "@/test/factories";
 
 vi.mock("@/utils/template-loader", () => ({

@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { ContactList } from "@/components/ContactList";
+import { ContactList } from "@/features/messages/components/ContactList";
 import { sortContactsByLabel } from "@/utils/contact-ordering";
 import { getAppointmentContacts } from "@/requests/cards";
 import { getMessagedContactIds } from "@/utils/get-messaged-contacts";
