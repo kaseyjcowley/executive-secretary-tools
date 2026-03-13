@@ -46,7 +46,7 @@ export function MemberSelector({
 
         return (
           <div key={index} className="flex items-center gap-1">
-            <div className="w-full md:w-auto md:min-w-[200px]">
+            <div className="w-full md:w-auto min-w-[200px]">
               <TypeAhead
                 options={memberOptions}
                 value={selectedOption}
