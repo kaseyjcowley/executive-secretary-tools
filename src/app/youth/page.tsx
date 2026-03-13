@@ -5,10 +5,12 @@ import { ScheduleVisitModal } from "@/features/youth/components/ScheduleVisitMod
 import { EditLastSeenModal } from "@/features/youth/components/EditLastSeenModal";
 import { YouthCard } from "@/features/youth/components/YouthCard";
 import { useYouthQueue } from "@/features/youth/hooks/useYouthQueue";
+import { YouthLoadingSkeleton } from "@/features/youth/components/YouthLoadingSkeleton";
+import { YouthErrorState } from "@/features/youth/components/YouthErrorState";
 import type { Youth } from "@/types/youth";
 
 export default function YouthQueuePage() {
-  const { queue, isLoading, refetch, sync, resetUnseen, removeYouth } =
+  const { queue, isLoading, error, refetch, sync, resetUnseen, removeYouth } =
     useYouthQueue();
   const [scheduleModal, setScheduleModal] = useState<{
     isOpen: boolean;
@@ -36,11 +38,11 @@ export default function YouthQueuePage() {
   );
 
   if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-gray-500">Loading queue...</div>
-      </div>
-    );
+    return <YouthLoadingSkeleton />;
+  }
+
+  if (error) {
+    return <YouthErrorState onRetry={refetch} />;
   }
 
   return (
