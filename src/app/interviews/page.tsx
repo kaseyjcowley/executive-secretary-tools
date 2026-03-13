@@ -1,13 +1,13 @@
 import { Suspense } from "react";
-import { InterviewsTable } from "@/components/InterviewsTable";
-import { InterviewsHeader } from "@/components/InterviewsHeader";
+import { InterviewsTable } from "@/features/interviews/components/InterviewsTable";
+import { InterviewsHeader } from "@/features/interviews/components/InterviewsHeader";
 import { BishopricMemberId } from "@/constants";
 import {
   CallingTrelloCard,
   fetchAllCardsGroupedByMember,
   InterviewTrelloCard,
 } from "@/requests/cards";
-import { size } from "@/utils/helpers";
+import { size } from "@/lib/utils/helpers";
 import { IconClock } from "@/components/ui/Icons";
 
 type InterviewCards = Record<

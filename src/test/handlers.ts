@@ -103,4 +103,43 @@ export const handlers = [
   http.post(`/api/unmark-messaged`, () => {
     return HttpResponse.json({ ok: true });
   }),
+  http.post(`/api/llm`, async ({ request }) => {
+    const body = (await request.json()) as {
+      job: string;
+      payload: { templateName: string; data: Record<string, unknown> };
+    };
+    const { templateName, data } = body.payload;
+    const recipients = (data.recipients as string[]) || [];
+
+    const responses: Record<string, string> = {
+      "bishop-interview":
+        "Hello! You have a bishop interview scheduled. Please let me know if you have any questions.",
+      "temple-recommend-renewal":
+        "Hello! Our records indicate your temple recommend expires soon. The Bishopric has times available for renewals.",
+      "welfare-meeting":
+        "Hello! You have a welfare meeting scheduled. Please let me know if you need any accommodations.",
+      "multiple-appointments": `Hello ${recipients[0] || "there"}! Here are your upcoming appointments. Let me know if you have any questions.`,
+      "bishop-youth-interview": data.subjects
+        ? `Hey ${recipients[0] || "there"}! Are ${data.subjects} available Sunday at 12:30 for their annual interview with Bishop?`
+        : "Hey! Are the youth available for their bishop interview this Sunday?",
+    };
+
+    let message: string;
+    if (responses[templateName]) {
+      message = responses[templateName];
+    } else if (templateName.includes("temple")) {
+      message = responses["temple-recommend-renewal"];
+    } else if (templateName.includes("welfare")) {
+      message = responses["welfare-meeting"];
+    } else if (templateName.includes("bishop")) {
+      message = responses["bishop-youth-interview"];
+    } else {
+      return HttpResponse.json(
+        { error: { message: "Unknown template" } },
+        { status: 400 },
+      );
+    }
+
+    return HttpResponse.json({ result: { message } });
+  }),
 ];
