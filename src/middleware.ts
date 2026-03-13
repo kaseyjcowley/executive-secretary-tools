@@ -88,6 +88,6 @@ export default withAuth(
 export const config = {
   matcher: [
     "/internal/:path*",
-    "/((?!api/auth/|auth/|_next/static|_next/image|favicon.ico).*)",
+    "/((?!api/auth/|auth/|api/crons/|api/cron/|_next/static|_next/image|favicon.ico).*)",
   ],
 };
