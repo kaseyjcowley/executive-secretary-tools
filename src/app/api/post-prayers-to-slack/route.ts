@@ -11,7 +11,7 @@ interface PrayerAssignment {
   closingPrayer: string | null;
 }
 
-export function extractPrayers(message: string): PrayerAssignment {
+function extractPrayers(message: string): PrayerAssignment {
   const openingMatch = message.match(/opening prayer:?\s*\n\s*([^\n]+)/i);
   const closingMatch = message.match(/closing prayer:?\s*\n\s*([^\n]+)/i);
 
@@ -21,7 +21,7 @@ export function extractPrayers(message: string): PrayerAssignment {
   };
 }
 
-export async function getConductorFromTopic(
+async function getConductorFromTopic(
   channelId: string,
 ): Promise<string | null> {
   const response = await slackApp.client.conversations.info({
