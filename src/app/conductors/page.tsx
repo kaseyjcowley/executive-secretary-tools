@@ -5,6 +5,8 @@ import {
 } from "@/utils/conductors";
 import { ConductorPageClient } from "./ConductorPageClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function ConductorsPage() {
   const state = await getConductorState();
   const currentConductor = resolveCurrentConductor(state);
