@@ -1,13 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import toast from "react-hot-toast";
 import { Template } from "@/types/messages";
 import { Category } from "@/types/messages";
+import {
+  getTemplates,
+  createTemplate,
+  updateTemplate,
+  removeTemplate,
+} from "@/app/actions/templates";
 
 export default function TemplatesPage() {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isPending, startTransition] = useTransition();
   const [searchQuery, setSearchQuery] = useState("");
   const [editingTemplate, setEditingTemplate] = useState<Template | null>(null);
   const [isCreating, setIsCreating] = useState(false);
@@ -26,9 +33,8 @@ export default function TemplatesPage() {
 
   const fetchTemplates = async () => {
     try {
-      const response = await fetch("/api/templates");
-      const data = await response.json();
-      setTemplates(data.templates);
+      const data = await getTemplates();
+      setTemplates(data);
     } catch (error) {
       toast.error("Failed to load templates");
       console.error(error);
@@ -66,25 +72,24 @@ export default function TemplatesPage() {
     }
 
     try {
-      const url = editingTemplate
-        ? `/api/templates/${editingTemplate.id}`
-        : "/api/templates";
-      const method = editingTemplate ? "PUT" : "POST";
+      let result;
+      if (editingTemplate) {
+        result = await updateTemplate(editingTemplate.id, formData);
+      } else {
+        result = await createTemplate(formData);
+      }
 
-      const response = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to save template");
+      if (result.error) {
+        toast.error(result.error);
+        return;
       }
 
       toast.success(editingTemplate ? "Template updated" : "Template created");
       setEditingTemplate(null);
       setIsCreating(false);
-      fetchTemplates();
+      startTransition(() => {
+        fetchTemplates();
+      });
     } catch (error) {
       toast.error("Failed to save template");
       console.error(error);
@@ -95,16 +100,17 @@ export default function TemplatesPage() {
     if (!confirm("Are you sure you want to delete this template?")) return;
 
     try {
-      const response = await fetch(`/api/templates/${id}`, {
-        method: "DELETE",
-      });
+      const result = await removeTemplate(id);
 
-      if (!response.ok) {
-        throw new Error("Failed to delete template");
+      if (result.error) {
+        toast.error(result.error);
+        return;
       }
 
       toast.success("Template deleted");
-      fetchTemplates();
+      startTransition(() => {
+        fetchTemplates();
+      });
     } catch (error) {
       toast.error("Failed to delete template");
       console.error(error);
