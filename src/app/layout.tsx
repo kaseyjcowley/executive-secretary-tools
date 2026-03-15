@@ -20,15 +20,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans`}>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
+      <body className={inter.className}>
         <Providers>
-          <header className="flex justify-between items-center px-4 sm:px-6 lg:px-8 py-4 bg-slate-50">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <IconClock className="w-6 h-6 text-blue-600" />
-            </div>
+          <div className="hidden md:flex justify-end px-4 sm:px-6 lg:px-8 py-2 bg-slate-50">
             <LogoutButton />
-          </header>
-          {children}
+          </div>
+          <main className="min-h-screen bg-gray-50">{children}</main>
           <Toaster position="bottom-right" />
         </Providers>
       </body>

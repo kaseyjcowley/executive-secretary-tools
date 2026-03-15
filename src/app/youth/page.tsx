@@ -142,28 +142,28 @@ export default function YouthQueuePage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
           Youth Visitation Queue
         </h1>
 
         <div className="flex flex-wrap gap-2">
           <a
             href="/youth/new"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            className="px-4 py-2.5 md:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-base md:text-sm min-h-[44px] flex items-center justify-center"
           >
             Add Youth
           </a>
           <a
             href="/youth/import"
-            className="px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors"
+            className="px-4 py-2.5 md:py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors text-base md:text-sm min-h-[44px] flex items-center justify-center"
           >
             Import
           </a>
           <button
             onClick={handleSync}
-            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+            className="px-4 py-2.5 md:py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-base md:text-sm min-h-[44px] flex items-center justify-center"
           >
-            Sync with Trello
+            Sync
           </button>
           <button
             onClick={handleRebuildVisitHistory}
@@ -174,29 +174,31 @@ export default function YouthQueuePage() {
           </button>
           <button
             onClick={() => setPendingReviewsModal(true)}
-            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+            className="px-4 py-2.5 md:py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-base md:text-sm min-h-[44px] flex items-center justify-center"
           >
-            Pending Reviews
+            Reviews
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-8">
-        <div className="bg-white rounded-lg p-4 shadow">
-          <div className="text-2xl font-bold text-gray-900">{queue.length}</div>
-          <div className="text-sm text-gray-600">Total Youth</div>
+      <div className="grid grid-cols-3 gap-2 md:gap-4 mb-6 md:mb-8">
+        <div className="bg-white rounded-lg p-3 md:p-4 shadow">
+          <div className="text-xl md:text-2xl font-bold text-gray-900">
+            {queue.length}
+          </div>
+          <div className="text-xs md:text-sm text-gray-600">Total Youth</div>
         </div>
-        <div className="bg-white rounded-lg p-4 shadow">
-          <div className="text-2xl font-bold text-red-600">
+        <div className="bg-white rounded-lg p-3 md:p-4 shadow">
+          <div className="text-xl md:text-2xl font-bold text-red-600">
             {scheduledYouth.length}
           </div>
-          <div className="text-sm text-gray-600">Scheduled</div>
+          <div className="text-xs md:text-sm text-gray-600">Scheduled</div>
         </div>
-        <div className="bg-white rounded-lg p-4 shadow">
-          <div className="text-2xl font-bold text-yellow-600">
+        <div className="bg-white rounded-lg p-3 md:p-4 shadow">
+          <div className="text-xl md:text-2xl font-bold text-yellow-600">
             {overdueYouth.length}
           </div>
-          <div className="text-sm text-gray-600">Overdue</div>
+          <div className="text-xs md:text-sm text-gray-600">Overdue</div>
         </div>
       </div>
 
@@ -363,7 +365,7 @@ function YouthCard({
 
   return (
     <div className="bg-white rounded-lg p-4 shadow border-l-4 border-gray-200">
-      <div className="flex justify-between items-start">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             {youth.scheduled && (
@@ -381,7 +383,7 @@ function YouthCard({
                 ✅
               </span>
             )}
-            <h3 className="font-semibold text-gray-900">
+            <h3 className="font-semibold text-gray-900 text-lg md:text-base">
               {youth.preferredName || youth.name}
             </h3>
             {youth.preferredName && (
@@ -415,30 +417,30 @@ function YouthCard({
           )}
         </div>
 
-        <div className="flex flex-wrap gap-2 ml-4">
+        <div className="flex flex-wrap gap-2 sm:flex-col sm:gap-1 sm:ml-4 w-full sm:w-auto">
           <button
             onClick={onHistory}
-            className="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
+            className="px-3 py-2.5 md:py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors min-h-[44px]"
           >
             History
           </button>
           {!youth.scheduled && (
             <button
               onClick={onSchedule}
-              className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              className="px-3 py-2.5 md:py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors min-h-[44px]"
             >
               Schedule
             </button>
           )}
           <button
             onClick={onEdit}
-            className="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+            className="px-3 py-2.5 md:py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors min-h-[44px]"
           >
             Edit
           </button>
           <button
             onClick={onDelete}
-            className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+            className="px-3 py-2.5 md:py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors min-h-[44px]"
           >
             Delete
           </button>
