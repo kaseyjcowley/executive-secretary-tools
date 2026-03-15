@@ -134,7 +134,7 @@ export function ConductorPageClient({
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
           Override (for next month)
         </h2>
-        <div className="bg-white rounded-lg p-6 shadow">
+        <div className="bg-white rounded-lg p-6 shadow border">
           <div className="space-y-3 mb-4">
             {CONDUCTORS.map((conductor) => (
               <label
@@ -192,7 +192,7 @@ export function ConductorPageClient({
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
           Manual Actions
         </h2>
-        <div className="bg-white rounded-lg p-6 shadow">
+        <div className="bg-white rounded-lg p-6 shadow border">
           <p className="text-sm text-gray-600 mb-4">
             Advance the rotation to the next person. This will also update the
             Slack bishopric channel topic.
