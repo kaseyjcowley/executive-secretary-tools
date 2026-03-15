@@ -1,0 +1,14 @@
+
+> exec-secretary-tools@0.1.0 dev /Users/kcowley/Code/executive-secretary-tools
+> next dev
+
+- info Loaded env from /Users/kcowley/Code/executive-secretary-tools/.env.local
+- warn You have enabled experimental feature (serverActions) in next.config.js.
+- warn Experimental features are not covered by semver, and may cause unexpected or broken application behavior. Use at your own risk.
+
+- [32mready[39m started server on [::]:3000, url: http://localhost:3000
+- [35mevent[39m compiled client and server successfully in 276 ms (20 modules)
+- [36mwait[39m compiling...
+- [35mevent[39m compiled client and server successfully in 122 ms (20 modules)
+- [36minfo[39m Loaded env from /Users/kcowley/Code/executive-secretary-tools/.env.local
+- [36minfo[39m Loaded env from /Users/kcowley/Code/executive-secretary-tools/.env.local
