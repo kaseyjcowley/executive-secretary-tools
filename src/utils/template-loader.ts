@@ -1,6 +1,5 @@
 import { MessageType, Category, Template } from "@/types/messages";
 import { REDIS_KEYS } from "@/constants";
-import redis from "./redis";
 
 /**
  * 1. Automate Template Loading
@@ -49,6 +48,7 @@ export function extractVariables(content: string): string[] {
  * Get all templates (from Redis or file fallback)
  */
 export async function getAllTemplates(): Promise<Template[]> {
+  const redis = (await import("./redis")).default;
   const templateIds = await redis.smembers(REDIS_KEYS.TEMPLATES);
 
   if (templateIds.length > 0) {
@@ -80,6 +80,7 @@ export async function getAllTemplates(): Promise<Template[]> {
  * Get a single template by ID (Redis first, then file fallback)
  */
 export async function getTemplate(id: string): Promise<Template | null> {
+  const redis = (await import("./redis")).default;
   const data = await redis.get(`${REDIS_KEYS.TEMPLATE_PREFIX}${id}`);
 
   if (data) {
@@ -104,6 +105,7 @@ export async function getTemplate(id: string): Promise<Template | null> {
  * Save template to Redis
  */
 export async function saveTemplate(template: Template): Promise<void> {
+  const redis = (await import("./redis")).default;
   await redis.set(
     `${REDIS_KEYS.TEMPLATE_PREFIX}${template.id}`,
     JSON.stringify(template),
@@ -115,6 +117,7 @@ export async function saveTemplate(template: Template): Promise<void> {
  * Delete template from Redis
  */
 export async function deleteTemplate(id: string): Promise<void> {
+  const redis = (await import("./redis")).default;
   await redis.del(`${REDIS_KEYS.TEMPLATE_PREFIX}${id}`);
   await redis.srem(REDIS_KEYS.TEMPLATES, id);
 }
