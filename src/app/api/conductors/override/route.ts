@@ -4,13 +4,6 @@ import { REDIS_KEYS } from "@/constants";
 import { SetOverrideRequest } from "@/types/conductors";
 
 export async function POST(request: NextRequest) {
-  const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return new Response("Unauthorized", {
-      status: 401,
-    });
-  }
-
   const body: SetOverrideRequest = await request.json();
 
   if (!body.slackUserId || !body.name) {
@@ -33,4 +26,16 @@ export async function POST(request: NextRequest) {
     message: `Override set! ${body.name} will conduct next month.`,
     override,
   });
+}
+
+export async function DELETE() {
+  const existingOverride = await redis.get(REDIS_KEYS.CONDUCTOR_OVERRIDE);
+
+  if (!existingOverride) {
+    return NextResponse.json({ message: "No override to clear" });
+  }
+
+  await redis.del(REDIS_KEYS.CONDUCTOR_OVERRIDE);
+
+  return NextResponse.json({ message: "Override cleared" });
 }
