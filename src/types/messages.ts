@@ -45,6 +45,14 @@ export interface MessageType {
   content: string;
 }
 
+export interface Template {
+  id: string;
+  name: string;
+  category: Category;
+  content: string;
+  variables: string[];
+}
+
 export interface ContactGroup {
   id: string;
   memberIds: string[];

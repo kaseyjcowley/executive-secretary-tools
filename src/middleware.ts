@@ -65,6 +65,7 @@ async function checkIPAccess(request: NextRequest): Promise<boolean> {
 
 const PUBLIC_PATHS = [
   "/api/auth/",
+  "/auth/signin",
   "/api/crons/",
   "/api/cron/",
   "/api/slack/",
