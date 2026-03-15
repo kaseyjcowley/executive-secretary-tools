@@ -4,6 +4,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { CONDUCTORS } from "@/constants/conductors";
 import type { Conductor, ConductorOverride } from "@/types/conductors";
+import { setOverride, clearOverride, advanceRotation } from "./actions";
 
 interface ConductorState {
   rotation: Conductor[];
@@ -34,21 +35,6 @@ export function ConductorPageClient({
   );
   const [reason, setReason] = useState(override?.reason ?? "");
 
-  const fetchState = async () => {
-    try {
-      const response = await fetch("/api/conductors");
-      const data = await response.json();
-      setState(data);
-      if (data.override) {
-        setSelectedConductor(data.override.slackUserId);
-        setReason(data.override.reason);
-      }
-    } catch (error) {
-      toast.error("Failed to load conductor state");
-      console.error(error);
-    }
-  };
-
   const handleSetOverride = async () => {
     if (!selectedConductor) {
       toast.error("Please select a conductor");
@@ -61,22 +47,9 @@ export function ConductorPageClient({
     if (!conductor) return;
 
     try {
-      const response = await fetch("/api/conductors/override", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          slackUserId: conductor.slackUserId,
-          name: conductor.name,
-          reason,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to set override");
-      }
-
+      await setOverride(conductor.slackUserId, conductor.name, reason);
       toast.success(`Override set! ${conductor.name} will conduct next month.`);
-      fetchState();
+      window.location.reload();
     } catch (error) {
       toast.error("Failed to set override");
       console.error(error);
@@ -85,18 +58,11 @@ export function ConductorPageClient({
 
   const handleClearOverride = async () => {
     try {
-      const response = await fetch("/api/conductors/override", {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to clear override");
-      }
-
+      await clearOverride();
       toast.success("Override cleared");
       setSelectedConductor("");
       setReason("");
-      fetchState();
+      window.location.reload();
     } catch (error) {
       toast.error("Failed to clear override");
       console.error(error);
@@ -113,17 +79,9 @@ export function ConductorPageClient({
     }
 
     try {
-      const response = await fetch("/api/conductors/advance", {
-        method: "POST",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to advance rotation");
-      }
-
-      const data = await response.json();
-      toast.success(`Rotation advanced to ${data.conductor.name}`);
-      fetchState();
+      const result = await advanceRotation();
+      toast.success(`Rotation advanced to ${result.conductor.name}`);
+      window.location.reload();
     } catch (error) {
       toast.error("Failed to advance rotation");
       console.error(error);
