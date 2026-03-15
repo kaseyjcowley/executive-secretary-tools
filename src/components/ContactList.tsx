@@ -19,11 +19,13 @@ import { IconUsers, IconCheck } from "@/components/ui/Icons";
 interface Props {
   contacts: Contact[];
   suppressedIds?: Set<string>;
+  showMessaged?: boolean;
 }
 
 export const ContactList = ({
   contacts,
   suppressedIds: initialSuppressedIds,
+  showMessaged = false,
 }: Props) => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [groups, setGroups] = useState<ContactGroup[]>([]);
@@ -35,8 +37,11 @@ export const ContactList = ({
   });
 
   const visibleContacts = useMemo(
-    () => contacts.filter((c) => !suppressedIds.has(c.name)),
-    [contacts, suppressedIds],
+    () =>
+      showMessaged
+        ? contacts
+        : contacts.filter((c) => !suppressedIds.has(c.name)),
+    [contacts, suppressedIds, showMessaged],
   );
 
   const groupedContactNames = useMemo(() => {
