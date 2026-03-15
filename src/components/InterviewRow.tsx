@@ -20,7 +20,7 @@ export const InterviewRow = ({ card }: Props) => {
       : false;
 
   return (
-    <div className="flex items-center gap-4 px-4 py-4 sm:px-6 bg-white border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 w-full max-w-3xl">
+    <div className="flex items-center gap-4 px-4 py-4 sm:px-6 bg-white border-2 border-slate-200 sm:border sm:border-slate-100 rounded-2xl shadow-md sm:shadow-sm hover:shadow-lg sm:hover:shadow-md transition-shadow duration-200 w-full max-w-3xl">
       {/* Mobile: Left col (chip + time stacked) */}
       <div className="flex sm:hidden flex-col items-center gap-2 flex-shrink-0">
         <span
@@ -40,7 +40,7 @@ export const InterviewRow = ({ card }: Props) => {
         <p className="text-sm font-semibold text-slate-800 truncate">
           {card.name}
         </p>
-        <p className="text-xs text-slate-400 mt-0.5 truncate">
+        <p className="text-xs text-slate-400 mt-0.5">
           {isCalling
             ? card.stage === CallingStage.needsCallingExtended
               ? `Calling as ${card.calling}`
