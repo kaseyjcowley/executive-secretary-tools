@@ -53,11 +53,11 @@ export const InterviewsTable = ({ memberId, interviews }: Props) => {
 
   return (
     <section
-      className={`max-w-3xl bg-white rounded-lg shadow-sm border border-gray-200 border-l-4 ${getBorderColor(
+      className={`max-w-3xl sm:bg-white sm:rounded-lg sm:shadow-sm sm:border border-gray-200 sm:border-l-4 ${getBorderColor(
         memberId,
       )} overflow-hidden`}
     >
-      <div className="p-6">
+      <div className="p-0 pb-4 sm:p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
           {getMemberName(memberId)}
         </h2>
