@@ -48,7 +48,9 @@ export function ConductorPageClient({
 
     try {
       await setOverride(conductor.slackUserId, conductor.name, reason);
-      toast.success(`Override set! ${conductor.name} will conduct next month.`);
+      toast.success(
+        `Override set! Brother ${conductor.name} will conduct next month.`,
+      );
       window.location.reload();
     } catch (error) {
       toast.error("Failed to set override");
@@ -72,7 +74,7 @@ export function ConductorPageClient({
   const handleAdvance = async () => {
     if (
       !confirm(
-        `Advance rotation to ${state.nextConductor.name}? This will update Slack channel topic.`,
+        `Advance rotation to Brother ${state.nextConductor.name}? This will update Slack channel topic.`,
       )
     ) {
       return;
@@ -80,7 +82,7 @@ export function ConductorPageClient({
 
     try {
       const result = await advanceRotation();
-      toast.success(`Rotation advanced to ${result.conductor.name}`);
+      toast.success(`Rotation advanced to Brother ${result.conductor.name}`);
       window.location.reload();
     } catch (error) {
       toast.error("Failed to advance rotation");
@@ -104,7 +106,7 @@ export function ConductorPageClient({
             <div>
               <div className="text-sm text-gray-600">This Month</div>
               <div className="text-lg font-semibold text-gray-900">
-                {state.currentConductor.name}
+                Brother {state.currentConductor.name}
               </div>
             </div>
           </div>
@@ -113,7 +115,7 @@ export function ConductorPageClient({
             <div>
               <div className="text-sm text-gray-600">Next</div>
               <div className="text-lg font-semibold text-gray-900">
-                {state.nextConductor.name}
+                Brother {state.nextConductor.name}
               </div>
             </div>
           </div>
@@ -123,7 +125,7 @@ export function ConductorPageClient({
                 Active Override
               </div>
               <div className="text-sm text-gray-700">
-                {state.override.name} - {state.override.reason}
+                Brother {state.override.name} - {state.override.reason}
               </div>
             </div>
           )}
@@ -149,7 +151,7 @@ export function ConductorPageClient({
                   onChange={(e) => setSelectedConductor(e.target.value)}
                   className="w-4 h-4 text-blue-600"
                 />
-                <span className="text-gray-900">{conductor.name}</span>
+                <span className="text-gray-900">Brother {conductor.name}</span>
               </label>
             ))}
           </div>
