@@ -88,6 +88,6 @@ export default withAuth(
 export const config = {
   matcher: [
     "/internal/:path*",
-    "/((?!api/auth/|auth/|api/crons/|api/cron/|api/slack/|api/post-prayers-to-slack|_next/static|_next/image|favicon.ico).*)",
+    "/((?!api/auth/|auth/|api/crons/|api/cron/|api/slack/|api/post-prayers-to-slack/|api/post-interviews-to-slack/|_next/static|_next/image|favicon.ico).*)",
   ],
 };
