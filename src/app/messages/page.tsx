@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { ContactList } from "@/components/ContactList";
+import { MessagesPageClient } from "@/components/MessagesPageClient";
 import { sortContactsByLabel } from "@/utils/contact-ordering";
 import { getAppointmentContacts } from "@/requests/cards";
 import { getMessagedContactIds } from "@/utils/get-messaged-contacts";
@@ -107,7 +107,7 @@ export default async function MessagesPage() {
           </div>
         </div>
         <Suspense fallback={<LoadingSkeleton />}>
-          <ContactList
+          <MessagesPageClient
             contacts={sortedContacts}
             suppressedIds={suppressedIds}
           />
