@@ -1,6 +1,6 @@
 import redis from "@/utils/redis";
 import { nanoid } from "nanoid";
-import type { Youth } from "@/types/youth";
+import type { Youth, VisitHistoryItem, PendingReview } from "@/types/youth";
 import { REDIS_KEYS } from "@/constants";
 
 const SIX_MONTHS_MS = 180 * 24 * 60 * 60 * 1000;
@@ -89,5 +89,59 @@ export async function deleteYouth(id: string): Promise<void> {
   const pipeline = redis.pipeline();
   pipeline.del(`${REDIS_KEYS.YOUTH_HASH_PREFIX}${id}`);
   pipeline.zrem(REDIS_KEYS.YOUTH_QUEUE, id);
+  pipeline.del(`${REDIS_KEYS.YOUTH_VISITS_PREFIX}${id}`);
   await pipeline.exec();
+}
+
+export async function getVisitHistory(id: string): Promise<VisitHistoryItem[]> {
+  const cached = await redis.get(`${REDIS_KEYS.YOUTH_VISITS_PREFIX}${id}`);
+  if (!cached) return [];
+  try {
+    return JSON.parse(cached) as VisitHistoryItem[];
+  } catch {
+    return [];
+  }
+}
+
+export async function setVisitHistory(
+  id: string,
+  visits: VisitHistoryItem[],
+): Promise<void> {
+  await redis.set(
+    `${REDIS_KEYS.YOUTH_VISITS_PREFIX}${id}`,
+    JSON.stringify(visits),
+  );
+}
+
+export async function getSyncedCardIds(): Promise<Set<string>> {
+  const cards = await redis.smembers(REDIS_KEYS.YOUTH_SYNCED_CARDS);
+  return new Set(cards);
+}
+
+export async function addSyncedCardId(cardId: string): Promise<void> {
+  await redis.sadd(REDIS_KEYS.YOUTH_SYNCED_CARDS, cardId);
+}
+
+export async function getPendingReviews(): Promise<PendingReview[]> {
+  const reviews = await redis.lrange(REDIS_KEYS.YOUTH_PENDING_REVIEWS, 0, -1);
+  return reviews.map((r) => JSON.parse(r) as PendingReview);
+}
+
+export async function addPendingReview(review: PendingReview): Promise<void> {
+  await redis.rpush(REDIS_KEYS.YOUTH_PENDING_REVIEWS, JSON.stringify(review));
+}
+
+export async function removePendingReview(trelloCardId: string): Promise<void> {
+  const reviews = await redis.lrange(REDIS_KEYS.YOUTH_PENDING_REVIEWS, 0, -1);
+  const toKeep: string[] = [];
+  for (const r of reviews) {
+    const review = JSON.parse(r) as PendingReview;
+    if (review.trelloCardId !== trelloCardId) {
+      toKeep.push(r);
+    }
+  }
+  await redis.del(REDIS_KEYS.YOUTH_PENDING_REVIEWS);
+  if (toKeep.length > 0) {
+    await redis.rpush(REDIS_KEYS.YOUTH_PENDING_REVIEWS, ...toKeep);
+  }
 }

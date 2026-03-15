@@ -5,6 +5,8 @@ import { formatDistanceToNow } from "date-fns";
 import toast from "react-hot-toast";
 import { ScheduleVisitModal } from "./ScheduleVisitModal";
 import { EditLastSeenModal } from "./EditLastSeenModal";
+import { VisitHistoryModal } from "@/components/youth/VisitHistoryModal";
+import { PendingReviewsModal } from "@/components/youth/PendingReviewsModal";
 import type { Youth } from "@/types/youth";
 
 export default function YouthQueuePage() {
@@ -19,6 +21,12 @@ export default function YouthQueuePage() {
     isOpen: boolean;
     youth: Youth;
   } | null>(null);
+  const [historyModal, setHistoryModal] = useState<{
+    isOpen: boolean;
+    youthId: string;
+    youthName: string;
+  } | null>(null);
+  const [pendingReviewsModal, setPendingReviewsModal] = useState(false);
 
   useEffect(() => {
     fetchQueue();
@@ -156,6 +164,12 @@ export default function YouthQueuePage() {
           >
             Sync with Trello
           </button>
+          <button
+            onClick={() => setPendingReviewsModal(true)}
+            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+          >
+            Pending Reviews
+          </button>
         </div>
       </div>
 
@@ -197,6 +211,13 @@ export default function YouthQueuePage() {
                 }
                 onEdit={() => setEditModal({ isOpen: true, youth })}
                 onDelete={() => handleDelete(youth.id, youth.name)}
+                onHistory={() =>
+                  setHistoryModal({
+                    isOpen: true,
+                    youthId: youth.id,
+                    youthName: youth.name,
+                  })
+                }
               />
             ))}
           </div>
@@ -222,6 +243,13 @@ export default function YouthQueuePage() {
                 }
                 onEdit={() => setEditModal({ isOpen: true, youth })}
                 onDelete={() => handleDelete(youth.id, youth.name)}
+                onHistory={() =>
+                  setHistoryModal({
+                    isOpen: true,
+                    youthId: youth.id,
+                    youthName: youth.name,
+                  })
+                }
               />
             ))}
           </div>
@@ -247,6 +275,13 @@ export default function YouthQueuePage() {
                 }
                 onEdit={() => setEditModal({ isOpen: true, youth })}
                 onDelete={() => handleDelete(youth.id, youth.name)}
+                onHistory={() =>
+                  setHistoryModal({
+                    isOpen: true,
+                    youthId: youth.id,
+                    youthName: youth.name,
+                  })
+                }
               />
             ))}
           </div>
@@ -283,6 +318,18 @@ export default function YouthQueuePage() {
           onClose={() => setEditModal(null)}
         />
       )}
+
+      {historyModal?.isOpen && (
+        <VisitHistoryModal
+          youthId={historyModal.youthId}
+          youthName={historyModal.youthName}
+          onClose={() => setHistoryModal(null)}
+        />
+      )}
+
+      {pendingReviewsModal && (
+        <PendingReviewsModal onClose={() => setPendingReviewsModal(false)} />
+      )}
     </div>
   );
 }
@@ -292,11 +339,13 @@ function YouthCard({
   onSchedule,
   onEdit,
   onDelete,
+  onHistory,
 }: {
   youth: Youth;
   onSchedule: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  onHistory: () => void;
 }) {
   const daysOverdue = Math.floor(
     (Date.now() - 180 * 24 * 60 * 60 * 1000 - youth.lastSeenAt) /
@@ -353,6 +402,12 @@ function YouthCard({
         </div>
 
         <div className="flex flex-wrap gap-2 ml-4">
+          <button
+            onClick={onHistory}
+            className="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
+          >
+            History
+          </button>
           {!youth.scheduled && (
             <button
               onClick={onSchedule}

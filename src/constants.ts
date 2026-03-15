@@ -89,6 +89,16 @@ export const REDIS_KEYS = {
   MESSAGED_CONTACT_PREFIX: "church:messaged:",
   YOUTH_HASH_PREFIX: "youth:",
   YOUTH_QUEUE: "youth:queue",
+  YOUTH_VISITS_PREFIX: "youth:visits:",
+  YOUTH_SYNCED_CARDS: "youth:syncedCards",
+  YOUTH_PENDING_REVIEWS: "youth:pendingReviews",
+} as const;
+
+// Trello sync configuration
+export const TRELLO_SYNC_CONFIG = {
+  YOUTH_LABEL_NAME: "Youth",
+  AUTO_COMMIT_THRESHOLD: 0.15,
+  REVIEW_THRESHOLD: 0.35,
 } as const;
 
 // Trello List IDs for Appointment Messaging

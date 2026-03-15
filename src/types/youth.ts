@@ -36,6 +36,36 @@ export interface YouthVisitTrelloCard {
   dateLastActivity: string;
 }
 
+export interface VisitHistoryItem {
+  id: string;
+  visitedAt: number;
+  visitType: string;
+  trelloUrl: string;
+  note?: string;
+}
+
+export interface VisitEvent {
+  contactId: string;
+  trelloCardId: string;
+  visitedAt: string;
+  source: "trello";
+  matchConfidence: number;
+}
+
+export interface MatchCandidate {
+  contactId: string;
+  fullName: string;
+  score: number;
+}
+
+export interface PendingReview {
+  trelloCardId: string;
+  cardTitle: string;
+  parsedName: string;
+  topCandidates: MatchCandidate[];
+  cardDate: string;
+}
+
 export interface SyncResult {
   markedVisited: string[];
   errors: string[];
