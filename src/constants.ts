@@ -91,6 +91,21 @@ export const REDIS_KEYS = {
   MESSAGED_CONTACT_PREFIX: "church:messaged:",
   YOUTH_HASH_PREFIX: "youth:",
   YOUTH_QUEUE: "youth:queue",
+  YOUTH_VISITS_PREFIX: "youth:visits:",
+  YOUTH_SYNCED_CARDS: "youth:syncedCards",
+  YOUTH_PENDING_REVIEWS: "youth:pendingReviews",
+} as const;
+
+// Trello sync configuration
+export const TRELLO_SYNC_CONFIG = {
+  YOUTH_LABEL_ID: "69b7682060c904a714a7d895",
+  YOUTH_VISIT_LABEL_IDS: [
+    "698423d96a77cbb730ddbfc5", // Bishop youth interview
+    "698142f18c51336104b0ca0b", // Counselor youth interview
+    "698142f18c51336104b0ca0c", // High school grad check-in
+  ] as string[],
+  AUTO_COMMIT_THRESHOLD: 0.15,
+  REVIEW_THRESHOLD: 0.35,
 } as const;
 
 // Trello List IDs for Appointment Messaging
@@ -103,6 +118,7 @@ export const TRELLO_LIST_IDS = {
   SETTING_APART_BOARD: ["6981403b91ce00795685a559", "5f62bc2052e58c7dc5740b4f"],
   YOUTH_VISITS_TO_SCHEDULE: "698142f18c51336104b0ca17",
   YOUTH_VISITS_COMPLETE: "698142f18c51336104b0ca19",
+  YOUTH_VISITS_BOARD: "698142f18c51336104b0c9d2",
 } as const;
 
 // Member selection constants

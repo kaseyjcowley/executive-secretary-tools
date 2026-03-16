@@ -4,6 +4,7 @@ import { useState } from "react";
 import { VisitTypeSelector } from "@/features/youth/components/VisitTypeSelector";
 import { YOUTH_VISIT_TYPES } from "@/constants/youth-visit-types";
 import toast from "react-hot-toast";
+import { scheduleVisitAction } from "@/actions/youth-visits";
 
 interface ScheduleVisitModalProps {
   youthId: string;
@@ -31,17 +32,7 @@ export function ScheduleVisitModal({
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`/api/youth/${youthId}/schedule`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ visitType, note: note.trim() || undefined }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to schedule");
-      }
-
-      const data = await response.json();
+      await scheduleVisitAction(youthId, visitType, note.trim() || undefined);
 
       toast.success(`Visit scheduled for ${youthName}`);
       onSuccess();
