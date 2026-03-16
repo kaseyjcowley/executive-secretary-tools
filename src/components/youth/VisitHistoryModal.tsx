@@ -128,11 +128,6 @@ export function VisitHistoryModal({
                     <div className="text-sm text-gray-500">
                       {format(new Date(visit.visitedAt), "MMMM d, yyyy")}
                     </div>
-                    {visit.note && (
-                      <div className="text-sm text-gray-600 mt-1 bg-gray-50 p-2 rounded">
-                        {visit.note}
-                      </div>
-                    )}
                     {visit.trelloUrl && (
                       <a
                         href={visit.trelloUrl}

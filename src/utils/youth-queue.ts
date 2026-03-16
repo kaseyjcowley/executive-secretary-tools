@@ -17,6 +17,7 @@ function deserializeYouth(raw: Record<string, string>): Youth {
   return {
     id: raw.id,
     name: raw.name,
+    preferredName: raw.preferredName || undefined,
     lastSeenAt: Number(raw.lastSeenAt),
     scheduled: raw.scheduled === "true",
     scheduledAt: raw.scheduledAt ? Number(raw.scheduledAt) : undefined,
@@ -83,6 +84,15 @@ export async function markVisited(id: string): Promise<void> {
     note: "",
   });
   await redis.zadd(REDIS_KEYS.YOUTH_QUEUE, normalScore(now), id);
+}
+
+export async function updatePreferredName(
+  id: string,
+  preferredName: string,
+): Promise<void> {
+  await redis.hset(`${REDIS_KEYS.YOUTH_HASH_PREFIX}${id}`, {
+    preferredName: preferredName || "",
+  });
 }
 
 export async function deleteYouth(id: string): Promise<void> {

@@ -41,7 +41,12 @@ export function YouthCard({
                 ✅
               </span>
             )}
-            <h3 className="font-semibold text-gray-900">{youth.name}</h3>
+            <h3 className="font-semibold text-gray-900">
+              {youth.preferredName || youth.name}
+            </h3>
+            {youth.preferredName && (
+              <span className="text-sm text-gray-500">({youth.name})</span>
+            )}
           </div>
 
           <p className="text-sm text-gray-600">

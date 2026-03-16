@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
 import toast from "react-hot-toast";
 import { ScheduleVisitModal } from "@/features/youth/components/ScheduleVisitModal";
-import { EditLastSeenModal } from "@/features/youth/components/EditLastSeenModal";
+import { EditYouthModal } from "@/features/youth/components/EditYouthModal";
 import { VisitHistoryModal } from "@/components/youth/VisitHistoryModal";
 import { PendingReviewsModal } from "@/components/youth/PendingReviewsModal";
 import type { Youth } from "@/types/youth";
@@ -12,6 +12,7 @@ import type { Youth } from "@/types/youth";
 export default function YouthQueuePage() {
   const [queue, setQueue] = useState<Youth[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRebuilding, setIsRebuilding] = useState(false);
   const [scheduleModal, setScheduleModal] = useState<{
     isOpen: boolean;
     youthId: string;
@@ -69,6 +70,37 @@ export default function YouthQueuePage() {
     } catch (error) {
       toast.dismiss(toastId);
       toast.error("Failed to sync");
+      console.error(error);
+    }
+  };
+
+  const handleRebuildVisitHistory = async () => {
+    if (
+      !confirm(
+        "Rebuild visit history for all youth? This will fetch fresh data from Trello.",
+      )
+    ) {
+      return;
+    }
+
+    const toastId = toast.loading("Rebuilding visit history for all youth...");
+
+    try {
+      const response = await fetch("/api/youth/rebuild-visits", {
+        method: "POST",
+      });
+      const data = await response.json();
+
+      toast.dismiss(toastId);
+
+      if (data.success) {
+        toast.success(`Rebuilt visit history for ${data.totalYouth} youth`);
+      } else {
+        toast.error(data.error || "Failed to rebuild visit history");
+      }
+    } catch (error) {
+      toast.dismiss(toastId);
+      toast.error("Failed to rebuild visit history");
       console.error(error);
     }
   };
@@ -163,6 +195,13 @@ export default function YouthQueuePage() {
             className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
           >
             Sync with Trello
+          </button>
+          <button
+            onClick={handleRebuildVisitHistory}
+            disabled={isRebuilding}
+            className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors disabled:opacity-50"
+          >
+            {isRebuilding ? "Rebuilding..." : "Rebuild Visit History"}
           </button>
           <button
             onClick={() => setPendingReviewsModal(true)}
@@ -310,9 +349,10 @@ export default function YouthQueuePage() {
       )}
 
       {editModal?.isOpen && (
-        <EditLastSeenModal
+        <EditYouthModal
           youthId={editModal.youth.id}
           youthName={editModal.youth.name}
+          youthPreferredName={editModal.youth.preferredName}
           currentLastSeen={editModal.youth.lastSeenAt}
           onSuccess={fetchQueue}
           onClose={() => setEditModal(null)}
@@ -372,7 +412,12 @@ function YouthCard({
                 ✅
               </span>
             )}
-            <h3 className="font-semibold text-gray-900">{youth.name}</h3>
+            <h3 className="font-semibold text-gray-900">
+              {youth.preferredName || youth.name}
+            </h3>
+            {youth.preferredName && (
+              <span className="text-sm text-gray-500">({youth.name})</span>
+            )}
           </div>
 
           <p className="text-sm text-gray-600">

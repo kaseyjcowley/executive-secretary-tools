@@ -16,16 +16,29 @@ interface SearchableContact {
 }
 
 export function buildFuseIndex(contacts: Youth[]): Fuse<SearchableContact> {
-  const searchable: SearchableContact[] = contacts.flatMap((contact) => [
-    {
-      contactId: contact.id,
-      fullName: contact.name,
-    },
-    {
-      contactId: contact.id,
-      fullName: contact.name.split(" ").reverse().join(" "),
-    },
-  ]);
+  const searchable: SearchableContact[] = contacts.flatMap((contact) => {
+    const entries: SearchableContact[] = [
+      {
+        contactId: contact.id,
+        fullName: contact.name,
+      },
+      {
+        contactId: contact.id,
+        fullName: contact.name.split(" ").reverse().join(" "),
+      },
+    ];
+    if (contact.preferredName) {
+      entries.push({
+        contactId: contact.id,
+        fullName: contact.preferredName,
+      });
+      entries.push({
+        contactId: contact.id,
+        fullName: contact.preferredName.split(" ").reverse().join(" "),
+      });
+    }
+    return entries;
+  });
 
   return new Fuse(searchable, {
     keys: ["fullName"],

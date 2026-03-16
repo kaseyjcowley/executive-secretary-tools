@@ -1,6 +1,7 @@
 export interface Youth {
   id: string;
   name: string;
+  preferredName?: string;
   lastSeenAt: number;
   scheduled: boolean;
   scheduledAt?: number;

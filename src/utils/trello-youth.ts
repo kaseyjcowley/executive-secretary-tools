@@ -20,6 +20,13 @@ import {
   createPendingReview,
 } from "./youth-name-match";
 
+export {
+  parseNameFromTitle,
+  buildFuseIndex,
+  matchCardToContact,
+  createPendingReview,
+} from "./youth-name-match";
+
 const TRELLO_API_KEY = process.env.TRELLO_API_KEY;
 const TRELLO_API_TOKEN = process.env.TRELLO_API_TOKEN;
 
@@ -27,6 +34,24 @@ interface TrelloLabel {
   id: string;
   name: string;
 }
+
+async function fetchTrelloLabels(): Promise<TrelloLabel[]> {
+  const response = await fetch(
+    `https://api.trello.com/1/boards/${TRELLO_LIST_IDS.YOUTH_VISITS_BOARD}/labels?key=${TRELLO_API_KEY}&token=${TRELLO_API_TOKEN}&limit=1000`,
+    { cache: "force-cache", next: { revalidate: 86400 } },
+  );
+
+  if (!response.ok) {
+    console.error("Failed to fetch Trello labels:", response.statusText);
+    return [];
+  }
+
+  return response.json();
+}
+
+const getCachedTrelloLabels = async () => {
+  return fetchTrelloLabels();
+};
 
 interface TrelloCard {
   id: string;
@@ -77,11 +102,12 @@ async function createTrelloCard(
   return { id: card.id, url: card.url };
 }
 
-async function fetchCompletedYouthCards(): Promise<TrelloCard[]> {
-  const response = await fetch(
-    `https://api.trello.com/1/lists/${TRELLO_LIST_IDS.YOUTH_VISITS_COMPLETE}/cards?key=${TRELLO_API_KEY}&token=${TRELLO_API_TOKEN}&fields=id,name,url,shortUrl,idList,dateLastActivity,desc&labels=all`,
-    { cache: "no-cache" },
-  );
+export async function fetchCompletedYouthCards(): Promise<TrelloCard[]> {
+  const boardId = TRELLO_LIST_IDS.YOUTH_VISITS_BOARD;
+
+  const url = `https://api.trello.com/1/boards/${boardId}/cards?key=${TRELLO_API_KEY}&token=${TRELLO_API_TOKEN}&fields=id,name,url,shortUrl,idList,dateLastActivity,desc,labels`;
+
+  const response = await fetch(url, { cache: "no-cache" });
 
   if (!response.ok) {
     throw new Error(`Failed to fetch Trello cards: ${response.statusText}`);
@@ -89,37 +115,48 @@ async function fetchCompletedYouthCards(): Promise<TrelloCard[]> {
 
   const cards: TrelloCard[] = await response.json();
 
-  return cards.filter((card) => {
-    const labels = card.labels || [];
-    const hasYouthLabel = labels.some(
-      (label) => label.id === TRELLO_SYNC_CONFIG.YOUTH_LABEL_ID,
-    );
-    const hasYouthVisitLabel = labels.some((label) =>
-      TRELLO_SYNC_CONFIG.YOUTH_VISIT_LABEL_IDS.includes(label.id),
-    );
-    return hasYouthLabel || hasYouthVisitLabel;
-  });
+  const completedListId = TRELLO_LIST_IDS.YOUTH_VISITS_COMPLETE;
+  return cards.filter((card) => card.idList === completedListId);
 }
 
-function extractVisitTypeFromCardName(cardName: string): string {
-  for (const [visitTypeId, visitType] of Object.entries(YOUTH_VISIT_TYPES)) {
-    if (
-      visitType.automationCode &&
-      cardName.endsWith(visitType.automationCode)
-    ) {
-      return visitTypeId;
+export async function extractVisitTypeFromCardName(
+  cardName: string,
+  labels?: TrelloLabel[],
+): Promise<string> {
+  if (!labels || labels.length === 0) {
+    return "other";
+  }
+
+  const allLabels = await getCachedTrelloLabels();
+
+  for (const cardLabel of labels) {
+    const boardLabel = allLabels.find((l) => l.id === cardLabel.id);
+    const labelName = boardLabel?.name || cardLabel.name;
+    const labelNameLower = labelName.toLowerCase();
+
+    for (const [visitTypeId, visitType] of Object.entries(YOUTH_VISIT_TYPES)) {
+      const typeNameLower = visitType.name.toLowerCase();
+      if (labelNameLower.includes(typeNameLower)) {
+        return visitTypeId;
+      }
     }
   }
+
   return "other";
 }
 
 export async function syncVisitHistory(
   youthName: string,
   youthId: string,
+  forceRebuild = false,
 ): Promise<VisitHistoryItem[]> {
-  const visits = await getVisitHistory(youthId);
-  if (visits.length > 0) {
-    return visits;
+  if (!forceRebuild) {
+    const visits = await getVisitHistory(youthId);
+    if (visits.length > 0) {
+      return visits;
+    }
+  } else {
+    await setVisitHistory(youthId, []);
   }
 
   const allYouth = await getQueue();
@@ -130,30 +167,19 @@ export async function syncVisitHistory(
   }
 
   const allCards = await fetchCompletedYouthCards();
-  console.log("Found cards:", allCards.length);
   const fuse = buildFuseIndex(allYouth);
 
   const visitsData: VisitHistoryItem[] = [];
 
   for (const card of allCards) {
     const parsedName = parseNameFromTitle(card.name);
-    console.log(
-      "Card:",
-      card.name,
-      "-> parsed:",
-      parsedName,
-      "-> looking for:",
-      youthName,
-    );
     const match = matchCardToContact(parsedName, fuse);
-
-    console.log("Match:", match);
 
     if (match.type === "commit" && match.contactId === youthId) {
       visitsData.push({
         id: card.id,
         visitedAt: new Date(card.dateLastActivity).getTime(),
-        visitType: extractVisitTypeFromCardName(card.name),
+        visitType: await extractVisitTypeFromCardName(card.name, card.labels),
         trelloUrl: card.url,
         note: card.desc || undefined,
       });
