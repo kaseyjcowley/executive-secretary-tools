@@ -130,13 +130,24 @@ export async function syncVisitHistory(
   }
 
   const allCards = await fetchCompletedYouthCards();
+  console.log("Found cards:", allCards.length);
   const fuse = buildFuseIndex(allYouth);
 
   const visitsData: VisitHistoryItem[] = [];
 
   for (const card of allCards) {
     const parsedName = parseNameFromTitle(card.name);
+    console.log(
+      "Card:",
+      card.name,
+      "-> parsed:",
+      parsedName,
+      "-> looking for:",
+      youthName,
+    );
     const match = matchCardToContact(parsedName, fuse);
+
+    console.log("Match:", match);
 
     if (match.type === "commit" && match.contactId === youthId) {
       visitsData.push({
