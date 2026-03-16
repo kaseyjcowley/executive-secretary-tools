@@ -2,56 +2,121 @@ import { NextRequest, NextResponse } from "next/server";
 import { App } from "@slack/bolt";
 
 import { SlackChannelId } from "@/constants";
+import { app } from "@/utils/slack";
 
-const app = new App({
-  token: process.env.SLACK_USER_OAUTH_TOKEN,
-  signingSecret: process.env.SLACK_SIGNING_SECRET,
-});
+const slackApp = app;
 
-function getPrayersFromMessage(message: string) {
-  const openingPrayerMatch = message.match(
-    /opening prayer:?\s([a-zA-Z]+\s[a-zA-Z]+)/i
-  );
-  const closingPrayerMatch = message.match(
-    /closing prayer:?\s([a-zA-Z]+\s[a-zA-Z]+)/i
-  );
+interface PrayerAssignment {
+  openingPrayer: string | null;
+  closingPrayer: string | null;
+}
 
-  if (!openingPrayerMatch || !closingPrayerMatch) {
-    throw new Error(
-      `something went wrong parsing the opening and closing prayers: opening: ${openingPrayerMatch}, closing: ${closingPrayerMatch}`
-    );
-  }
+function extractPrayers(message: string): PrayerAssignment {
+  const openingMatch = message.match(/opening prayer:?\s*\n\s*([^\n]+)/i);
+  const closingMatch = message.match(/closing prayer:?\s*\n\s*([^\n]+)/i);
 
   return {
-    invocation: openingPrayerMatch[1].trim(),
-    benediction: closingPrayerMatch[1].trim(),
+    openingPrayer: openingMatch ? openingMatch[1].trim() : null,
+    closingPrayer: closingMatch ? closingMatch[1].trim() : null,
   };
 }
 
+async function getConductorFromTopic(
+  channelId: string,
+): Promise<string | null> {
+  const response = await slackApp.client.conversations.info({
+    channel: channelId,
+  });
+
+  const topic = response.channel?.topic?.value;
+
+  console.log(`[Prayer Bot] Channel topic: "${topic}"`);
+
+  if (!topic) return null;
+
+  const conductorMatch = topic.match(/<@(U[A-Z0-9]+)>/);
+  return conductorMatch ? conductorMatch[1] : null;
+}
+
 export async function POST(request: NextRequest) {
-  let body;
+  const authHeader = request.headers.get("x-webhook-secret");
+  if (authHeader !== process.env.PRAYER_WEBHOOK_SECRET) {
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
+  }
+
+  let body: { message?: string; dryRun?: boolean };
   try {
     body = await request.json();
-  } catch (e) {
-    throw new Error("no request body found");
+  } catch {
+    return NextResponse.json(
+      { success: false, error: "Invalid JSON body" },
+      { status: 400 },
+    );
   }
 
   const { message, dryRun } = body;
 
-  if (!message) {
-    throw new Error('missing payload value: "message"');
+  if (dryRun) {
+    console.log(`[Prayer Bot] Dry run requested`);
   }
 
-  const { invocation, benediction } = getPrayersFromMessage(message);
+  if (!message) {
+    return NextResponse.json(
+      { success: false, error: 'Missing payload value: "message"' },
+      { status: 400 },
+    );
+  }
 
-  await app.client.chat.postMessage({
-    channel: dryRun
-      ? SlackChannelId.automationTesting
-      : SlackChannelId.bishopric,
-    text: `Sacrament meeting prayers:
+  const { openingPrayer, closingPrayer } = extractPrayers(message);
 
-Opening prayer: ${invocation}
-Closing prayer: ${benediction}`,
+  if (!openingPrayer || !closingPrayer) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: `Could not parse prayer assignments. Parsed: opening="${openingPrayer}", closing="${closingPrayer}"`,
+      },
+      { status: 422 },
+    );
+  }
+
+  const targetChannel = dryRun
+    ? SlackChannelId.automationTesting
+    : SlackChannelId.bishopric;
+
+  console.log(
+    `[Prayer Bot] Target channel: ${targetChannel} (dryRun: ${dryRun})`,
+  );
+
+  const conductorId = await getConductorFromTopic(targetChannel).catch(
+    () => null,
+  );
+
+  if (conductorId) {
+    console.log(`[Prayer Bot] Found conductor from topic: ${conductorId}`);
+  } else {
+    console.log(`[Prayer Bot] No conductor found in channel topic`);
+  }
+
+  let messageText = "";
+
+  if (conductorId) {
+    messageText += `🙏 <@${conductorId}> — here are this week's Sacrament meeting prayer assignments. 🙏\n\n`;
+  } else {
+    messageText += `🙏 Here are this week's Sacrament meeting prayer assignments. 🙏\n\n`;
+  }
+
+  messageText += `*Opening Prayer:* ${openingPrayer}\n*Closing Prayer:* ${closingPrayer}`;
+
+  console.log(
+    `[Prayer Bot] Posting message: ${messageText.replace(/\n/g, "\\n")}`,
+  );
+
+  await slackApp.client.chat.postMessage({
+    channel: targetChannel,
+    text: messageText,
   });
 
   return NextResponse.json({ success: true });

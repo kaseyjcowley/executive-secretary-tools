@@ -63,6 +63,17 @@ async function checkIPAccess(request: NextRequest): Promise<boolean> {
   return true;
 }
 
+const PUBLIC_PATHS = [
+  "/api/auth/",
+  "/auth/signin",
+  "/api/crons/",
+  "/api/cron/",
+  "/api/slack/",
+  "/api/post-prayers-to-slack",
+  "/api/post-interviews-to-slack",
+  "/api/interviews",
+];
+
 export default withAuth(
   async function middleware(req) {
     const { pathname } = req.nextUrl;
@@ -80,7 +91,13 @@ export default withAuth(
   },
   {
     callbacks: {
-      authorized: ({ token }) => !!token,
+      authorized: ({ token, req }) => {
+        const { pathname } = req.nextUrl;
+        if (PUBLIC_PATHS.some((path) => pathname.startsWith(path))) {
+          return true;
+        }
+        return !!token;
+      },
     },
   },
 );
@@ -88,6 +105,6 @@ export default withAuth(
 export const config = {
   matcher: [
     "/internal/:path*",
-    "/((?!api/auth/|auth/|_next/static|_next/image|favicon.ico).*)",
+    "/((?!_next/static|_next/image|favicon.ico).*)",
   ],
 };
