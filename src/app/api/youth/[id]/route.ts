@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getYouthById, deleteYouth } from "@/utils/youth-queue";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const youth = await getYouthById(params.id);
     if (!youth) {
@@ -20,10 +18,8 @@ export async function GET(
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     await deleteYouth(params.id);
     return NextResponse.json({ success: true });

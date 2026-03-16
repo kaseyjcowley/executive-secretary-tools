@@ -36,7 +36,7 @@ Object.defineProperty(window, "matchMedia", {
 });
 
 const customRender = (
-  ui: ReactElement,
+  ui: ReactElement<any>,
   options?: Omit<RenderOptions, "wrapper">,
 ) => {
   return render(ui, { ...options });

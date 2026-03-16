@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Fuse from "fuse.js";
 import { Contact } from "@/types/messages";
-import { ContactList } from "@/components/ContactList";
+import { ContactList } from "@/features/messages/components/ContactList";
 import {
   ContactFilters,
   filterContacts,
