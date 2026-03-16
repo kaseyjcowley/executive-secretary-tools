@@ -129,21 +129,25 @@ export async function syncVisitHistory(
     return [];
   }
 
-  const syncedCards = await getSyncedCardIds();
   const allCards = await fetchCompletedYouthCards();
+  const fuse = buildFuseIndex(allYouth);
 
-  const youthCards = allCards.filter(
-    (card) =>
-      syncedCards.has(card.id) || card.id === matchingYouth.trelloCardId,
-  );
+  const visitsData: VisitHistoryItem[] = [];
 
-  const visitsData: VisitHistoryItem[] = youthCards.map((card) => ({
-    id: card.id,
-    visitedAt: new Date(card.dateLastActivity).getTime(),
-    visitType: extractVisitTypeFromCardName(card.name),
-    trelloUrl: card.url,
-    note: card.desc || undefined,
-  }));
+  for (const card of allCards) {
+    const parsedName = parseNameFromTitle(card.name);
+    const match = matchCardToContact(parsedName, fuse);
+
+    if (match.type === "commit" && match.contactId === youthId) {
+      visitsData.push({
+        id: card.id,
+        visitedAt: new Date(card.dateLastActivity).getTime(),
+        visitType: extractVisitTypeFromCardName(card.name),
+        trelloUrl: card.url,
+        note: card.desc || undefined,
+      });
+    }
+  }
 
   visitsData.sort((a, b) => b.visitedAt - a.visitedAt);
 
