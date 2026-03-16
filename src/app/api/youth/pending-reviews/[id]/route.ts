@@ -6,8 +6,9 @@ import {
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   try {
     const body = await request.json();
     const { action, youthId } = body;
@@ -19,10 +20,10 @@ export async function POST(
           { status: 400 },
         );
       }
-      await confirmPendingReview(params.id, youthId);
+      await confirmPendingReview(id, youthId);
       return NextResponse.json({ success: true, message: "Visit confirmed" });
     } else if (action === "dismiss") {
-      await dismissPendingReview(params.id);
+      await dismissPendingReview(id);
       return NextResponse.json({ success: true, message: "Review dismissed" });
     } else {
       return NextResponse.json(
