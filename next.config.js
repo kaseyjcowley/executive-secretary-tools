@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverActions: true,
+  turbopack: {
+    rules: {
+      "*.txt": { loaders: ["raw-loader"], as: "*.js" },
+    },
   },
   webpack: (config, { isServer }) => {
     config.module.rules.push({

@@ -48,6 +48,7 @@ export function MemberSelector({
           <div key={index} className="flex items-center gap-1">
             <div className="w-full md:w-auto min-w-[200px]">
               <TypeAhead
+                instanceId={`member-select-${index}`}
                 options={memberOptions}
                 value={selectedOption}
                 onChange={(option) =>

@@ -13,6 +13,7 @@ interface TypeAheadProps {
   className?: string;
   placeholder?: string;
   menuPlacement?: "auto" | "top" | "bottom";
+  instanceId?: string;
 }
 
 const customStyles: StylesConfig<TypeAheadOption, false> = {
@@ -63,9 +64,11 @@ export const TypeAhead: React.FC<TypeAheadProps> = ({
   className = "",
   placeholder = "Select...",
   menuPlacement = "auto",
+  instanceId,
 }) => {
   return (
     <Select
+      instanceId={instanceId || "typeahead-select"}
       options={options}
       value={value}
       onChange={onChange}

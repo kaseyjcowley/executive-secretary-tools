@@ -6,7 +6,7 @@ import { Providers } from "./providers";
 import { LogoutButton } from "@/components/ui/LogoutButton";
 import { IconClock } from "@/components/ui/Icons";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: "Executive Secretary Tools",
@@ -20,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.variable} font-sans`}>
         <Providers>
           <header className="flex justify-between items-center px-4 sm:px-6 lg:px-8 py-4 bg-slate-50">
             <div className="p-2 bg-blue-100 rounded-lg">

@@ -3,10 +3,8 @@ import { getYouthById } from "@/utils/youth-queue";
 import { REDIS_KEYS } from "@/constants";
 import redis from "@/utils/redis";
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const body = await request.json();
     const { lastSeenAt } = body;

@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -14,6 +14,7 @@
     "@ai-sdk/groq": "^3.0.29",
     "@slack/bolt": "^3.14.0",
     "@types/nodemailer": "^6.4.17",
+    "@vercel/functions": "^3.4.3",
     "ai": "^6.0.116",
     "autoprefixer": "10.4.15",
     "date-fns": "^2.30.0",
@@ -22,14 +23,14 @@
     "googleapis": "^144.0.0",
     "ioredis": "^5.6.0",
     "nanoid": "^5.1.6",
-    "next": "13.4.19",
+    "next": "16.1.6",
     "next-auth": "^4.24.13",
     "nodemailer": "^6.10.0",
     "postcss": "8.4.29",
     "prettier": "^3.3.3",
     "rambdax": "^10.0.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
     "react-hot-toast": "^2.6.0",
     "react-select": "^5.10.2",
     "tailwindcss": "3.3.3",
@@ -40,16 +41,23 @@
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "20.6.0",
-    "@types/react": "18.2.21",
-    "@types/react-dom": "18.2.7",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "^5.1.4",
     "dotenv": "^17.3.1",
-    "eslint": "8.49.0",
-    "eslint-config-next": "13.4.19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
     "jest-environment-jsdom": "^30.2.0",
     "msw": "^2.12.10",
+    "raw-loader": "^4.0.2",
     "typescript": "5.2.2",
     "vitest": "^4.0.18",
     "webpack-node-externals": "^3.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.2.14",
+      "@types/react-dom": "19.2.3"
+    }
   }
 }

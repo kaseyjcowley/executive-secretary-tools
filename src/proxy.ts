@@ -1,6 +1,7 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { ipAddress } from "@vercel/functions";
+import { NextRequest } from "next/server";
 
 function getClientIP(request: NextRequest): string {
   const vercelForwardedFor = request.headers.get("x-vercel-forwarded-for");
@@ -18,8 +19,8 @@ function getClientIP(request: NextRequest): string {
     return realIP.trim();
   }
 
-  if (request.ip) {
-    return request.ip;
+  if (ipAddress(request)) {
+    return ipAddress(request) as string;
   }
 
   return "";
@@ -39,7 +40,7 @@ async function checkIPAccess(request: NextRequest): Promise<boolean> {
     "x-vercel-forwarded-for": request.headers.get("x-vercel-forwarded-for"),
     "x-forwarded-for": request.headers.get("x-forwarded-for"),
     "x-real-ip": request.headers.get("x-real-ip"),
-    "request.ip": request.ip,
+    "request.ip": ipAddress(request),
     detected: clientIP,
     allowed: allowedIPs,
   });
@@ -75,7 +76,7 @@ const PUBLIC_PATHS = [
 ];
 
 export default withAuth(
-  async function middleware(req) {
+  async function proxy(req) {
     const { pathname } = req.nextUrl;
 
     if (pathname.startsWith("/internal")) {

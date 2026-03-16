@@ -7,6 +7,8 @@ import { IconMail } from "@/components/ui/Icons";
 import { MessagesLoadingSkeleton } from "@/features/messages/components/MessagesLoadingSkeleton";
 import { MessagesErrorState } from "@/features/messages/components/MessagesErrorState";
 
+export const dynamic = "force-dynamic";
+
 export default async function MessagesPage() {
   let contacts;
   try {
