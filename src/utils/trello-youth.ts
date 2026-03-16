@@ -61,6 +61,7 @@ interface TrelloCard {
   shortUrl: string;
   idList: string;
   dateLastActivity: string;
+  due: string | null;
   labels: TrelloLabel[];
 }
 
@@ -105,7 +106,7 @@ async function createTrelloCard(
 export async function fetchCompletedYouthCards(): Promise<TrelloCard[]> {
   const boardId = TRELLO_LIST_IDS.YOUTH_VISITS_BOARD;
 
-  const url = `https://api.trello.com/1/boards/${boardId}/cards?key=${TRELLO_API_KEY}&token=${TRELLO_API_TOKEN}&fields=id,name,url,shortUrl,idList,dateLastActivity,desc,labels`;
+  const url = `https://api.trello.com/1/boards/${boardId}/cards?key=${TRELLO_API_KEY}&token=${TRELLO_API_TOKEN}&fields=id,name,url,shortUrl,idList,dateLastActivity,due,desc,labels`;
 
   const response = await fetch(url, { cache: "no-cache" });
 
@@ -176,9 +177,12 @@ export async function syncVisitHistory(
     const match = matchCardToContact(parsedName, fuse);
 
     if (match.type === "commit" && match.contactId === youthId) {
+      const visitedAt = card.due
+        ? new Date(card.due).getTime()
+        : new Date(card.dateLastActivity).getTime();
       visitsData.push({
         id: card.id,
-        visitedAt: new Date(card.dateLastActivity).getTime(),
+        visitedAt,
         visitType: await extractVisitTypeFromCardName(card.name, card.labels),
         trelloUrl: card.url,
         note: card.desc || undefined,

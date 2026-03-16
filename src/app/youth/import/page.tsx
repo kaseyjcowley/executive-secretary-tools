@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { importYouthAction } from "@/actions/youth-visits";
 
 export default function ImportYouthPage() {
   const router = useRouter();
@@ -25,18 +26,7 @@ export default function ImportYouthPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/youth/import", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ names }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to import");
-      }
-
+      const data = await importYouthAction(names);
       toast.success(`Imported ${data.imported} youth`);
       router.push("/youth");
     } catch (error) {

@@ -4,6 +4,12 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import type { VisitHistoryItem } from "@/types/youth";
 import { YOUTH_VISIT_TYPES } from "@/constants/youth-visit-types";
+import {
+  getVisitHistoryAction,
+  updateLastSeenAtAction,
+  updatePreferredNameAction,
+  setVisitHistoryAction,
+} from "@/actions/youth-visits";
 
 interface EditYouthModalProps {
   youthId: string;
@@ -37,9 +43,8 @@ export function EditYouthModal({
   useEffect(() => {
     async function fetchVisitHistory() {
       try {
-        const response = await fetch(`/api/youth/${youthId}/visits`);
-        const data = await response.json();
-        setVisitHistory(data.visits || []);
+        const { visits } = await getVisitHistoryAction(youthId);
+        setVisitHistory(visits || []);
       } catch (error) {
         console.error("Error fetching visit history:", error);
       } finally {
@@ -54,28 +59,11 @@ export function EditYouthModal({
 
     try {
       if (preferredName !== (youthPreferredName || "")) {
-        const prefResponse = await fetch(
-          `/api/youth/${youthId}/preferred-name`,
-          {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ preferredName }),
-          },
-        );
-        if (!prefResponse.ok) {
-          throw new Error("Failed to update preferred name");
-        }
+        await updatePreferredNameAction(youthId, preferredName);
       }
 
-      const response = await fetch(`/api/youth/${youthId}/last-seen`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lastSeenAt: date }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to update");
-      }
+      const timestamp = new Date(date).getTime();
+      await updateLastSeenAtAction(youthId, timestamp);
 
       toast.success(`Updated for ${youthName}`);
       onSuccess();
@@ -108,15 +96,7 @@ export function EditYouthModal({
     );
 
     try {
-      const response = await fetch(`/api/youth/${youthId}/visits`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ visits: updatedHistory }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to update visits");
-      }
+      await setVisitHistoryAction(youthId, updatedHistory);
 
       setVisitHistory(updatedHistory);
 
@@ -126,15 +106,8 @@ export function EditYouthModal({
         .split("T")[0];
       setDate(newDate);
 
-      const lastSeenResponse = await fetch(`/api/youth/${youthId}/last-seen`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lastSeenAt: newDate }),
-      });
-
-      if (!lastSeenResponse.ok) {
-        throw new Error("Failed to update last seen");
-      }
+      const timestampMs = new Date(newDate).getTime();
+      await updateLastSeenAtAction(youthId, timestampMs);
 
       toast.success("Visit added");
       setNewVisitDate("");
@@ -150,15 +123,7 @@ export function EditYouthModal({
     const updatedHistory = visitHistory.filter((v) => v.id !== visitId);
 
     try {
-      const response = await fetch(`/api/youth/${youthId}/visits`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ visits: updatedHistory }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to update visits");
-      }
+      await setVisitHistoryAction(youthId, updatedHistory);
 
       setVisitHistory(updatedHistory);
 

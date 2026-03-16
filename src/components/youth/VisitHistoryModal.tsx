@@ -5,6 +5,10 @@ import { format } from "date-fns";
 import toast from "react-hot-toast";
 import { YOUTH_VISIT_TYPES } from "@/constants/youth-visit-types";
 import type { VisitHistoryItem } from "@/types/youth";
+import {
+  getVisitHistoryAction,
+  rebuildVisitHistoryAction,
+} from "@/actions/youth-visits";
 
 interface VisitHistoryModalProps {
   youthId: string;
@@ -27,10 +31,9 @@ export function VisitHistoryModal({
 
   const fetchVisits = async () => {
     try {
-      const response = await fetch(`/api/youth/${youthId}/visits`);
-      const data = await response.json();
-      if (data.visits) {
-        setVisits(data.visits);
+      const { visits: visitsData } = await getVisitHistoryAction(youthId);
+      if (visitsData) {
+        setVisits(visitsData);
       }
     } catch (error) {
       console.error("Failed to fetch visits:", error);
@@ -43,12 +46,12 @@ export function VisitHistoryModal({
   const handleRebuild = async () => {
     setIsRebuilding(true);
     try {
-      const response = await fetch(`/api/youth/${youthId}/visits`, {
-        method: "POST",
-      });
-      const data = await response.json();
-      if (data.visits) {
-        setVisits(data.visits);
+      const { visits: rebuiltVisits } = await rebuildVisitHistoryAction(
+        youthId,
+        true,
+      );
+      if (rebuiltVisits) {
+        setVisits(rebuiltVisits);
         toast.success("Visit history rebuilt from Trello");
       }
     } catch (error) {

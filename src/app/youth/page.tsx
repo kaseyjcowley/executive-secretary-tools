@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { formatDistanceToNow } from "date-fns";
 import toast from "react-hot-toast";
 import { ScheduleVisitModal } from "@/features/youth/components/ScheduleVisitModal";
 import { EditYouthModal } from "@/features/youth/components/EditYouthModal";
 import { VisitHistoryModal } from "@/components/youth/VisitHistoryModal";
 import { PendingReviewsModal } from "@/components/youth/PendingReviewsModal";
+import { getQueueAction, deleteYouthAction } from "@/actions/youth";
+import { syncWithTrelloAction } from "@/actions/sync";
+import { rebuildAllVisitHistoriesAction } from "@/actions/youth-visits";
 import type { Youth } from "@/types/youth";
 
 export default function YouthQueuePage() {
@@ -35,9 +38,8 @@ export default function YouthQueuePage() {
 
   const fetchQueue = async () => {
     try {
-      const response = await fetch("/api/queue");
-      const data = await response.json();
-      setQueue(data.queue);
+      const queue = await getQueueAction();
+      setQueue(queue);
     } catch (error) {
       toast.error("Failed to load queue");
       console.error(error);
@@ -50,8 +52,7 @@ export default function YouthQueuePage() {
     const toastId = toast.loading("Syncing with Trello...");
 
     try {
-      const response = await fetch("/api/youth/sync", { method: "POST" });
-      const data = await response.json();
+      const data = await syncWithTrelloAction();
 
       toast.dismiss(toastId);
 
@@ -86,17 +87,14 @@ export default function YouthQueuePage() {
     const toastId = toast.loading("Rebuilding visit history for all youth...");
 
     try {
-      const response = await fetch("/api/youth/rebuild-visits", {
-        method: "POST",
-      });
-      const data = await response.json();
+      const data = await rebuildAllVisitHistoriesAction();
 
       toast.dismiss(toastId);
 
       if (data.success) {
         toast.success(`Rebuilt visit history for ${data.totalYouth} youth`);
       } else {
-        toast.error(data.error || "Failed to rebuild visit history");
+        toast.error("Failed to rebuild visit history");
       }
     } catch (error) {
       toast.dismiss(toastId);
@@ -105,40 +103,11 @@ export default function YouthQueuePage() {
     }
   };
 
-  const handleResetUnseen = async () => {
-    if (
-      !confirm(
-        "Reset all recently added youth to 'never seen'? This will mark them as overdue.",
-      )
-    ) {
-      return;
-    }
-
-    try {
-      const response = await fetch("/api/youth/reset-unseen", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ minutesAgo: 60 }),
-      });
-      const data = await response.json();
-
-      if (data.reset > 0) {
-        toast.success(`Reset ${data.reset} youth to never seen`);
-        fetchQueue();
-      } else {
-        toast.success(data.message || "No youth to reset");
-      }
-    } catch (error) {
-      toast.error("Failed to reset");
-      console.error(error);
-    }
-  };
-
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`Remove ${name} from the queue?`)) return;
 
     try {
-      await fetch(`/api/youth/${id}`, { method: "DELETE" });
+      await deleteYouthAction(id);
       toast.success(`${name} removed from queue`);
       fetchQueue();
     } catch (error) {

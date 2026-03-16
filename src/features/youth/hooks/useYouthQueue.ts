@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
 import type { Youth } from "@/types/youth";
+import { getQueueAction, deleteYouthAction } from "@/actions/youth";
+import { syncWithTrelloAction } from "@/actions/sync";
 
 interface UseYouthQueueReturn {
   queue: Youth[];
@@ -8,7 +10,6 @@ interface UseYouthQueueReturn {
   error: Error | null;
   refetch: () => Promise<void>;
   sync: () => Promise<void>;
-  resetUnseen: () => Promise<void>;
   removeYouth: (id: string, name: string) => Promise<void>;
 }
 
@@ -21,9 +22,8 @@ export function useYouthQueue(): UseYouthQueueReturn {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/queue");
-      const data = await response.json();
-      setQueue(data.queue);
+      const queueData = await getQueueAction();
+      setQueue(queueData);
     } catch (err) {
       console.error("Failed to load queue:", err);
       setError(err instanceof Error ? err : new Error("Failed to load queue"));
@@ -41,8 +41,7 @@ export function useYouthQueue(): UseYouthQueueReturn {
     const toastId = toast.loading("Syncing with Trello...");
 
     try {
-      const response = await fetch("/api/youth/sync", { method: "POST" });
-      const data = await response.json();
+      const data = await syncWithTrelloAction();
 
       toast.dismiss(toastId);
 
@@ -65,41 +64,12 @@ export function useYouthQueue(): UseYouthQueueReturn {
     }
   }, [fetchQueue]);
 
-  const resetUnseen = useCallback(async () => {
-    if (
-      !confirm(
-        "Reset all recently added youth to 'never seen'? This will mark them as overdue.",
-      )
-    ) {
-      return;
-    }
-
-    try {
-      const response = await fetch("/api/youth/reset-unseen", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ minutesAgo: 60 }),
-      });
-      const data = await response.json();
-
-      if (data.reset > 0) {
-        toast.success(`Reset ${data.reset} youth to never seen`);
-        fetchQueue();
-      } else {
-        toast.success(data.message || "No youth to reset");
-      }
-    } catch (err) {
-      toast.error("Failed to reset");
-      console.error(err);
-    }
-  }, [fetchQueue]);
-
   const removeYouth = useCallback(
     async (id: string, name: string) => {
       if (!confirm(`Remove ${name} from the queue?`)) return;
 
       try {
-        await fetch(`/api/youth/${id}`, { method: "DELETE" });
+        await deleteYouthAction(id);
         toast.success(`${name} removed from queue`);
         fetchQueue();
       } catch (err) {
@@ -116,7 +86,6 @@ export function useYouthQueue(): UseYouthQueueReturn {
     error,
     refetch: fetchQueue,
     sync,
-    resetUnseen,
     removeYouth,
   };
 }

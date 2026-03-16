@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { createYouthAction } from "@/actions/youth";
 
 export default function NewYouthPage() {
   const router = useRouter();
@@ -20,14 +21,7 @@ export default function NewYouthPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/youth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim() }),
-      });
-
-      if (!response.ok) throw new Error("Failed to create youth");
-
+      await createYouthAction(name.trim());
       toast.success(`${name.trim()} added to queue`);
       router.push("/youth");
     } catch (error) {

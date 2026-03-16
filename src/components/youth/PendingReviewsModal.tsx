@@ -4,7 +4,12 @@ import { useState, useEffect, useCallback } from "react";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import type { PendingReview, MatchCandidate } from "@/types/youth";
-import { getQueue } from "@/utils/youth-queue";
+import {
+  getPendingReviewsAction,
+  syncPendingReviewsAction,
+  confirmPendingReviewAction,
+  dismissPendingReviewAction,
+} from "@/actions/youth-pending-reviews";
 
 interface PendingReviewsModalProps {
   onClose: () => void;
@@ -17,10 +22,9 @@ export function PendingReviewsModal({ onClose }: PendingReviewsModalProps) {
 
   const fetchReviews = useCallback(async () => {
     try {
-      const response = await fetch("/api/youth/pending-reviews");
-      const data = await response.json();
-      if (data.reviews) {
-        setReviews(data.reviews);
+      const { reviews: reviewsData } = await getPendingReviewsAction();
+      if (reviewsData) {
+        setReviews(reviewsData);
       }
     } catch (error) {
       console.error("Failed to fetch reviews:", error);
@@ -37,10 +41,7 @@ export function PendingReviewsModal({ onClose }: PendingReviewsModalProps) {
   const handleSync = async () => {
     setIsSyncing(true);
     try {
-      const response = await fetch("/api/youth/pending-reviews", {
-        method: "POST",
-      });
-      const data = await response.json();
+      const data = await syncPendingReviewsAction();
       if (data.committed !== undefined) {
         toast.success(
           `Synced: ${data.committed} committed, ${data.pending} pending review, ${data.noMatch} no match`,
@@ -57,18 +58,9 @@ export function PendingReviewsModal({ onClose }: PendingReviewsModalProps) {
 
   const handleConfirm = async (trelloCardId: string, youthId: string) => {
     try {
-      const response = await fetch(
-        `/api/youth/pending-reviews/${trelloCardId}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "confirm", youthId }),
-        },
-      );
-      if (response.ok) {
-        toast.success("Visit confirmed");
-        fetchReviews();
-      }
+      await confirmPendingReviewAction(trelloCardId, youthId);
+      toast.success("Visit confirmed");
+      fetchReviews();
     } catch (error) {
       console.error("Failed to confirm:", error);
       toast.error("Failed to confirm visit");
@@ -77,18 +69,9 @@ export function PendingReviewsModal({ onClose }: PendingReviewsModalProps) {
 
   const handleDismiss = async (trelloCardId: string) => {
     try {
-      const response = await fetch(
-        `/api/youth/pending-reviews/${trelloCardId}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "dismiss" }),
-        },
-      );
-      if (response.ok) {
-        toast.success("Review dismissed");
-        fetchReviews();
-      }
+      await dismissPendingReviewAction(trelloCardId);
+      toast.success("Review dismissed");
+      fetchReviews();
     } catch (error) {
       console.error("Failed to dismiss:", error);
       toast.error("Failed to dismiss review");
