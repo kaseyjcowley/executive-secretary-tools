@@ -1,26 +1,64 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import Link from "next/link";
 import { format } from "date-fns";
+import Link from "next/link";
 
-interface DashboardData {
-  messages: {
-    total: number;
-    messaged: number;
-    unmessaged: number;
+import { getQueue } from "@/utils/youth-queue";
+import {
+  fetchAllCardsGroupedByMember,
+  getAppointmentContacts,
+} from "@/requests/cards";
+import { getMessagedContactIds } from "@/utils/get-messaged-contacts";
+
+const SIX_MONTHS_MS = 180 * 24 * 60 * 60 * 1000;
+
+async function getDashboardData() {
+  const [contacts, interviews, queue] = await Promise.all([
+    getAppointmentContacts(),
+    fetchAllCardsGroupedByMember(),
+    getQueue(),
+  ]);
+
+  const messagedIds = await getMessagedContactIds(contacts.map((c) => c.name));
+  const messagedSet = messagedIds;
+
+  const totalContacts = contacts.length;
+  const messagedCount = messagedSet.size;
+  const unmessagedCount = totalContacts - messagedCount;
+
+  const interviewCounts: Record<string, number> = {};
+  let totalInterviews = 0;
+  Object.entries(interviews).forEach(([memberId, cards]) => {
+    interviewCounts[memberId] = cards.length;
+    totalInterviews += cards.length;
+  });
+
+  const totalYouth = queue.length;
+  const scheduledYouth = queue.filter((y) => y.scheduled).length;
+  const now = Date.now();
+  const overdueYouth = queue.filter(
+    (y) => !y.scheduled && now - y.lastSeenAt > SIX_MONTHS_MS,
+  ).length;
+  const recentlyVisited = queue.filter(
+    (y) => !y.scheduled && now - y.lastSeenAt <= SIX_MONTHS_MS,
+  ).length;
+
+  return {
+    messages: {
+      total: totalContacts,
+      messaged: messagedCount,
+      unmessaged: unmessagedCount,
+    },
+    interviews: {
+      total: totalInterviews,
+      byMember: interviewCounts,
+    },
+    youth: {
+      total: totalYouth,
+      scheduled: scheduledYouth,
+      overdue: overdueYouth,
+      recentlyVisited,
+    },
+    lastUpdated: new Date().toISOString(),
   };
-  interviews: {
-    total: number;
-    byMember: Record<string, number>;
-  };
-  youth: {
-    total: number;
-    scheduled: number;
-    overdue: number;
-    recentlyVisited: number;
-  };
-  lastUpdated: string;
 }
 
 function getGreeting(): string {
@@ -30,61 +68,8 @@ function getGreeting(): string {
   return "Good evening";
 }
 
-export default function DashboardPage() {
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchDashboard();
-  }, []);
-
-  const fetchDashboard = async () => {
-    try {
-      const response = await fetch("/api/dashboard");
-      if (!response.ok) {
-        throw new Error("Failed to fetch dashboard");
-      }
-      const dashboardData = await response.json();
-      setData(dashboardData);
-    } catch (err) {
-      setError("Failed to load dashboard");
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-gray-200 rounded w-64" />
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded-lg" />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !data) {
-    return (
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <p className="text-red-600">{error || "Failed to load dashboard"}</p>
-          <button
-            onClick={fetchDashboard}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
+export default async function DashboardPage() {
+  const data = await getDashboardData();
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -143,17 +128,23 @@ export default function DashboardPage() {
       </section>
 
       <section className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">All Pages</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <NavLink href="/messages" label="Messages" icon="📬" />
+          <NavLink href="/interviews" label="Interviews" icon="📅" />
+          <NavLink href="/youth" label="Youth" icon="👦" />
+          <NavLink href="/conductors" label="Conductors" icon="🎵" />
+          <NavLink href="/youth/new" label="New Youth" icon="➕" />
+          <NavLink href="/youth/import" label="Import Youth" icon="📥" />
+        </div>
+      </section>
+
+      <section className="mb-8">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
           <div className="flex items-center justify-between text-sm text-gray-500">
             <span>
               Last updated: {format(new Date(data.lastUpdated), "h:mm a")}
             </span>
-            <button
-              onClick={fetchDashboard}
-              className="text-blue-600 hover:text-blue-700"
-            >
-              Refresh
-            </button>
           </div>
         </div>
       </section>
@@ -229,6 +220,26 @@ function QuickActionButton({
       <span className="text-sm font-medium text-gray-700 text-center">
         {label}
       </span>
+    </Link>
+  );
+}
+
+function NavLink({
+  href,
+  label,
+  icon,
+}: {
+  href: string;
+  label: string;
+  icon: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all"
+    >
+      <span className="text-xl">{icon}</span>
+      <span className="text-sm font-medium text-gray-700">{label}</span>
     </Link>
   );
 }
