@@ -417,7 +417,7 @@ function YouthCard({
           )}
         </div>
 
-        <div className="flex flex-wrap gap-2 sm:flex-col sm:gap-1 sm:ml-4 w-full sm:w-auto">
+        <div className="flex flex-wrap gap-2 sm:flex-row sm:gap-2 sm:ml-4 w-full sm:w-auto">
           <button
             onClick={onHistory}
             className="px-3 py-2.5 md:py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors min-h-[44px]"

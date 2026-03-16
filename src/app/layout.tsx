@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import { Providers } from "./providers";
+import { Navbar } from "@/components/Navbar";
 import { LogoutButton } from "@/components/ui/LogoutButton";
 import { IconClock } from "@/components/ui/Icons";
 
@@ -25,6 +26,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <Providers>
+          <Navbar />
           <div className="hidden md:flex justify-end px-4 sm:px-6 lg:px-8 py-2 bg-slate-50">
             <LogoutButton />
           </div>
