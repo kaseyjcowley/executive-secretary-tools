@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import { Providers } from "./providers";
-import { LogoutButton } from "@/components/LogoutButton";
+import { LogoutButton } from "@/components/ui/LogoutButton";
 import { IconClock } from "@/components/ui/Icons";
 
 const inter = Inter({ subsets: ["latin"] });

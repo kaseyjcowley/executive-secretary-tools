@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { app } from "@/utils/slack";
 import { BlockKit } from "@/utils/block-kit-builder"; // Import the builder
 import { SlackChannelId } from "@/constants";
-import { getClosestSunday, isFirstSunday } from "@/utils/dates";
+import { getClosestSunday, isFirstSunday } from "@/lib/utils/dates";
 
 export async function GET(request: NextRequest) {
   // Confirm someone is allowed to do this
@@ -34,14 +34,14 @@ export async function GET(request: NextRequest) {
   const messagePayload = BlockKit.message()
     .channel(slackChannel)
     .text(
-      `<@${userIdConductingThisMonth}>, please click the button below to add Sacrament speakers for the week.` // Fallback text
+      `<@${userIdConductingThisMonth}>, please click the button below to add Sacrament speakers for the week.`, // Fallback text
     )
     .addBlock(
       BlockKit.section().text(
         BlockKit.markdownText(
-          `<@${userIdConductingThisMonth}>, please click the button below to add Sacrament speakers for the week. Thank you!`
-        )
-      )
+          `<@${userIdConductingThisMonth}>, please click the button below to add Sacrament speakers for the week. Thank you!`,
+        ),
+      ),
     )
     .addBlock(BlockKit.divider())
     .addBlock(
@@ -49,11 +49,11 @@ export async function GET(request: NextRequest) {
         .blockId("speakers_actions")
         .addElement(
           BlockKit.button(
-            BlockKit.plainText("Submit Sacrament Speakers", { emoji: true })
+            BlockKit.plainText("Submit Sacrament Speakers", { emoji: true }),
           )
             .style("primary")
-            .actionId("open_speakers_modal")
-        )
+            .actionId("open_speakers_modal"),
+        ),
     )
     .build();
 

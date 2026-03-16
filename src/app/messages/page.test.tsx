@@ -12,7 +12,7 @@ vi.mock("@/utils/get-messaged-contacts", () => ({
   getMessagedContactIds: vi.fn().mockResolvedValue(new Set()),
 }));
 
-vi.mock("@/components/ContactList", () => ({
+vi.mock("@/features/messages/components/ContactList", () => ({
   ContactList: ({ contacts }: { contacts: Array<{ name: string }> }) => (
     <div data-testid="contact-list">
       {contacts.map((c) => (

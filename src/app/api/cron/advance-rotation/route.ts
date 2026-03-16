@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import redis from "@/utils/redis";
 import { app } from "@/utils/slack";
 import { SlackChannelId, REDIS_KEYS } from "@/constants";
-import { getLastSundayOfMonth } from "@/utils/dates";
+import { getLastSundayOfMonth } from "@/lib/utils/dates";
 import { Conductor } from "@/types/conductors";
 
 function isLastSundayOfMonth(date: Date): boolean {
