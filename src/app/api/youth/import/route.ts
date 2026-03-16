@@ -4,6 +4,7 @@ import {
   getQueue,
   setVisitHistory,
   getVisitHistory,
+  normalScore,
 } from "@/utils/youth-queue";
 import {
   fetchCompletedYouthCards,
