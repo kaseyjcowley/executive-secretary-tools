@@ -98,7 +98,12 @@ export const REDIS_KEYS = {
 
 // Trello sync configuration
 export const TRELLO_SYNC_CONFIG = {
-  YOUTH_LABEL_NAME: "Youth",
+  YOUTH_LABEL_ID: "69b7682060c904a714a7d895",
+  YOUTH_VISIT_LABEL_IDS: [
+    "698423d96a77cbb730ddbfc5", // Bishop youth interview
+    "698142f18c51336104b0ca0b", // Counselor youth interview
+    "698142f18c51336104b0ca0c", // High school grad check-in
+  ] as string[],
   AUTO_COMMIT_THRESHOLD: 0.15,
   REVIEW_THRESHOLD: 0.35,
 } as const;

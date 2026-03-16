@@ -89,13 +89,15 @@ async function fetchCompletedYouthCards(): Promise<TrelloCard[]> {
 
   const cards: TrelloCard[] = await response.json();
 
-  return cards.filter((card) =>
-    card.labels.some(
-      (label) =>
-        label.name.toLowerCase() ===
-        TRELLO_SYNC_CONFIG.YOUTH_LABEL_NAME.toLowerCase(),
-    ),
-  );
+  return cards.filter((card) => {
+    const hasYouthLabel = card.labels.some(
+      (label) => label.id === TRELLO_SYNC_CONFIG.YOUTH_LABEL_ID,
+    );
+    const hasYouthVisitLabel = card.labels.some((label) =>
+      TRELLO_SYNC_CONFIG.YOUTH_VISIT_LABEL_IDS.includes(label.id),
+    );
+    return hasYouthLabel || hasYouthVisitLabel;
+  });
 }
 
 function extractVisitTypeFromCardName(cardName: string): string {
