@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect } from "react";
 import { Contact, MessageType, MessageScenario } from "@/types/messages";
-import { useRecipientSubjectSelection } from "@/hooks/useRecipientSubjectSelection";
+import { useRecipientSubjectSelection } from "@/features/messages/hooks/useRecipientSubjectSelection";
 import { getAvailableMessageTypes } from "@/utils/template-loader";
 import { classifyScenario, generateMessage } from "@/utils/message-generator";
 import {
@@ -14,11 +14,11 @@ import {
   ContactInfo,
   ContactLabels,
   ContactTypeBadge,
-} from "@/components/ContactInfo";
-import { MemberSelector } from "@/components/MemberSelector";
-import { TemplateSelector } from "@/components/TemplateSelector";
-import { TimeSelector } from "@/components/TimeSelector";
-import { MessagePreview } from "@/components/MessagePreview";
+} from "@/features/messages/components/ContactInfo";
+import { MemberSelector } from "@/features/messages/components/MemberSelector";
+import { TemplateSelector } from "@/features/messages/components/TemplateSelector";
+import { TimeSelector } from "@/features/messages/components/TimeSelector";
+import { MessagePreview } from "@/features/messages/components/MessagePreview";
 import { CHURCH_END_TIME, MEMBER_SELECTION } from "@/constants";
 import { getBeforeOrAfterChurch } from "@/utils/time-utils";
 import { formatTimeForDisplay } from "@/utils/date-formatters";
