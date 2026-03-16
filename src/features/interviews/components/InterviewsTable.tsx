@@ -53,18 +53,18 @@ export const InterviewsTable = ({ memberId, interviews }: Props) => {
 
   return (
     <section
-      className={`max-w-3xl sm:bg-white sm:rounded-lg sm:shadow-sm sm:border border-gray-200 sm:border-l-4 ${getBorderColor(
+      className={`max-w-3xl w-full mx-auto sm:bg-white sm:rounded-lg sm:shadow-sm sm:border border-gray-200 sm:border-l-4 ${getBorderColor(
         memberId,
       )} overflow-hidden`}
     >
-      <div className="p-0 pb-4 sm:p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">
+      <div className="p-3 pb-4 sm:p-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
           {getMemberName(memberId)}
         </h2>
 
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
           <div>
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-3 sm:mb-4">
               <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700">
                 Before Church
               </span>
@@ -83,7 +83,7 @@ export const InterviewsTable = ({ memberId, interviews }: Props) => {
           </div>
 
           <div>
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-3 sm:mb-4">
               <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-700">
                 After Church
               </span>
