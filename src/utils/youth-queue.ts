@@ -9,6 +9,8 @@ function normalScore(lastSeenAt: number): number {
   return lastSeenAt + SIX_MONTHS_MS;
 }
 
+export { normalScore };
+
 function scheduledScore(): number {
   return -Date.now();
 }

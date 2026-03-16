@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   createYouth,
-  normalScore,
   getQueue,
   setVisitHistory,
   getVisitHistory,
@@ -41,22 +40,29 @@ async function findVisitsForYouth(
   }
 
   const fuse = buildFuseIndex(allYouth);
-  const visitsData: VisitHistoryItem[] = [];
 
-  for (const card of allCards) {
+  const visitPromises = allCards.map(async (card) => {
     const parsedName = parseNameFromTitle(card.name);
     const match = matchCardToContact(parsedName, fuse);
 
     if (match.type === "commit" && match.contactId === youthId) {
-      visitsData.push({
+      const visitType = await extractVisitTypeFromCardName(
+        card.name,
+        card.labels,
+      );
+      return {
         id: card.id,
         visitedAt: new Date(card.dateLastActivity).getTime(),
-        visitType: extractVisitTypeFromCardName(card.name),
+        visitType,
         trelloUrl: card.url,
         note: card.desc || undefined,
-      });
+      };
     }
-  }
+    return null;
+  });
+
+  const results = await Promise.all(visitPromises);
+  const visitsData = results.filter(Boolean) as VisitHistoryItem[];
 
   visitsData.sort((a, b) => b.visitedAt - a.visitedAt);
   await setVisitHistory(youthId, visitsData);
