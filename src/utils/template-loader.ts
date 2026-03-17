@@ -14,7 +14,8 @@ const TEMPLATE_REGISTRY: Record<string, string> = {};
 templateContext.keys().forEach((key: string) => {
   const filename = key.split("/").pop() || key;
   const id = filename.replace(".txt", "");
-  TEMPLATE_REGISTRY[id] = templateContext(key);
+  const content = templateContext(key) as unknown;
+  TEMPLATE_REGISTRY[id] = typeof content === "string" ? content : (content as { default: string }).default;
 });
 
 export function extractVariables(content: string): string[] {
