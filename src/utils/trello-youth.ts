@@ -1,7 +1,7 @@
 import redis from "@/utils/redis";
-import type { SyncResult, VisitHistoryItem, Youth } from "@/types/youth";
+import type { SyncResult, VisitHistoryItem } from "@/types/youth";
 import { YOUTH_VISIT_TYPES } from "@/constants/youth-visit-types";
-import { REDIS_KEYS, TRELLO_LIST_IDS, TRELLO_SYNC_CONFIG } from "@/constants";
+import { REDIS_KEYS, TRELLO_LIST_IDS } from "@/constants";
 import {
   getQueue,
   markVisited,
@@ -121,7 +121,7 @@ export async function fetchCompletedYouthCards(): Promise<TrelloCard[]> {
 }
 
 export async function extractVisitTypeFromCardName(
-  cardName: string,
+  _cardName: string,
   labels?: TrelloLabel[],
 ): Promise<string> {
   if (!labels || labels.length === 0) {

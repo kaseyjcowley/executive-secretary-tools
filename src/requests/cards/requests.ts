@@ -26,8 +26,11 @@ const fetchCards = async (
     ).toString()}`,
     { cache: "no-cache" },
   )
-    .then((response) => response.json())
-    .catch((err) => console.error("Failed to fetch Trello cards:", err));
+    .then((response) => response.json() as Promise<ApiTrelloCard[]>)
+    .catch((err) => {
+      console.error("Failed to fetch Trello cards:", err);
+      return [] as ApiTrelloCard[];
+    });
 
   return apiCards;
 };
@@ -48,7 +51,7 @@ const buildCallingCardsPipeline = (
 ): ((cards: ApiTrelloCard[]) => Promise<CallingTrelloCard[]>) => {
   return pipeAsync<CallingTrelloCard[]>(
     transformer,
-    // @ts-expect-error - these types don't match up to what the API says is possible
+    // @ts-expect-error - partial application with stage parameter causes type mismatch with Rambdax map
     map(partial(buildCallingTrelloCard, stage)),
   );
 };
@@ -99,11 +102,11 @@ export const fetchAllCardsGroupedByMember = async () =>
   await Promise.all([
     ...TRELLO_LIST_IDS.INTERVIEW_BOARD.map(fetchInterviewCards),
     ...TRELLO_LIST_IDS.CALLINGS_BOARD.map(
-      // @ts-expect-error - these types don't match up to what the API says is possible
+      // @ts-expect-error - partial application causes type inference issues with Promise.all
       partial(fetchCallingCards, CallingStage.needsCallingExtended),
     ),
     ...TRELLO_LIST_IDS.SETTING_APART_BOARD.map(
-      // @ts-expect-error - these types don't match up to what the API says is possible
+      // @ts-expect-error - partial application causes type inference issues with Promise.all
       partial(fetchCallingCards, CallingStage.needsSettingApart),
     ),
   ]).then((allCards) => groupSortedCardsByMember(allCards.flat()));

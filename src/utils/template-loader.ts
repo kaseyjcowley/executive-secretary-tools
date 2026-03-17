@@ -5,11 +5,9 @@ export {
 import { MessageType, Category, Template } from "@/types/messages";
 import { REDIS_KEYS } from "@/constants";
 
-const templateContext = (require as any).context(
-  "../templates/messages",
-  false,
-  /\.txt$/,
-);
+const templateContext = (
+  require as NodeRequire & { context: typeof requireContext }
+).context("../templates/messages", false, /\.txt$/);
 
 const TEMPLATE_REGISTRY: Record<string, string> = {};
 

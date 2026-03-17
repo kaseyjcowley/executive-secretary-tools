@@ -2,7 +2,6 @@ import getHours from "date-fns/getHours";
 import getMinutes from "date-fns/getMinutes";
 import { utcToZonedTime } from "date-fns-tz";
 
-import { BishopricMemberId } from "@/constants";
 import { CallingTrelloCard, InterviewTrelloCard } from "@/requests/cards";
 import { getMemberName } from "@/requests/members";
 import { InterviewRow } from "./InterviewRow";
@@ -48,8 +47,6 @@ export const InterviewsTable = ({ memberId, interviews }: Props) => {
       (hours === END_OF_CHURCH_HOUR && minutes >= END_OF_CHURCH_MINUTE)
     );
   });
-
-  const isUnassigned = memberId === "unassigned";
 
   return (
     <section

@@ -1,8 +1,9 @@
 import { fetchAllCardsGroupedByMember } from "@/requests/cards";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-export async function GET(request: Request) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function GET(_request: Request) {
   const interviews = await fetchAllCardsGroupedByMember();
   return Response.json(interviews);
 }

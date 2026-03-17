@@ -11,10 +11,6 @@ function normalScore(lastSeenAt: number): number {
 
 export { normalScore };
 
-function scheduledScore(): number {
-  return -Date.now();
-}
-
 function deserializeYouth(raw: Record<string, string>): Youth {
   return {
     id: raw.id,

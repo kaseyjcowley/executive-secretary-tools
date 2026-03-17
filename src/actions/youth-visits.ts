@@ -125,7 +125,7 @@ async function setLastSeenAt(
 }
 
 async function findVisitsForYouth(
-  youthName: string,
+  _youthName: string,
   youthId: string,
   allCards: Awaited<ReturnType<typeof fetchCompletedYouthCards>>,
   allYouth: Youth[],

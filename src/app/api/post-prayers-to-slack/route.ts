@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { App } from "@slack/bolt";
 
 import { SlackChannelId } from "@/constants";
 import { app } from "@/utils/slack";
@@ -11,7 +10,7 @@ interface PrayerAssignment {
   closingPrayer: string | null;
 }
 
-function extractPrayers(message: string): PrayerAssignment {
+export function extractPrayers(message: string): PrayerAssignment {
   const openingMatch = message.match(/opening prayer:?\s*\n\s*([^\n]+)/i);
   const closingMatch = message.match(/closing prayer:?\s*\n\s*([^\n]+)/i);
 

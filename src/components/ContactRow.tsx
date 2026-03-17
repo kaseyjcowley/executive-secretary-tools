@@ -1,17 +1,13 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { Contact, MessageType, MessageScenario } from "@/types/messages";
 import { useRecipientSubjectSelection } from "@/features/messages/hooks/useRecipientSubjectSelection";
 import { getAvailableMessageTypes } from "@/utils/template-loader";
 import { classifyScenario, generateMessage } from "@/utils/message-generator";
-import {
-  formatMemberDisplayNames,
-  Member,
-} from "@/utils/format-member-display";
+import { Member } from "@/utils/format-member-display";
 import members from "@/data/members.json";
 import {
-  ContactInfo,
   ContactLabels,
   ContactTypeBadge,
 } from "@/features/messages/components/ContactInfo";
@@ -33,72 +29,26 @@ interface Props {
   isInGroup?: boolean;
 }
 
-export const ContactRow = ({
-  contact,
-  initialTemplateId,
-  isSelected,
-  onSelect,
-  isInGroup,
-}: Props) => {
-  const [selectedTemplateId, setSelectedTemplateId] =
-    useState(initialTemplateId);
-
-  const [selectedTime, setSelectedTime] = useState(CHURCH_END_TIME);
-
-  const {
-    recipientMemberIds,
-    subjectMemberIds,
-    recipientsAreSubjects,
-    setRecipientsAreSubjects,
-    addRecipient,
-    removeRecipient,
-    changeRecipient,
-    addSubject,
-    removeSubject,
-    changeSubject,
-    recipientPhoneNumbers,
-  } = useRecipientSubjectSelection({
-    contactName: contact.name,
-    defaultRecipientsAreSubjects: true,
-  });
-
-  const messageTypes = getAvailableMessageTypes();
-
-  const categories: Record<string, MessageType[]> = useMemo(
-    () => ({
-      calling: messageTypes.filter((m) => m.category === "calling"),
-      interview: messageTypes.filter((m) => m.category === "interview"),
-    }),
-    [messageTypes],
-  );
-
-  const phoneNumbers = recipientsAreSubjects
-    ? recipientPhoneNumbers
-    : recipientPhoneNumbers;
-
+function PreviewSection({
+  validRecipients,
+  validSubjects,
+  recipientsAreSubjects,
+  selectedTemplateId,
+  selectedTime,
+  phoneNumbers,
+}: {
+  validRecipients: number[];
+  validSubjects: number[];
+  recipientsAreSubjects: boolean;
+  selectedTemplateId: string | undefined;
+  selectedTime: string;
+  phoneNumbers: string[];
+}) {
   const [templatePreview, setTemplatePreview] = useState("");
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
 
-  const validRecipients = useMemo(
-    () =>
-      recipientMemberIds.filter(
-        (id) => id !== MEMBER_SELECTION.INITIAL_MEMBER_ID,
-      ),
-    [recipientMemberIds],
-  );
-  const validSubjects = useMemo(
-    () =>
-      subjectMemberIds.filter(
-        (id) => id !== MEMBER_SELECTION.INITIAL_MEMBER_ID,
-      ),
-    [subjectMemberIds],
-  );
-
-  const canShowPreview =
-    selectedTemplateId && (recipientsAreSubjects || validSubjects.length > 0);
-
   const canGenerate =
-    canShowPreview &&
+    selectedTemplateId &&
     (recipientsAreSubjects || validSubjects.length > 0) &&
     (recipientsAreSubjects ? validRecipients.length > 0 : true);
 
@@ -162,16 +112,98 @@ export const ContactRow = ({
       });
   };
 
-  useEffect(() => {
-    setTemplatePreview("");
-    setIsLoadingPreview(false);
-  }, [
-    canShowPreview,
-    validRecipients,
-    validSubjects,
+  return (
+    <>
+      {canGenerate && !templatePreview && !isLoadingPreview && (
+        <button
+          onClick={generatePreview}
+          className="w-full mb-3 md:mb-2 px-4 py-3 md:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-base md:text-sm font-medium min-h-[44px]"
+        >
+          Generate Message
+        </button>
+      )}
+      <MessagePreview
+        templatePreview={templatePreview}
+        phoneNumbers={phoneNumbers}
+        isReady={validRecipients.length > 0}
+        isLoading={isLoadingPreview}
+      />
+    </>
+  );
+}
+
+export const ContactRow = ({
+  contact,
+  initialTemplateId,
+  isSelected,
+  onSelect,
+  isInGroup,
+}: Props) => {
+  const [selectedTemplateId, setSelectedTemplateId] =
+    useState(initialTemplateId);
+
+  const [selectedTime, setSelectedTime] = useState(CHURCH_END_TIME);
+
+  const {
+    recipientMemberIds,
+    subjectMemberIds,
     recipientsAreSubjects,
-    selectedTemplateId,
-  ]);
+    setRecipientsAreSubjects,
+    addRecipient,
+    removeRecipient,
+    changeRecipient,
+    addSubject,
+    removeSubject,
+    changeSubject,
+    recipientPhoneNumbers,
+  } = useRecipientSubjectSelection({
+    contactName: contact.name,
+    defaultRecipientsAreSubjects: true,
+  });
+
+  const messageTypes = getAvailableMessageTypes();
+
+  const categories: Record<string, MessageType[]> = useMemo(
+    () => ({
+      calling: messageTypes.filter((m) => m.category === "calling"),
+      interview: messageTypes.filter((m) => m.category === "interview"),
+    }),
+    [messageTypes],
+  );
+
+  const phoneNumbers = recipientsAreSubjects
+    ? recipientPhoneNumbers
+    : recipientPhoneNumbers;
+
+  const validRecipients = useMemo(
+    () =>
+      recipientMemberIds.filter(
+        (id) => id !== MEMBER_SELECTION.INITIAL_MEMBER_ID,
+      ),
+    [recipientMemberIds],
+  );
+  const validSubjects = useMemo(
+    () =>
+      subjectMemberIds.filter(
+        (id) => id !== MEMBER_SELECTION.INITIAL_MEMBER_ID,
+      ),
+    [subjectMemberIds],
+  );
+
+  const canShowPreview =
+    selectedTemplateId && (recipientsAreSubjects || validSubjects.length > 0);
+
+  const previewKey = useMemo(
+    () =>
+      `${canShowPreview}-${validRecipients.join(",")}-${validSubjects.join(",")}-${recipientsAreSubjects}-${selectedTemplateId}`,
+    [
+      canShowPreview,
+      validRecipients,
+      validSubjects,
+      recipientsAreSubjects,
+      selectedTemplateId,
+    ],
+  );
 
   const isCalling = contact.kind === "calling";
 
@@ -268,19 +300,14 @@ export const ContactRow = ({
 
         <div className="grid md:row-start-1 md:row-span-4">
           <div className="min-h-full mt-4 md:mt-0">
-            {canGenerate && !templatePreview && !isLoadingPreview && (
-              <button
-                onClick={generatePreview}
-                className="w-full mb-3 md:mb-2 px-4 py-3 md:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-base md:text-sm font-medium min-h-[44px]"
-              >
-                Generate Message
-              </button>
-            )}
-            <MessagePreview
-              templatePreview={templatePreview}
+            <PreviewSection
+              key={previewKey}
+              validRecipients={validRecipients}
+              validSubjects={validSubjects}
+              recipientsAreSubjects={recipientsAreSubjects}
+              selectedTemplateId={selectedTemplateId}
+              selectedTime={selectedTime}
               phoneNumbers={phoneNumbers}
-              isReady={validRecipients.length > 0}
-              isLoading={isLoadingPreview}
             />
           </div>
         </div>

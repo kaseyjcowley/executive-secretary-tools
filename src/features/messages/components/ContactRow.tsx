@@ -6,10 +6,7 @@ import { useRecipientSubjectSelection } from "@/features/messages/hooks/useRecip
 import { useMessagePreview } from "@/features/messages/hooks/useMessagePreview";
 import { getAvailableMessageTypes } from "@/features/messages/utils/template-loader";
 import { classifyScenario } from "@/features/messages/utils/message-generator";
-import {
-  formatMemberDisplayNames,
-  Member,
-} from "@/utils/format-member-display";
+import { Member } from "@/utils/format-member-display";
 import members from "@/data/members.json";
 import { CHURCH_END_TIME, MEMBER_SELECTION } from "@/constants";
 import { getBeforeOrAfterChurch } from "@/lib/utils/time-utils";

@@ -1,4 +1,4 @@
-import { Contact, Contact as ContactType } from "@/types/messages";
+import { Contact } from "@/types/messages";
 import { MessageType } from "@/types/messages";
 import { TemplateSelector } from "@/features/messages/components/TemplateSelector";
 

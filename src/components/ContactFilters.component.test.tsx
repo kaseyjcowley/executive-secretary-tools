@@ -1,7 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import React from "react";
 import { ContactFilters, FilterState } from "@/components/ContactFilters";
 import { createInterviewContact, createCallingContact } from "@/test/factories";
 import { CallingStage } from "@/constants";
@@ -133,9 +132,11 @@ describe("ContactFilters component", () => {
   });
 
   it("shows available assigned members from contacts", () => {
-    const contactsWithAssigned = [...contacts];
-    (contactsWithAssigned[0] as any).assigned = "Bishop";
-    (contactsWithAssigned[1] as any).assigned = "First Counselor";
+    const contactsWithAssigned = [
+      { ...contacts[0], assigned: "Bishop" },
+      { ...contacts[1], assigned: "First Counselor" },
+      ...contacts.slice(2),
+    ];
 
     render(
       <ContactFilters

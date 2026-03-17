@@ -122,11 +122,7 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 border-t-4 border-t-accent-500 p-6 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
-          <GroupHeader
-            groupNames={groupNames}
-            contacts={groupContacts}
-            onUnmerge={() => onUnmerge(group.id)}
-          />
+          <GroupHeader groupNames={groupNames} contacts={groupContacts} />
 
           <GroupRecipientStep
             recipientsAreSubjects={recipientsAreSubjects}

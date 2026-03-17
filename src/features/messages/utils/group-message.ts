@@ -1,8 +1,5 @@
 import { Contact } from "@/types/messages";
-import {
-  appointmentSummaries,
-  AppointmentSummary,
-} from "@/constants/appointment-summaries";
+import { appointmentSummaries } from "@/constants/appointment-summaries";
 import { getBeforeOrAfterChurch } from "@/utils/time-utils";
 import { format, isSunday, parse, startOfTomorrow } from "date-fns";
 
