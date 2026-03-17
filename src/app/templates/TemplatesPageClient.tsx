@@ -146,17 +146,17 @@ export function TemplatesPageClient({ initialTemplates }: Props) {
 
       {!editingTemplate && !isCreating && (
         <>
-          <div className="flex gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <input
               type="text"
               placeholder="Search templates..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
             />
             <button
               onClick={handleCreate}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors whitespace-nowrap"
             >
               + New Template
             </button>
@@ -350,7 +350,7 @@ function TemplateCard({
   onDelete: () => void;
 }) {
   return (
-    <div className="bg-white rounded-lg p-4 shadow border flex justify-between items-center">
+    <div className="bg-white rounded-lg p-4 shadow border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
       <div>
         <div className="font-medium text-gray-900">{template.name}</div>
         <div className="text-sm text-gray-500">
@@ -359,16 +359,16 @@ function TemplateCard({
             : "No variables"}
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 w-full sm:w-auto">
         <button
           onClick={onEdit}
-          className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+          className="flex-1 sm:flex-none px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
         >
           Edit
         </button>
         <button
           onClick={onDelete}
-          className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+          className="flex-1 sm:flex-none px-4 py-2 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
         >
           Delete
         </button>
