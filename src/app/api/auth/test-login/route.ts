@@ -10,7 +10,6 @@ export async function GET(request: NextRequest) {
   const clientIP =
     request.headers.get("x-forwarded-for")?.split(",")[0] ||
     request.headers.get("x-real-ip") ||
-    request.ip ||
     "";
 
   const allowedIPs = process.env.INTERNAL_ALLOWED_IPS?.split(",").map((ip) => ip.trim()) || [];
