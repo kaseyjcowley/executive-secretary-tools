@@ -18,17 +18,9 @@ vi.mock("react-hot-toast", () => ({
   },
 }));
 
-import {
-  getTemplates,
-  createTemplate,
-  updateTemplate,
-  removeTemplate,
-} from "@/app/actions/templates";
+import { getTemplates } from "@/app/actions/templates";
 
-const mockedGetTemplates = getTemplates as ReturnType<typeof vi.fn>;
-const mockedCreateTemplate = createTemplate as ReturnType<typeof vi.fn>;
-const mockedUpdateTemplate = updateTemplate as ReturnType<typeof vi.fn>;
-const mockedRemoveTemplate = removeTemplate as ReturnType<typeof vi.fn>;
+const mockedGetTemplates = vi.mocked(getTemplates);
 
 const mockTemplates = [
   {
@@ -52,43 +44,29 @@ describe("TemplatesPage integration", () => {
     vi.clearAllMocks();
   });
 
-  it("renders loading state initially", async () => {
-    mockedGetTemplates.mockImplementation(() => new Promise(() => {}));
-
-    render(<TemplatesPage />);
-
-    expect(screen.getByText(/Loading/i)).toBeInTheDocument();
-  });
-
   it("renders templates after loading", async () => {
     mockedGetTemplates.mockResolvedValue(mockTemplates);
 
-    render(<TemplatesPage />);
+    render(await TemplatesPage());
 
-    await waitFor(() => {
-      expect(screen.getByText("Baptismal Interview")).toBeInTheDocument();
-      expect(screen.getByText("Calling Acceptance")).toBeInTheDocument();
-    });
+    expect(screen.getByText("Baptismal Interview")).toBeInTheDocument();
+    expect(screen.getByText("Calling Acceptance")).toBeInTheDocument();
   });
 
   it("renders empty state when no templates", async () => {
     mockedGetTemplates.mockResolvedValue([]);
 
-    render(<TemplatesPage />);
+    render(await TemplatesPage());
 
-    await waitFor(() => {
-      expect(screen.getByText("No templates found.")).toBeInTheDocument();
-    });
+    expect(screen.getByText("No templates found.")).toBeInTheDocument();
   });
 
   it("filters templates by search query", async () => {
     mockedGetTemplates.mockResolvedValue(mockTemplates);
 
-    render(<TemplatesPage />);
+    render(await TemplatesPage());
 
-    await waitFor(() => {
-      expect(screen.getByText("Baptismal Interview")).toBeInTheDocument();
-    });
+    expect(screen.getByText("Baptismal Interview")).toBeInTheDocument();
 
     const searchInput = screen.getByPlaceholderText(/Search templates/i);
     await userEvent.type(searchInput, "baptism");
@@ -102,11 +80,9 @@ describe("TemplatesPage integration", () => {
   it("shows only matching templates for search", async () => {
     mockedGetTemplates.mockResolvedValue(mockTemplates);
 
-    render(<TemplatesPage />);
+    render(await TemplatesPage());
 
-    await waitFor(() => {
-      expect(screen.getByText("Baptismal Interview")).toBeInTheDocument();
-    });
+    expect(screen.getByText("Baptismal Interview")).toBeInTheDocument();
 
     const searchInput = screen.getByPlaceholderText(/Search templates/i);
     await userEvent.type(searchInput, "calling");
@@ -120,11 +96,9 @@ describe("TemplatesPage integration", () => {
   it("opens create form when New Template button is clicked", async () => {
     mockedGetTemplates.mockResolvedValue(mockTemplates);
 
-    render(<TemplatesPage />);
+    render(await TemplatesPage());
 
-    await waitFor(() => {
-      expect(screen.getByText("Baptismal Interview")).toBeInTheDocument();
-    });
+    expect(screen.getByText("Baptismal Interview")).toBeInTheDocument();
 
     const newButton = screen.getByText("+ New Template");
     await userEvent.click(newButton);
@@ -136,22 +110,18 @@ describe("TemplatesPage integration", () => {
   it("groups templates by category", async () => {
     mockedGetTemplates.mockResolvedValue(mockTemplates);
 
-    render(<TemplatesPage />);
+    render(await TemplatesPage());
 
-    await waitFor(() => {
-      expect(screen.getByText("Interview")).toBeInTheDocument();
-      expect(screen.getByText("Calling")).toBeInTheDocument();
-    });
+    expect(screen.getByText("Interview")).toBeInTheDocument();
+    expect(screen.getByText("Calling")).toBeInTheDocument();
   });
 
   it("displays template variables on cards", async () => {
     mockedGetTemplates.mockResolvedValue(mockTemplates);
 
-    render(<TemplatesPage />);
+    render(await TemplatesPage());
 
-    await waitFor(() => {
-      expect(screen.getByText(/Variables: recipients/)).toBeInTheDocument();
-      expect(screen.getByText(/Variables: name/)).toBeInTheDocument();
-    });
+    expect(screen.getByText(/Variables: recipients/)).toBeInTheDocument();
+    expect(screen.getByText(/Variables: name/)).toBeInTheDocument();
   });
 });
