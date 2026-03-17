@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { matchContact } from "@/utils/contact-fuzzy-match";
 import { MEMBER_SELECTION } from "@/constants";
 import { useMemberPhoneNumbers } from "./useMemberPhoneNumbers";
@@ -12,33 +12,20 @@ export function useRecipientSubjectSelection({
   contactName,
   defaultRecipientsAreSubjects = true,
 }: UseRecipientSubjectSelectionOptions) {
-  const [recipientMemberIds, setRecipientMemberIds] = useState<number[]>([
-    MEMBER_SELECTION.INITIAL_MEMBER_ID,
-  ]);
-  const [subjectMemberIds, setSubjectMemberIds] = useState<number[]>([]);
+  const [recipientMemberIds, setRecipientMemberIds] = useState<number[]>(() => {
+    const matchedId = matchContact(contactName);
+    return matchedId ? [matchedId] : [MEMBER_SELECTION.INITIAL_MEMBER_ID];
+  });
+  const [subjectMemberIds, setSubjectMemberIds] = useState<number[]>(() => {
+    if (!defaultRecipientsAreSubjects) {
+      const matchedId = matchContact(contactName);
+      return matchedId ? [matchedId] : [MEMBER_SELECTION.INITIAL_MEMBER_ID];
+    }
+    return [];
+  });
   const [recipientsAreSubjects, setRecipientsAreSubjects] = useState(
     defaultRecipientsAreSubjects,
   );
-
-  useEffect(() => {
-    const matchedId = matchContact(contactName);
-    if (matchedId) {
-      setRecipientMemberIds([matchedId]);
-    } else {
-      setRecipientMemberIds([MEMBER_SELECTION.INITIAL_MEMBER_ID]);
-    }
-  }, [contactName]);
-
-  useEffect(() => {
-    if (!recipientsAreSubjects) {
-      const matchedId = matchContact(contactName);
-      if (matchedId) {
-        setSubjectMemberIds([matchedId]);
-      } else if (subjectMemberIds.length === 0) {
-        setSubjectMemberIds([MEMBER_SELECTION.INITIAL_MEMBER_ID]);
-      }
-    }
-  }, [recipientsAreSubjects, contactName]);
 
   const addRecipient = () => {
     if (recipientMemberIds.length < MEMBER_SELECTION.MAX_RECIPIENTS) {
@@ -88,6 +75,13 @@ export function useRecipientSubjectSelection({
     setRecipientsAreSubjects(checked);
     if (checked) {
       setSubjectMemberIds([]);
+    } else {
+      const matchedId = matchContact(contactName);
+      if (matchedId) {
+        setSubjectMemberIds([matchedId]);
+      } else {
+        setSubjectMemberIds([MEMBER_SELECTION.INITIAL_MEMBER_ID]);
+      }
     }
   };
 

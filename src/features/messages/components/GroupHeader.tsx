@@ -4,10 +4,9 @@ import { IconUsers } from "@/components/ui/Icons";
 interface Props {
   groupNames: string;
   contacts: Contact[];
-  onUnmerge: () => void;
 }
 
-export const GroupHeader = ({ groupNames, contacts, onUnmerge }: Props) => {
+export const GroupHeader = ({ groupNames, contacts }: Props) => {
   const hasCalling = contacts.some((c) => c.kind === "calling");
   const hasInterview = contacts.some((c) => c.kind === "interview");
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { formatDistanceToNow } from "date-fns";
 import toast from "react-hot-toast";
 import { ScheduleVisitModal } from "@/features/youth/components/ScheduleVisitModal";
@@ -12,10 +12,12 @@ import { syncWithTrelloAction } from "@/actions/sync";
 import { rebuildAllVisitHistoriesAction } from "@/actions/youth-visits";
 import type { Youth } from "@/types/youth";
 
+const DAYS_180_AGO_MS = 180 * 24 * 60 * 60 * 1000;
+
 export default function YouthQueuePage() {
   const [queue, setQueue] = useState<Youth[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isRebuilding, setIsRebuilding] = useState(false);
+  const [isRebuilding] = useState(false);
   const [scheduleModal, setScheduleModal] = useState<{
     isOpen: boolean;
     youthId: string;
@@ -31,6 +33,7 @@ export default function YouthQueuePage() {
     youthName: string;
   } | null>(null);
   const [pendingReviewsModal, setPendingReviewsModal] = useState(false);
+  const referenceDate = useState(() => Date.now() - DAYS_180_AGO_MS)[0];
 
   useEffect(() => {
     fetchQueue();
@@ -212,6 +215,7 @@ export default function YouthQueuePage() {
               <YouthCard
                 key={youth.id}
                 youth={youth}
+                referenceDate={referenceDate}
                 onSchedule={() =>
                   setScheduleModal({
                     isOpen: true,
@@ -244,6 +248,7 @@ export default function YouthQueuePage() {
               <YouthCard
                 key={youth.id}
                 youth={youth}
+                referenceDate={referenceDate}
                 onSchedule={() =>
                   setScheduleModal({
                     isOpen: true,
@@ -276,6 +281,7 @@ export default function YouthQueuePage() {
               <YouthCard
                 key={youth.id}
                 youth={youth}
+                referenceDate={referenceDate}
                 onSchedule={() =>
                   setScheduleModal({
                     isOpen: true,
@@ -347,21 +353,24 @@ export default function YouthQueuePage() {
 
 function YouthCard({
   youth,
+  referenceDate,
   onSchedule,
   onEdit,
   onDelete,
   onHistory,
 }: {
   youth: Youth;
+  referenceDate: number;
   onSchedule: () => void;
   onEdit: () => void;
   onDelete: () => void;
   onHistory: () => void;
 }) {
-  const daysOverdue = Math.floor(
-    (Date.now() - 180 * 24 * 60 * 60 * 1000 - youth.lastSeenAt) /
-      (24 * 60 * 60 * 1000),
-  );
+  const daysOverdue = useMemo(() => {
+    return Math.floor(
+      (referenceDate - youth.lastSeenAt) / (24 * 60 * 60 * 1000),
+    );
+  }, [referenceDate, youth.lastSeenAt]);
 
   return (
     <div className="bg-white rounded-lg p-4 shadow border-l-4 border-gray-200">

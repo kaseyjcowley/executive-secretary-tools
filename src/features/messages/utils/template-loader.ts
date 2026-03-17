@@ -5,11 +5,9 @@ import { MessageType, Category } from "@/types/messages";
  * require.context(directory, useSubdirectories, regExp)
  * Note: The path must be relative to THIS file.
  */
-const templateContext = (require as any).context(
-  "../../../templates/messages",
-  false,
-  /\.txt$/,
-);
+const templateContext = (
+  require as NodeRequire & { context: typeof requireContext }
+).context("../../../templates/messages", false, /\.txt$/);
 
 // This creates a map where key is "./filename.txt" and value is the file content
 const TEMPLATE_REGISTRY: Record<string, string> = {};

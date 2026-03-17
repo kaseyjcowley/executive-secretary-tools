@@ -14,7 +14,7 @@ interface ConductorState {
   nextConductor: Conductor;
 }
 
-interface Props extends ConductorState {}
+type Props = ConductorState;
 
 export function ConductorPageClient({
   rotation,
@@ -23,7 +23,7 @@ export function ConductorPageClient({
   currentConductor,
   nextConductor,
 }: Props) {
-  const [state, setState] = useState<ConductorState>({
+  const [state] = useState<ConductorState>({
     rotation,
     currentIndex,
     override,

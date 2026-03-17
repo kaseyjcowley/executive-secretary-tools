@@ -6,7 +6,6 @@ import {
   getDate,
   getDay,
   lastDayOfMonth,
-  startOfMonth,
 } from "date-fns";
 
 import { ApiTrelloCard } from "@/requests/cards";

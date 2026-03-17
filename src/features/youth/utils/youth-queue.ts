@@ -9,10 +9,6 @@ function normalScore(lastSeenAt: number): number {
   return lastSeenAt + SIX_MONTHS_MS;
 }
 
-function scheduledScore(): number {
-  return -Date.now();
-}
-
 function deserializeYouth(raw: Record<string, string>): Youth {
   return {
     id: raw.id,

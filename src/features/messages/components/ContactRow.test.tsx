@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import React from "react";
 import { ContactRow } from "@/features/messages/components/ContactRow";
 import { createInterviewContact, createCallingContact } from "@/test/factories";
 import { CallingStage } from "@/constants";
@@ -89,11 +88,7 @@ vi.mock("@/lib/utils/date-formatters", () => ({
   formatTimeForDisplay: vi.fn(() => "6:00 PM"),
 }));
 
-import {
-  generateMessage,
-  classifyScenario,
-} from "@/features/messages/utils/message-generator";
-import { MEMBER_SELECTION } from "@/constants";
+import { generateMessage } from "@/features/messages/utils/message-generator";
 
 describe("ContactRow", () => {
   it("renders contact name", () => {
@@ -370,7 +365,6 @@ describe("ContactRow", () => {
     });
 
     it("should show Add button for recipients", async () => {
-      const user = userEvent.setup();
       const contact = createInterviewContact("John Doe");
 
       render(<ContactRow contact={contact} />);

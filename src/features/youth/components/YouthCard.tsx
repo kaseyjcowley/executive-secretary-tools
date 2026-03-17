@@ -1,10 +1,14 @@
 "use client";
 
+import { useMemo } from "react";
 import { formatDistanceToNow } from "date-fns";
 import type { Youth } from "@/types/youth";
 
+const DAYS_180_AGO_MS = 180 * 24 * 60 * 60 * 1000;
+
 interface YouthCardProps {
   youth: Youth;
+  referenceDate?: number;
   onSchedule: () => void;
   onEdit: () => void;
   onDelete: () => void;
@@ -12,14 +16,16 @@ interface YouthCardProps {
 
 export function YouthCard({
   youth,
+  referenceDate = Date.now() - DAYS_180_AGO_MS,
   onSchedule,
   onEdit,
   onDelete,
 }: YouthCardProps) {
-  const daysOverdue = Math.floor(
-    (Date.now() - 180 * 24 * 60 * 60 * 1000 - youth.lastSeenAt) /
-      (24 * 60 * 60 * 1000),
-  );
+  const daysOverdue = useMemo(() => {
+    return Math.floor(
+      (referenceDate - youth.lastSeenAt) / (24 * 60 * 60 * 1000),
+    );
+  }, [referenceDate, youth.lastSeenAt]);
 
   return (
     <div className="bg-white rounded-lg p-4 shadow border-l-4 border-gray-200">

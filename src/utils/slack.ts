@@ -1,4 +1,4 @@
-import { SlackChannelId, BishopricSlackMemberIds } from "@/constants";
+import { SlackChannelId } from "@/constants";
 import redis from "@/utils/redis";
 import { App } from "@slack/bolt";
 import {
@@ -63,18 +63,18 @@ interface SlackInteractivityPayload {
   };
 }
 
-type HandlerResponse = Record<string, any>;
+type HandlerResponse = Record<string, unknown>;
 
 interface SlackInteractivityHandler {
   handle(
     payload: SlackInteractivityPayload,
-    dryRun: boolean
+    dryRun: boolean,
   ): Promise<HandlerResponse | void>;
 }
 
 export class HandlerFactory {
   static create(
-    handlerIdentifier: HandlerIdentifier
+    handlerIdentifier: HandlerIdentifier,
   ): SlackInteractivityHandler {
     switch (handlerIdentifier) {
       case "submit_speakers":
@@ -97,12 +97,12 @@ function calculateNextWednesdayExpiry(currentDate: Date): Date {
 class SacramentSpeakersHandler implements SlackInteractivityHandler {
   async handle(
     payload: SlackInteractivityPayload,
-    dryRun: boolean
+    dryRun: boolean,
   ): Promise<HandlerResponse | void> {
     const extractValuesFromView = R.pipe<
       ViewState[],
       StateValues | undefined,
-      StateValues | {},
+      StateValues | object,
       BlockActions[],
       ActionValue[],
       string[]
@@ -116,7 +116,7 @@ class SacramentSpeakersHandler implements SlackInteractivityHandler {
       // Map R.values over each BlockActions and flatten -> ActionValue[]
       R.chain(R.values),
       // Extract the 'value' property -> string[]
-      R.pluck("value")
+      R.pluck("value"),
     );
 
     const speakers = extractValuesFromView(payload.view);
@@ -130,7 +130,7 @@ class SacramentSpeakersHandler implements SlackInteractivityHandler {
 
       if (emailSentTimestamp) {
         console.log(
-          `Email for sacrament speakers on ${dateKey} already sent at ${emailSentTimestamp}. Skipping.`
+          `Email for sacrament speakers on ${dateKey} already sent at ${emailSentTimestamp}. Skipping.`,
         );
         return;
       }
@@ -152,7 +152,7 @@ class SacramentSpeakersHandler implements SlackInteractivityHandler {
       let metadata;
       try {
         metadata = JSON.parse(payload.view.private_metadata);
-      } catch (e) {
+      } catch {
         metadata = {};
       }
 
@@ -181,11 +181,11 @@ class SacramentSpeakersHandler implements SlackInteractivityHandler {
       if (expirySeconds > 0) {
         await redis.setex(redisKey, expirySeconds, sentTimestamp); // Store timestamp
         console.log(
-          `Done sending! Set Redis key ${redisKey} with value ${sentTimestamp} to expire in ${expirySeconds} seconds (at ${expiryDate.toISOString()})`
+          `Done sending! Set Redis key ${redisKey} with value ${sentTimestamp} to expire in ${expirySeconds} seconds (at ${expiryDate.toISOString()})`,
         );
       } else {
         console.warn(
-          `Calculated expiry time (${expiryDate.toISOString()}) is in the past. Not setting Redis key ${redisKey}.`
+          `Calculated expiry time (${expiryDate.toISOString()}) is in the past. Not setting Redis key ${redisKey}.`,
         );
       }
 
@@ -202,7 +202,7 @@ class OpenSpeakersModalHandler implements SlackInteractivityHandler {
 
   async handle(
     payload: SlackInteractivityPayload,
-    dryRun: boolean
+    dryRun: boolean,
   ): Promise<void> {
     const metadata = JSON.stringify({
       dryRun,
@@ -212,7 +212,7 @@ class OpenSpeakersModalHandler implements SlackInteractivityHandler {
     const extractValuesFromView = R.pipe<
       ViewState[],
       StateValues | undefined,
-      StateValues | {},
+      StateValues | object,
       BlockActions[],
       ActionValue[],
       string[]
@@ -226,7 +226,7 @@ class OpenSpeakersModalHandler implements SlackInteractivityHandler {
       // Map R.values over each BlockActions and flatten -> ActionValue[]
       R.chain(R.values),
       // Extract the 'value' property -> string[]
-      R.pluck("value")
+      R.pluck("value"),
     );
 
     const previousValues = extractValuesFromView(payload.view);
@@ -234,7 +234,7 @@ class OpenSpeakersModalHandler implements SlackInteractivityHandler {
 
     // Build the modal view using the fluent interface
     const modalViewBuilder = BlockKit.modal(
-      BlockKit.plainText("Sacrament Speakers")
+      BlockKit.plainText("Sacrament Speakers"),
     )
       .callbackId("submit_speakers")
       .privateMetadata(metadata) // Pass dryRun status
@@ -244,9 +244,9 @@ class OpenSpeakersModalHandler implements SlackInteractivityHandler {
         BlockKit.section().text(
           BlockKit.plainText(
             "Please add the Sacrament speakers for this week below.",
-            { emoji: true }
-          )
-        )
+            { emoji: true },
+          ),
+        ),
       )
       .addBlocks(inputBlockBuilders) // Add the input blocks from builders
       .addBlock(
@@ -254,11 +254,11 @@ class OpenSpeakersModalHandler implements SlackInteractivityHandler {
           .blockId("add_speaker_button_block")
           .addElement(
             BlockKit.button(
-              BlockKit.plainText("Add another speaker", { emoji: true })
+              BlockKit.plainText("Add another speaker", { emoji: true }),
             )
               .style("primary")
-              .actionId("add_speaker_input")
-          )
+              .actionId("add_speaker_input"),
+          ),
       );
 
     const finalModalView = modalViewBuilder.build();
@@ -287,13 +287,13 @@ class OpenSpeakersModalHandler implements SlackInteractivityHandler {
 
     for (let i = 0; i < numberOfInputs; i++) {
       const inputBuilder = BlockKit.input(
-        BlockKit.plainText(`Speaker ${i + 1}`)
+        BlockKit.plainText(`Speaker ${i + 1}`),
       )
         .blockId(`speaker_input_block_${i}`)
         .element(
           BlockKit.plainTextInput()
             .actionId(`speaker_input_action_${i}`)
-            .maybeInitialValue(previousValues?.[i]) // Use maybeInitialValue
+            .maybeInitialValue(previousValues?.[i]), // Use maybeInitialValue
         );
       builders.push(inputBuilder);
     }

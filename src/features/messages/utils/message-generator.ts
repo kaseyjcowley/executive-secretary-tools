@@ -6,6 +6,8 @@ import {
   ScenarioType,
 } from "@/types/messages";
 import { loadTemplateContent } from "./template-loader";
+
+type ContactWithGender = Contact & { gender?: "M" | "F" };
 import { substituteTemplate } from "./template-substitution";
 import {
   formatNameList,
@@ -163,7 +165,7 @@ function buildTemplateVariables(
     subjects.some((s) => s.name === r.name),
   );
 
-  const pronoun = getPronoun(recipientsAreSubjects, subjects.length);
+  const pronoun = getPronoun(recipientsAreSubjects);
 
   const subjectFirstNames = subjects.map((s) => {
     const parts = s.name.split(",");
@@ -247,7 +249,7 @@ function buildSimplifiedData(
   const recipientStrings = recipients.map((r) => {
     const parts = r.name.split(",");
     const lastName = parts[0]?.trim() || r.name;
-    const gender = (r as any).gender || "M";
+    const gender = (r as ContactWithGender).gender || "M";
     const title = gender === "M" ? "Brother" : "Sister";
     return `${title} ${lastName} (${gender})`;
   });
@@ -261,7 +263,7 @@ function buildSimplifiedData(
     const subjectStrings = subjects.map((s) => {
       const parts = s.name.split(",");
       const firstName = parts[1]?.trim()?.split(" ")[0] || s.name.split(" ")[0];
-      const gender = (s as any).gender || "M";
+      const gender = (s as ContactWithGender).gender || "M";
       return `${firstName} (${gender})`;
     });
     result.subjects = subjectStrings;
@@ -276,7 +278,7 @@ function buildSimplifiedData(
 }
 
 function generateListMessage(
-  scenario: MessageScenario,
+  _scenario: MessageScenario,
   variables: GroupTemplateVariables,
 ): string {
   const { subjectList } = variables;

@@ -7,7 +7,7 @@ const createTransporter = async () => {
   const oauth2Client = new OAuth2(
     process.env.GMAIL_CLIENT_ID,
     process.env.GMAIL_CLIENT_SECRET,
-    "https://developers.google.com/oauthplayground"
+    "https://developers.google.com/oauthplayground",
   );
 
   oauth2Client.setCredentials({
@@ -17,7 +17,7 @@ const createTransporter = async () => {
   const accessToken = await oauth2Client.getAccessToken();
 
   const transporter = nodemailer.createTransport({
-    // @ts-expect-error
+    // @ts-expect-error - nodemailer types don't include 'gmail' as a service option but it works
     service: "gmail",
     auth: {
       type: "OAuth2",
@@ -33,6 +33,6 @@ const createTransporter = async () => {
 };
 
 export const sendEmail = async (emailOptions: Mail.Options) => {
-  let emailTransporter = await createTransporter();
+  const emailTransporter = await createTransporter();
   await emailTransporter.sendMail(emailOptions);
 };

@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { isContactGroup, ContactGroup, Contact } from "@/types/messages";
-import { CallingStage } from "@/constants";
 
 const createContact = (): Contact => ({
   name: "John Doe",

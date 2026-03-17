@@ -1,9 +1,11 @@
-enum BishopricMember {
-  bishop = "bishop",
-  firstCounselor = "firstCounselor",
-  secondCounselor = "secondCounselor",
-  executiveSecretary = "executiveSecretary",
-}
+const BishopricMember = {
+  bishop: "bishop",
+  firstCounselor: "firstCounselor",
+  secondCounselor: "secondCounselor",
+  executiveSecretary: "executiveSecretary",
+} as const;
+
+type BishopricMember = (typeof BishopricMember)[keyof typeof BishopricMember];
 
 export const BishopricMemberId: Record<BishopricMember, string> = {
   [BishopricMember.bishop]: "698140165dd97628fcedff99",

@@ -1,15 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { format } from "date-fns";
 import { getClosestSunday } from "@/utils/dates";
 
 export function InterviewsHeader() {
-  const [closestSunday, setClosestSunday] = useState<Date | null>(null);
-
-  useEffect(() => {
-    setClosestSunday(getClosestSunday());
-  }, []);
+  const [closestSunday] = useState<Date | null>(() => getClosestSunday());
 
   return (
     <div className="mb-4">

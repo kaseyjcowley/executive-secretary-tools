@@ -3,7 +3,6 @@
 import { useMemo, useCallback } from "react";
 import { Contact } from "@/types/messages";
 import { CallingStage } from "@/constants";
-import { BishopricMemberName } from "@/constants";
 
 export type ContactTypeFilter = "all" | "interview" | "calling";
 export type ContactStatusFilter = "all" | "unmessaged" | "messaged";

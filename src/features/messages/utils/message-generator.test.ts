@@ -1,11 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   generateMessage,
   classifyScenario,
 } from "@/features/messages/utils/message-generator";
 import { MessageScenario } from "@/types/messages";
-import { createInterviewContact, createCallingContact } from "@/test/factories";
-import { CallingStage } from "@/constants";
+import { createInterviewContact } from "@/test/factories";
 
 vi.mock("@/features/messages/utils/template-loader", () => ({
   getAvailableMessageTypes: () => [

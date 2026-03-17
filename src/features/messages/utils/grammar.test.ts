@@ -81,19 +81,19 @@ describe("grammar utilities", () => {
 
   describe("getPronoun", () => {
     it("returns 'your' when recipient is true", () => {
-      expect(getPronoun(true, 1)).toBe("your");
+      expect(getPronoun(true)).toBe("your");
     });
 
     it("returns 'their' when recipient is false", () => {
-      expect(getPronoun(false, 1)).toBe("their");
+      expect(getPronoun(false)).toBe("their");
     });
 
     it("returns 'your' for multiple recipients when isRecipient is true", () => {
-      expect(getPronoun(true, 3)).toBe("your");
+      expect(getPronoun(true)).toBe("your");
     });
 
     it("returns 'their' for multiple subjects when isRecipient is false", () => {
-      expect(getPronoun(false, 3)).toBe("their");
+      expect(getPronoun(false)).toBe("their");
     });
   });
 

@@ -62,7 +62,7 @@ abstract class ElementBuilder {
     return this;
   }
 
-  abstract build(): any;
+  abstract build(): unknown;
 }
 
 class ButtonElementBuilder extends ElementBuilder {
@@ -179,6 +179,7 @@ abstract class BlockBuilder {
 class SectionBlockBuilder extends BlockBuilder {
   private _text?: TextObjectOutput;
   private _fields?: TextObjectOutput[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _accessory?: any;
 
   text(textBuilder: TextBuilder): this {
@@ -210,6 +211,7 @@ class DividerBlockBuilder extends BlockBuilder {
 }
 
 class ActionsBlockBuilder extends BlockBuilder {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _elements: any[] = [];
 
   addElement(elementBuilder: ElementBuilder): this {
@@ -235,6 +237,7 @@ class ActionsBlockBuilder extends BlockBuilder {
 
 export class InputBlockBuilder extends BlockBuilder {
   private _label: PlainTextElement;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _element: any;
   private _hint?: PlainTextElement;
   private _optional?: boolean;
@@ -249,7 +252,7 @@ export class InputBlockBuilder extends BlockBuilder {
     // Currently only supports PlainTextInput, extend as needed
     if (!(elementBuilder instanceof PlainTextInputElementBuilder)) {
       throw new Error(
-        "Input block currently only supports PlainTextInputElementBuilder"
+        "Input block currently only supports PlainTextInputElementBuilder",
       );
     }
     this._element = elementBuilder.build();
@@ -470,7 +473,7 @@ export class BlockKit {
   // Text Objects
   static plainText(
     text: string,
-    options?: { emoji?: boolean }
+    options?: { emoji?: boolean },
   ): PlainTextBuilder {
     const builder = new PlainTextBuilder(text);
     if (options?.emoji !== undefined) builder.emoji(options.emoji);

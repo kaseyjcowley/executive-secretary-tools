@@ -28,9 +28,9 @@ export async function POST(request: NextRequest) {
 
     try {
       privateMetadataDryRun = JSON.parse(
-        parsedPayload.view.private_metadata
+        parsedPayload.view.private_metadata,
       ).dryRun;
-    } catch (e) {
+    } catch {
       privateMetadataDryRun = false;
     }
 
@@ -44,12 +44,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(response ?? { message: "Success" }, {
       status: 200,
     });
-  } catch (error) {
+  } catch {
     return new NextResponse(
       "There was a problem parsing the form data for this request.",
       {
         status: 500,
-      }
+      },
     );
   }
 }

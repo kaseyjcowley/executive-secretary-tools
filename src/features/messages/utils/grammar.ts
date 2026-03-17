@@ -60,7 +60,7 @@ export function pluralize(word: string, count: number): string {
   return `${word}s`;
 }
 
-export function getPronoun(isRecipient: boolean, count: number): string {
+export function getPronoun(isRecipient: boolean): string {
   return isRecipient ? "your" : "their";
 }
 

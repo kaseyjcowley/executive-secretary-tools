@@ -1,22 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { matchContact } from "@/utils/contact-fuzzy-match";
 
 const INITIAL_MEMBER_ID = -1;
 const MAX_MEMBERS = 2;
 
 export function useMemberSelection(contactName: string) {
-  const [selectedMemberIds, setSelectedMemberIds] = useState<number[]>([
-    INITIAL_MEMBER_ID,
-  ]);
-
-  useEffect(() => {
+  const [selectedMemberIds, setSelectedMemberIds] = useState<number[]>(() => {
     const matchedId = matchContact(contactName);
-    if (matchedId) {
-      setSelectedMemberIds([matchedId]);
-    } else {
-      setSelectedMemberIds([INITIAL_MEMBER_ID]);
-    }
-  }, [contactName]);
+    return matchedId ? [matchedId] : [INITIAL_MEMBER_ID];
+  });
 
   const addMember = () => {
     if (selectedMemberIds.length < MAX_MEMBERS) {

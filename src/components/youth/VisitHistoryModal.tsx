@@ -26,22 +26,22 @@ export function VisitHistoryModal({
   const [isRebuilding, setIsRebuilding] = useState(false);
 
   useEffect(() => {
+    const fetchVisits = async () => {
+      try {
+        const { visits: visitsData } = await getVisitHistoryAction(youthId);
+        if (visitsData) {
+          setVisits(visitsData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch visits:", error);
+        toast.error("Failed to load visit history");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchVisits();
   }, [youthId]);
-
-  const fetchVisits = async () => {
-    try {
-      const { visits: visitsData } = await getVisitHistoryAction(youthId);
-      if (visitsData) {
-        setVisits(visitsData);
-      }
-    } catch (error) {
-      console.error("Failed to fetch visits:", error);
-      toast.error("Failed to load visit history");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleRebuild = async () => {
     setIsRebuilding(true);

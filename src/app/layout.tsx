@@ -5,7 +5,6 @@ import { Toaster } from "react-hot-toast";
 import { Providers } from "./providers";
 import { Navbar } from "@/components/Navbar";
 import { LogoutButton } from "@/components/ui/LogoutButton";
-import { IconClock } from "@/components/ui/Icons";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 

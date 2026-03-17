@@ -2,9 +2,10 @@ import { describe, it, expect } from "vitest";
 import { createInterviewContact, createCallingContact } from "@/test/factories";
 import { CallingStage } from "@/constants";
 import { filterContacts, FilterState } from "@/components/ContactFilters";
+import type { Contact } from "@/types/messages";
 
 describe("filterContacts", () => {
-  const contacts: ReturnType<typeof createInterviewContact>[] = [
+  const contacts: Contact[] = [
     createInterviewContact("John Doe", { id: "1", name: "Bishop Interview" }),
     createInterviewContact("Jane Smith", { id: "2", name: "Temple Recommend" }),
     createInterviewContact("Bob Wilson", { id: "3", name: "Member Record" }),
@@ -26,9 +27,9 @@ describe("filterContacts", () => {
   ];
 
   // Set assigned property on callings
-  (contacts[3] as any).assigned = "Bishop";
-  (contacts[4] as any).assigned = "Bishop";
-  (contacts[5] as any).assigned = "First Counselor";
+  (contacts[3] as Contact & { assigned: string }).assigned = "Bishop";
+  (contacts[4] as Contact & { assigned: string }).assigned = "Bishop";
+  (contacts[5] as Contact & { assigned: string }).assigned = "First Counselor";
 
   const emptyFilters: FilterState = {
     type: "all",
@@ -122,8 +123,10 @@ describe("filterContacts", () => {
       });
       expect(result).toHaveLength(2);
       expect(
-        (result as any[]).every(
-          (c) => c.stage === CallingStage.needsCallingExtended,
+        result.every(
+          (c) =>
+            c.kind === "calling" &&
+            c.stage === CallingStage.needsCallingExtended,
         ),
       ).toBe(true);
     });
