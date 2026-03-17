@@ -39,7 +39,12 @@ export default function ImportYouthPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-md">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Import Youth</h1>
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900">Import Youth</h2>
+        <p className="mt-2 text-sm text-gray-600">
+          Import multiple youth at once from a list of names
+        </p>
+      </div>
 
       <form onSubmit={handleImport} className="space-y-4">
         <div>

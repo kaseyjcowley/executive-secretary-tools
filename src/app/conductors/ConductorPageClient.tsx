@@ -90,9 +90,14 @@ export function ConductorPageClient({
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">
-        Conductor Rotation
-      </h1>
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900">
+          Conductor Rotation
+        </h2>
+        <p className="mt-2 text-sm text-gray-600">
+          Manage the monthly conductor rotation and overrides
+        </p>
+      </div>
 
       <section className="mb-8">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">

@@ -144,12 +144,15 @@ export default function YouthQueuePage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900">
           Youth Visitation Queue
-        </h1>
+        </h2>
+        <p className="mt-2 text-sm text-gray-600">
+          Track and manage youth home teaching visits
+        </p>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap gap-2">
           <a
             href="/youth/new"
             className="px-4 py-2.5 md:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-base md:text-sm min-h-[44px] flex items-center justify-center"

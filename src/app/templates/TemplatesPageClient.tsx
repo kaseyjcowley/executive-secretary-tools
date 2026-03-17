@@ -140,9 +140,14 @@ export function TemplatesPageClient({ initialTemplates }: Props) {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">
-        Message Templates
-      </h1>
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900">
+          Message Templates
+        </h2>
+        <p className="mt-2 text-sm text-gray-600">
+          Create and manage message templates for interviews and callings
+        </p>
+      </div>
 
       {!editingTemplate && !isCreating && (
         <>

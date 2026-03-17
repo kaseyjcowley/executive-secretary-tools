@@ -34,7 +34,12 @@ export default function NewYouthPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-md">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Add Youth</h1>
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900">Add Youth</h2>
+        <p className="mt-2 text-sm text-gray-600">
+          Add a new youth to the visitation queue
+        </p>
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
