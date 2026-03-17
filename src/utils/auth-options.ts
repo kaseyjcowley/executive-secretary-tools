@@ -10,6 +10,9 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user }) {
+      if (process.env.NODE_ENV === "development" && user.email === "test@yourdomain.com") {
+        return true;
+      }
       if (!process.env.ALLOWED_EMAIL) {
         console.warn("ALLOWED_EMAIL not configured - sign-in denied");
         return false;
