@@ -3,14 +3,22 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { IconX, IconMenu } from "@/components/ui/Icons";
+import {
+  IconX,
+  IconMenu,
+  IconMail,
+  IconUsers,
+  IconUser,
+  IconMusic,
+  IconFile,
+} from "@/components/ui/Icons";
 
 const navLinks = [
-  { href: "/messages", label: "Messages", icon: "📬" },
-  { href: "/interviews", label: "Interviews", icon: "📅" },
-  { href: "/youth", label: "Youth", icon: "👦" },
-  { href: "/conductors", label: "Conductors", icon: "🎵" },
-  { href: "/templates", label: "Templates", icon: "📝" },
+  { href: "/messages", label: "Messages", icon: IconMail },
+  { href: "/interviews", label: "Interviews", icon: IconUsers },
+  { href: "/youth", label: "Youth", icon: IconUser },
+  { href: "/conductors", label: "Conductors", icon: IconMusic },
+  { href: "/templates", label: "Templates", icon: IconFile },
 ];
 
 export function MobileNav() {
@@ -59,7 +67,7 @@ export function MobileNav() {
                             : "text-gray-700 hover:bg-gray-100"
                         }`}
                       >
-                        <span className="text-lg">{link.icon}</span>
+                        <link.icon className="w-5 h-5" />
                         <span>{link.label}</span>
                       </Link>
                     </li>

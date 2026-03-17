@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { IconUser } from "@/components/ui/Icons";
 import { importYouthAction } from "@/actions/youth-visits";
 
 export default function ImportYouthPage() {
@@ -40,10 +41,17 @@ export default function ImportYouthPage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-md">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">Import Youth</h2>
-        <p className="mt-2 text-sm text-gray-600">
-          Import multiple youth at once from a list of names
-        </p>
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-blue-100 rounded-lg">
+            <IconUser className="w-5 h-5 text-blue-600" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Import Youth</h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Import multiple youth at once from a list of names
+            </p>
+          </div>
+        </div>
       </div>
 
       <form onSubmit={handleImport} className="space-y-4">
