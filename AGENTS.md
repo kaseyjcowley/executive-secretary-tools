@@ -209,6 +209,17 @@ src/
 4. Verify no TypeScript errors (build includes type check)
 5. **Only run dev server (`pnpm dev`) if you need to verify visual/rendering changes**
 
+## Deployment
+
+**NEVER use Vercel CLI for production deployments.** Always merge PRs through GitHub to trigger production builds.
+
+Workflow:
+1. Create a branch and push to GitHub
+2. Open a PR (or use the URL provided after push)
+3. Wait for Vercel build to pass on the PR
+4. Merge the PR on GitHub - this will trigger a production deployment
+5. Do NOT use `vercel --prod` or similar CLI commands for production
+
 ## Key Dependencies
 
 - **Framework**: Next.js 13.4
