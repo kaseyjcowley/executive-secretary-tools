@@ -18,6 +18,10 @@ export async function GET(request: NextRequest) {
 
   if (shouldSkip) return NextResponse.json({ message: "Skipped" });
 
+  if (!app) {
+    return NextResponse.json({ message: "Slack not configured" }, { status: 503 });
+  }
+
   // Grab the conductor for this month. It's found in the topic of the channel
   const channelInfo = await app.client.conversations.info({
     channel: SlackChannelId.bishopric,

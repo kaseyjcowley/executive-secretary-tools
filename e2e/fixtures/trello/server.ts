@@ -25,6 +25,7 @@ app.use("*", async (c, next) => {
     return c.text("Unauthorized", 401);
   }
   await next();
+  return;
 });
 
 app.get("/1/lists/:listId/cards", (c) => {

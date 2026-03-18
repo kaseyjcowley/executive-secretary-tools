@@ -4,6 +4,10 @@ import { app } from "@/utils/slack";
 import blocks from "@/ward-council-reminder-blocks.json";
 
 export async function POST(request: NextRequest) {
+  if (!app) {
+    return Response.json({ success: false, error: "Slack not configured" }, { status: 503 });
+  }
+  
   const searchParams = request.nextUrl.searchParams;
 
   const dryRun =
