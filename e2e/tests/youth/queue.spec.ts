@@ -45,12 +45,18 @@ test.describe("Youth Queue", () => {
   test("add single youth via page", async ({ page }) => {
     await page.goto("http://localhost:3001/youth");
     
-    await page.getByRole("button", { name: "Add Youth" }).click();
-    await page.fill('input[name="name"]', "New Youth");
+    await page.getByRole("link", { name: "Add Youth" }).click();
+    const nameInput = page.locator('#name');
+    await nameInput.fill("");
+    await nameInput.pressSequentially("New Youth", { delay: 50 });
+    await page.waitForFunction(() => {
+      const btn = document.querySelector('button[type="submit"]') as HTMLButtonElement;
+      return btn && !btn.disabled;
+    });
     await page.getByRole("button", { name: "Add Youth" }).click();
     
     await expect(page).toHaveURL("http://localhost:3001/youth");
-    await expect(page.getByText("New Youth")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "New Youth" })).toBeVisible();
   });
 
   test("edit youth", async ({ page }) => {
@@ -58,8 +64,8 @@ test.describe("Youth Queue", () => {
     
     await page.goto("http://localhost:3001/youth");
     
-    await page.getByText(youth.name).click();
-    await page.fill('input[name="preferredName"]', "Nickname");
+    await page.getByRole("button", { name: "Edit" }).first().click();
+    await page.locator('#preferredName').pressSequentially("Nickname");
     await page.getByRole("button", { name: "Save" }).click();
     
     await expect(page.getByText("Nickname")).toBeVisible();
@@ -70,9 +76,8 @@ test.describe("Youth Queue", () => {
     
     await page.goto("http://localhost:3001/youth");
     
-    await page.getByText(youth.name).click();
-    await page.getByRole("button", { name: "Delete" }).click();
-    await page.getByRole("button", { name: "Confirm" }).click();
+    page.on("dialog", (dialog) => dialog.accept());
+    await page.getByRole("button", { name: "Delete" }).first().click();
     
     await expect(page.getByText("To Delete")).not.toBeVisible();
   });
@@ -80,6 +85,6 @@ test.describe("Youth Queue", () => {
   test("shows empty state when no youth", async ({ page }) => {
     await page.goto("http://localhost:3001/youth");
     
-    await expect(page.getByText("No youth in queue")).toBeVisible();
+    await expect(page.getByText("No youth in the queue yet")).toBeVisible();
   });
 });

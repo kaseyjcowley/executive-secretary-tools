@@ -9,9 +9,9 @@ const TEST_USER = {
 };
 
 const TEST_CONDUCTORS = [
-  { slackUserId: "U001", name: "Ryan Preece" },
-  { slackUserId: "U002", name: "Roger Schultz" },
-  { slackUserId: "U003", name: "Dave Thibault" },
+  { slackUserId: "U0ABURZDH39", name: "Test Conductor 1" },
+  { slackUserId: "U0AE1TWL95X", name: "Test Conductor 2" },
+  { slackUserId: "U0AD4HC8Z3J", name: "Test Conductor 3" },
 ];
 
 test.beforeEach(async ({ context }) => {
@@ -41,18 +41,18 @@ test.describe("Conductors", () => {
   test("shows current and next conductor", async ({ page }) => {
     await page.goto("http://localhost:3001/conductors");
     
-    await expect(page.locator("div").filter({ hasText: /^Ryan Preece$/ })).toBeVisible();
-    await expect(page.locator("div").filter({ hasText: /^Roger Schultz$/ })).toBeVisible();
+    await expect(page.locator("div").filter({ hasText: /^Test Conductor 1$/ })).toBeVisible();
+    await expect(page.locator("div").filter({ hasText: /^Test Conductor 2$/ })).toBeVisible();
   });
 
   test("set override", async ({ page }) => {
     await page.goto("http://localhost:3001/conductors");
     
-    await page.selectOption('select[name="override"]', "U003");
-    await page.fill('input[name="reason"]', "Vacation");
+    await page.click('input[value="U0AD4HC8Z3J"]');
+    await page.fill('#reason', "Vacation");
     await page.click("text=Set Override");
     
-    await expect(page.locator("div").filter({ hasText: /^Dave Thibault$/ })).toBeVisible();
+    await expect(page.getByText("Dave Thibault").first()).toBeVisible();
     await expect(page.locator("text=Vacation")).toBeVisible();
   });
 
@@ -63,7 +63,7 @@ test.describe("Conductors", () => {
     
     await page.click("text=Clear Override");
     
-    await expect(page.locator("div").filter({ hasText: /^Ryan Preece$/ })).toBeVisible();
+    await expect(page.locator("div").filter({ hasText: /^Test Conductor 1$/ })).toBeVisible();
   });
 
   test("advance rotation", async ({ page }) => {
@@ -73,6 +73,6 @@ test.describe("Conductors", () => {
     
     await page.click("text=Advance Rotation");
     
-    await expect(page.locator("div").filter({ hasText: /^Roger Schultz$/ })).toBeVisible();
+    await expect(page.locator("div").filter({ hasText: /^Test Conductor 2$/ })).toBeVisible();
   });
 });

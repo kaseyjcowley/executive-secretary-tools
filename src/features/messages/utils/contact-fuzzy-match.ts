@@ -47,6 +47,10 @@ const fuse = new Fuse(members as DirectoryEntry[], {
  * @returns The ID of the best match if score < 0.4, otherwise undefined
  */
 export function matchContact(name: string): number | undefined {
+  if (!fuse || !name || typeof name !== "string") {
+    return undefined;
+  }
+
   const results = fuse.search(name);
 
   if (results.length === 0) {

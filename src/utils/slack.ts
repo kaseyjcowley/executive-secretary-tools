@@ -14,10 +14,15 @@ import { BlockKit, InputBlockBuilder } from "./block-kit-builder";
 import { getClosestSunday } from "./dates";
 import { sendEmail } from "./email";
 
-export const app = new App({
-  token: process.env.SLACK_USER_OAUTH_TOKEN,
-  signingSecret: process.env.SLACK_SIGNING_SECRET,
-});
+const hasSlackEnv = process.env.SLACK_USER_OAUTH_TOKEN && process.env.SLACK_SIGNING_SECRET;
+const isTestMode = process.env.NODE_ENV === "test";
+
+export const app = hasSlackEnv && !isTestMode
+  ? new App({
+      token: process.env.SLACK_USER_OAUTH_TOKEN,
+      signingSecret: process.env.SLACK_SIGNING_SECRET,
+    })
+  : null;
 
 type HandlerIdentifier =
   | "submit_speakers"

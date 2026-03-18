@@ -64,8 +64,8 @@ test.describe("Templates", () => {
     
     await page.getByRole("button", { name: "+ New Template" }).click();
     
-    await page.fill('input[name="name"]', "Test Template");
-    await page.fill('textarea[name="content"]', "Hello {recipient}, this is a test.");
+    await page.locator("input[type='text']").first().fill("Test Template");
+    await page.locator("textarea").fill("Hello {recipient}, this is a test.");
     await page.getByRole("button", { name: "Save" }).click();
     
     await expect(page.getByText("Test Template")).toBeVisible();
@@ -80,8 +80,8 @@ test.describe("Templates", () => {
     
     await page.goto("http://localhost:3001/templates");
     
+    page.on("dialog", (dialog) => dialog.accept());
     await page.getByRole("button", { name: "Delete" }).first().click();
-    await page.getByRole("button", { name: "Confirm" }).click();
     
     await expect(page.getByText("To Delete")).not.toBeVisible();
   });

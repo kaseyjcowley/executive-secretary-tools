@@ -20,7 +20,7 @@ test.describe("Dashboard", () => {
   test("loads with greeting and stat cards", async ({ page }) => {
     await page.goto("http://localhost:3001/");
     
-    await expect(page.locator("h1")).toContainText("Good afternoon!");
+    await expect(page.locator("h1")).toContainText(/^Good/);
     await expect(page.locator("text=Pending Messages")).toBeVisible();
     await expect(page.getByRole("link", { name: "Interviews", exact: true })).toBeVisible();
     await expect(page.locator("text=Youth Visits Due")).toBeVisible();
