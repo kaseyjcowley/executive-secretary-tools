@@ -20,6 +20,7 @@
     "@vercel/functions": "^3.4.3",
     "ai": "^6.0.116",
     "autoprefixer": "10.4.15",
+    "daisyui": "^5.5.19",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
     "fuse.js": "^7.1.0",
