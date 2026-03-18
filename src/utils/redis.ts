@@ -1,6 +1,13 @@
 import Redis from "ioredis";
 
-const redisUrl = process.env.REDIS_URL;
+let redisUrl = process.env.REDIS_URL;
+
+console.log("[redis] NODE_ENV:", process.env.NODE_ENV, "REDIS_URL:", redisUrl);
+
+if (["test", "development"].includes(process.env.NODE_ENV || "") && !redisUrl) {
+  redisUrl = "redis://localhost:6399";
+  console.log("[redis] Using default test Redis");
+}
 
 if (!redisUrl) {
   throw new Error("REDIS_URL environment variable is not set.");

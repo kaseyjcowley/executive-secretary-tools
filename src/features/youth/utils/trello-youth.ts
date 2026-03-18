@@ -6,6 +6,7 @@ import { getQueue, markVisited } from "./youth-queue";
 
 const TRELLO_API_KEY = process.env.TRELLO_API_KEY;
 const TRELLO_API_TOKEN = process.env.TRELLO_API_TOKEN;
+const TRELLO_BASE_URL = process.env.TRELLO_BASE_URL || "https://api.trello.com";
 
 interface TrelloCard {
   id: string;
@@ -33,7 +34,7 @@ async function createTrelloCard(
   }
 
   const response = await fetch(
-    `https://api.trello.com/1/cards?key=${TRELLO_API_KEY}&token=${TRELLO_API_TOKEN}`,
+    `${TRELLO_BASE_URL}/1/cards?key=${TRELLO_API_KEY}&token=${TRELLO_API_TOKEN}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -56,7 +57,7 @@ async function createTrelloCard(
 
 async function fetchCompleteCards(): Promise<TrelloCard[]> {
   const response = await fetch(
-    `https://api.trello.com/1/lists/${TRELLO_LIST_IDS.YOUTH_VISITS_COMPLETE}/cards?key=${TRELLO_API_KEY}&token=${TRELLO_API_TOKEN}&fields=id,name,url,shortUrl,idList,dateLastActivity`,
+    `${TRELLO_BASE_URL}/1/lists/${TRELLO_LIST_IDS.YOUTH_VISITS_COMPLETE}/cards?key=${TRELLO_API_KEY}&token=${TRELLO_API_TOKEN}&fields=id,name,url,shortUrl,idList,dateLastActivity`,
     { cache: "no-cache" },
   );
 

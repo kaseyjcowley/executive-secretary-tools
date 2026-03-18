@@ -14,12 +14,14 @@ import { CallingStage, TRELLO_LIST_IDS } from "@/constants";
 
 const DEFAULT_CARD_FIELDS = ["id", "name", "due", "assigned", "idMembers"];
 
+const TRELLO_BASE_URL = process.env.TRELLO_BASE_URL || "https://api.trello.com";
+
 const fetchCards = async (
   listId: string,
   additionalFields: string[] = [],
 ): Promise<ApiTrelloCard[]> => {
   const apiCards = await fetch(
-    `https://api.trello.com/1/lists/${listId}/cards?key=${
+    `${TRELLO_BASE_URL}/1/lists/${listId}/cards?key=${
       process.env.TRELLO_API_KEY
     }&token=${process.env.TRELLO_API_TOKEN}&fields=${DEFAULT_CARD_FIELDS.concat(
       additionalFields,
