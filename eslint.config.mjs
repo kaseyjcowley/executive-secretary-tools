@@ -5,4 +5,5 @@ import tseslint from "typescript-eslint";
 export default defineConfig([
   ...nextCoreWebVitals,
   ...tseslint.configs.recommended,
+  { ignores: ["e2e/**"] },
 ]);
