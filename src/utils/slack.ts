@@ -14,10 +14,15 @@ import { BlockKit, InputBlockBuilder } from "./block-kit-builder";
 import { getClosestSunday } from "./dates";
 import { sendEmail } from "./email";
 
-export const app = new App({
-  token: process.env.SLACK_USER_OAUTH_TOKEN,
-  signingSecret: process.env.SLACK_SIGNING_SECRET,
-});
+const hasSlackEnv = process.env.SLACK_USER_OAUTH_TOKEN && process.env.SLACK_SIGNING_SECRET;
+const isTestMode = process.env.NODE_ENV === "test";
+
+export const app = hasSlackEnv && !isTestMode
+  ? new App({
+      token: process.env.SLACK_USER_OAUTH_TOKEN,
+      signingSecret: process.env.SLACK_SIGNING_SECRET,
+    })
+  : null;
 
 type HandlerIdentifier =
   | "submit_speakers"
@@ -120,6 +125,11 @@ class SacramentSpeakersHandler implements SlackInteractivityHandler {
     );
 
     const speakers = extractValuesFromView(payload.view);
+
+    if (!app) {
+      console.log("[TEST MODE] Would send Slack message about submitted speakers");
+      return;
+    }
 
     const closestSunday = getClosestSunday();
     const dateKey = format(closestSunday, "yyyy-MM-dd"); // Use consistent date format for key
@@ -262,6 +272,11 @@ class OpenSpeakersModalHandler implements SlackInteractivityHandler {
       );
 
     const finalModalView = modalViewBuilder.build();
+
+    if (!app) {
+      console.log("[TEST MODE] Would open/update Slack modal");
+      return;
+    }
 
     if (payload.actions[0].action_id === "add_speaker_input") {
       await app.client.views.update({

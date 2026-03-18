@@ -29,6 +29,7 @@ export {
 
 const TRELLO_API_KEY = process.env.TRELLO_API_KEY;
 const TRELLO_API_TOKEN = process.env.TRELLO_API_TOKEN;
+const TRELLO_BASE_URL = process.env.TRELLO_BASE_URL || "https://api.trello.com";
 
 interface TrelloLabel {
   id: string;
@@ -37,7 +38,7 @@ interface TrelloLabel {
 
 async function fetchTrelloLabels(): Promise<TrelloLabel[]> {
   const response = await fetch(
-    `https://api.trello.com/1/boards/${TRELLO_LIST_IDS.YOUTH_VISITS_BOARD}/labels?key=${TRELLO_API_KEY}&token=${TRELLO_API_TOKEN}&limit=1000`,
+    `${TRELLO_BASE_URL}/1/boards/${TRELLO_LIST_IDS.YOUTH_VISITS_BOARD}/labels?key=${TRELLO_API_KEY}&token=${TRELLO_API_TOKEN}&limit=1000`,
     { cache: "force-cache", next: { revalidate: 86400 } },
   );
 
@@ -82,7 +83,7 @@ async function createTrelloCard(
   }
 
   const response = await fetch(
-    `https://api.trello.com/1/cards?key=${TRELLO_API_KEY}&token=${TRELLO_API_TOKEN}`,
+    `${TRELLO_BASE_URL}/1/cards?key=${TRELLO_API_KEY}&token=${TRELLO_API_TOKEN}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -106,7 +107,7 @@ async function createTrelloCard(
 export async function fetchCompletedYouthCards(): Promise<TrelloCard[]> {
   const boardId = TRELLO_LIST_IDS.YOUTH_VISITS_BOARD;
 
-  const url = `https://api.trello.com/1/boards/${boardId}/cards?key=${TRELLO_API_KEY}&token=${TRELLO_API_TOKEN}&fields=id,name,url,shortUrl,idList,dateLastActivity,due,desc,labels`;
+  const url = `${TRELLO_BASE_URL}/1/boards/${boardId}/cards?key=${TRELLO_API_KEY}&token=${TRELLO_API_TOKEN}&fields=id,name,url,shortUrl,idList,dateLastActivity,due,desc,labels`;
 
   const response = await fetch(url, { cache: "no-cache" });
 

@@ -11,6 +11,11 @@ function isLastSundayOfMonth(date: Date): boolean {
 }
 
 async function updateSlackChannelTopic(conductor: Conductor): Promise<void> {
+  if (!app) {
+    console.log(`[TEST MODE] Would update channel topic to: Conducting this month: ${conductor.name}`);
+    return;
+  }
+  
   const mention = `<@${conductor.slackUserId}>`;
   const newTopic = `Conducting this month: ${mention}`;
 

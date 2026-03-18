@@ -10,7 +10,7 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user }) {
-      if (process.env.NODE_ENV === "development" && user.email === "test@yourdomain.com") {
+      if (["development", "test"].includes(process.env.NODE_ENV) && user.email === "test@yourdomain.com") {
         return true;
       }
       if (!process.env.ALLOWED_EMAIL) {

@@ -23,6 +23,8 @@ export function extractPrayers(message: string): PrayerAssignment {
 async function getConductorFromTopic(
   channelId: string,
 ): Promise<string | null> {
+  if (!slackApp) return null;
+  
   const response = await slackApp.client.conversations.info({
     channel: channelId,
   });
@@ -113,6 +115,10 @@ export async function POST(request: NextRequest) {
     `[Prayer Bot] Posting message: ${messageText.replace(/\n/g, "\\n")}`,
   );
 
+  if (!slackApp) {
+    return NextResponse.json({ success: false, error: "Slack not configured" }, { status: 503 });
+  }
+  
   await slackApp.client.chat.postMessage({
     channel: targetChannel,
     text: messageText,

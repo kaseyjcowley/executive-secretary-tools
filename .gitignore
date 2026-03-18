@@ -22,10 +22,16 @@
 *.crt
 /.certs/
 
+# playwright
+.playwright-cli
+test-results/
+playwright-report/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+nohup.out
 
 # local env files
 .env*.local
@@ -40,6 +46,3 @@ next-env.d.ts
 
 # jetbrains
 .idea
-
-# playwright
-.playwright-cli

@@ -15,12 +15,21 @@ import {
 import { CallingTrelloCard, InterviewTrelloCard } from "@/requests/cards";
 import { SITE_URL } from "@/utils/urls";
 
-const app = new App({
-  token: process.env.SLACK_USER_OAUTH_TOKEN,
-  signingSecret: process.env.SLACK_SIGNING_SECRET,
-});
+const hasSlackEnv = process.env.SLACK_USER_OAUTH_TOKEN && process.env.SLACK_SIGNING_SECRET;
+const isTestMode = process.env.NODE_ENV === "test";
+
+const app = hasSlackEnv && !isTestMode
+  ? new App({
+      token: process.env.SLACK_USER_OAUTH_TOKEN,
+      signingSecret: process.env.SLACK_SIGNING_SECRET,
+    })
+  : null;
 
 export async function POST(request: NextRequest) {
+  if (!app) {
+    return Response.json({ success: false, error: "Slack not configured" }, { status: 503 });
+  }
+  
   const searchParams = request.nextUrl.searchParams;
 
   const result = await fetch(`${SITE_URL}/api/interviews`).then((r) =>

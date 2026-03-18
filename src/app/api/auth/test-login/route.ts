@@ -3,7 +3,7 @@ import { encode } from "next-auth/jwt";
 import type { JWT } from "next-auth/jwt";
 
 export async function GET(request: NextRequest) {
-  if (process.env.NODE_ENV !== "development") {
+  if (!["development", "test"].includes(process.env.NODE_ENV)) {
     return new NextResponse("Forbidden", { status: 403 });
   }
 
@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     request.headers.get("x-real-ip") ||
     "";
 
-  const allowedIPs = process.env.INTERNAL_ALLOWED_IPS?.split(",").map((ip) => ip.trim()) || [];
+  const allowedIPs = (process.env.INTERNAL_ALLOWED_IPS?.split(",").map((ip) => ip.trim()).filter(Boolean) || []);
   const isLocalhostHost = request.headers.get("host")?.startsWith("localhost");
 
   if (allowedIPs.length > 0 && !allowedIPs.includes(clientIP) && !isLocalhostHost) {
