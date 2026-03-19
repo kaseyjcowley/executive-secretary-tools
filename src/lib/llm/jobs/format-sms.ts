@@ -9,6 +9,7 @@ export interface FormatSmsInput {
     template: string;
     recipients: string[];
     subjects?: string[];
+    recipientsAreSubjects?: boolean;
     meetingTime?: string;
     churchEndTime?: string;
     date?: string;
@@ -29,6 +30,7 @@ export const formatSmsJob: LlmJob<FormatSmsInput, FormatSmsOutput> = {
       template,
       recipients,
       subjects,
+      recipientsAreSubjects,
       meetingTime,
       churchEndTime,
       date,
@@ -47,6 +49,8 @@ export const formatSmsJob: LlmJob<FormatSmsInput, FormatSmsOutput> = {
         ``,
         `RECIPIENTS: ${JSON.stringify(recipients)}`,
         subjects && `SUBJECTS: ${JSON.stringify(subjects)}`,
+        recipientsAreSubjects !== undefined &&
+          `RECIPIENTS_ARE_SUBJECTS: ${recipientsAreSubjects}`,
         meetingTime && `MEETING TIME: ${meetingTime}`,
         churchEndTime && `CHURCH END TIME: ${churchEndTime}`,
         date && `DATE: ${date}`,

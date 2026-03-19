@@ -13,12 +13,14 @@ const templateContext = (
 const TEMPLATE_REGISTRY: Record<string, string> = {};
 
 templateContext.keys().forEach((key: string) => {
-  // Extract just the filename, handling various path formats:
-  // "./calling-acceptance.txt" -> "calling-acceptance"
-  // "src/templates/messages/calling-acceptance.txt" -> "calling-acceptance"
   const filename = key.split("/").pop() || key;
   const id = filename.replace(".txt", "");
-  TEMPLATE_REGISTRY[id] = templateContext(key);
+  const content = templateContext(key);
+  const templateContent =
+    typeof content === "string"
+      ? content
+      : (content as { default: string }).default;
+  TEMPLATE_REGISTRY[id] = templateContent;
 });
 
 /**

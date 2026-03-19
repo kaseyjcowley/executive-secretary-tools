@@ -79,8 +79,11 @@ export async function generateMessage(
       return "Unable to generate message. Please try again.";
     }
 
+    const messageText = result?.message;
     const message =
-      result?.message || "Unable to generate message. Please try again.";
+      typeof messageText === "string" && messageText.length > 0
+        ? messageText
+        : "Unable to generate message. Please try again.";
     return message;
   } catch (error) {
     if (error instanceof Error && error.name === "AbortError") {
@@ -257,6 +260,7 @@ function buildSimplifiedData(
   const result: Record<string, unknown> = {
     template: loadTemplateContent(templateId).replace(/^TEMPLATE:\s*/, ""),
     recipients: recipientStrings,
+    recipientsAreSubjects,
   };
 
   if (!recipientsAreSubjects && subjects.length > 0) {
