@@ -3,74 +3,68 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  IconMail,
-  IconUsers,
-  IconUser,
-  IconMusic,
-  IconFile,
-} from "@/components/ui/Icons";
-import { MobileNav } from "./MobileNav";
+  EnvelopeIcon,
+  UsersIcon,
+  CalendarDaysIcon,
+  ClipboardDocumentListIcon,
+} from "@/components/ui/Icon";
+import { Button } from "./ui/Button";
 
 const navLinks = [
-  { href: "/messages", label: "Messages" },
-  { href: "/interviews", label: "Interviews" },
-  { href: "/youth", label: "Youth" },
-  { href: "/conductors", label: "Conductors" },
-  { href: "/templates", label: "Templates" },
+  {
+    href: "/messages",
+    label: "Messages",
+    icon: <EnvelopeIcon className="w-5 h-5" />,
+  },
+  {
+    href: "/interviews",
+    label: "Interviews",
+    icon: <CalendarDaysIcon className="w-5 h-5" />,
+  },
+  { href: "/youth", label: "Youth", icon: <UsersIcon className="w-5 h-5" /> },
+  {
+    href: "/templates",
+    label: "Templates",
+    icon: <ClipboardDocumentListIcon className="w-5 h-5" />,
+  },
 ];
 
 export function Navbar() {
   const pathname = usePathname();
 
-  const renderPageIcon = () => {
-    if (pathname.startsWith("/interviews")) {
-      return <IconUsers className="w-5 h-5 text-blue-600" />;
-    }
-    if (pathname.startsWith("/youth")) {
-      return <IconUser className="w-5 h-5 text-blue-600" />;
-    }
-    if (pathname.startsWith("/conductors")) {
-      return <IconMusic className="w-5 h-5 text-blue-600" />;
-    }
-    if (pathname.startsWith("/templates")) {
-      return <IconFile className="w-5 h-5 text-blue-600" />;
-    }
-    return <IconMail className="w-5 h-5 text-blue-600" />;
-  };
-
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-gray-200">
-      <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3">
-        <div className="flex items-center gap-3">
-          <MobileNav />
-          <Link href="/messages" className="flex items-center gap-2">
-            <div className="p-1.5 bg-blue-100 rounded-lg">
-              {renderPageIcon()}
-            </div>
-            <span className="hidden sm:block text-lg font-semibold text-gray-900">
-              Executive Secretary Tools
-            </span>
+    <header className="sticky top-0 z-40 bg-base-100 border-b border-base-300">
+      <div className="navbar">
+        <div className="navbar-start">
+          <Link href="/" className="btn btn-ghost text-xl gap-2">
+            <span className="text-primary">ES</span>
+            <span className="hidden sm:inline">Executive Secretary</span>
           </Link>
         </div>
 
-        <nav className="hidden md:flex items-center gap-1">
-          {navLinks.map((link) => {
-            const isActive = pathname === link.href;
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? "bg-blue-100 text-blue-700"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                }`}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
+        <div className="navbar-center hidden lg:flex">
+          <ul className="menu menu-horizontal px-1 gap-1">
+            {navLinks.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className={
+                    pathname === link.href ? "active bg-primary/10" : ""
+                  }
+                >
+                  {link.icon}
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="navbar-end gap-2">
+          <Button variant="ghost" size="sm">
+            Sign Out
+          </Button>
+        </div>
       </div>
     </header>
   );
