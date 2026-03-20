@@ -42,7 +42,7 @@ export function MessagePreview({
           </div>
         </div>
       ) : templatePreview ? (
-        <>
+        <div className="p-4 bg-gray-50 rounded-lg border-2 border-gray-200 text-gray-800 text-sm font-mono md:h-full overflow-visible relative">
           {phoneNumbers.length > 0 && (
             <a
               href={`sms:${phoneNumbers.join(",")}?body=${encodeURIComponent(templatePreview)}`}
@@ -53,13 +53,10 @@ export function MessagePreview({
               <IconMessage className="w-6 h-6 rotate-45" />
             </a>
           )}
-          <div
-            className={`p-4 bg-gray-50 rounded-lg border-2 border-gray-200 text-gray-800 whitespace-pre-wrap text-sm font-mono md:h-full`}
-            dangerouslySetInnerHTML={{
-              __html: templatePreview.replace(/\\n/g, "<br />"),
-            }}
-          />
-        </>
+          <div className="text-gray-900 whitespace-pre-wrap break-words">
+            {templatePreview.replace(/\\n/g, "\n")}
+          </div>
+        </div>
       ) : (
         <div className="p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 text-gray-500 italic text-sm text-center py-8">
           {isReady
