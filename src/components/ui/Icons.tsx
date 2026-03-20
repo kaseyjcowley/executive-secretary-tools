@@ -41,7 +41,7 @@ export function IconClock({ className = "w-4 h-4" }: IconProps) {
 export function IconMessage({ className = "w-4 h-4" }: IconProps) {
   return (
     <svg
-      className={className}
+      className={`${className} rotate-45`}
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"

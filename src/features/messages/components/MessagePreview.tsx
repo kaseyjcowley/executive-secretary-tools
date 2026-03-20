@@ -42,15 +42,15 @@ export function MessagePreview({
           </div>
         </div>
       ) : templatePreview ? (
-        <div className="p-4 bg-gray-50 rounded-lg border-2 border-gray-200 text-gray-800 text-sm font-mono md:h-full overflow-visible relative">
+        <div className="flex flex-col p-4 bg-gray-50 rounded-lg border-2 border-gray-200 text-gray-800 text-sm font-mono md:h-full overflow-visible">
           {phoneNumbers.length > 0 && (
             <a
               href={`sms:${phoneNumbers.join(",")}?body=${encodeURIComponent(templatePreview)}`}
-              className="absolute top-2 right-2 text-blue-600 hover:text-blue-800 md:hidden z-10"
+              className="flex justify-end text-blue-600 hover:text-blue-800 z-10 md:hidden"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <IconMessage className="w-6 h-6 rotate-45" />
+              <IconMessage className="w-6 h-6" />
             </a>
           )}
           <div className="text-gray-900 whitespace-pre-wrap break-words">
