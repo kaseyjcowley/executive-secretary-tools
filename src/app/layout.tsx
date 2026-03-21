@@ -19,17 +19,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="corporate">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body className={inter.className}>
         <Providers>
           <Navbar />
-          <div className="hidden md:flex justify-end px-4 sm:px-6 lg:px-8 py-2 bg-slate-50">
+          <div className="hidden md:flex justify-end px-4 sm:px-6 lg:px-8 py-2 bg-base-200">
             <LogoutButton />
           </div>
-          <main className="min-h-screen bg-gray-50">{children}</main>
+          <main className="min-h-screen bg-base-200">{children}</main>
           <Toaster position="bottom-right" />
         </Providers>
       </body>

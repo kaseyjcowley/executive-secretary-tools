@@ -1,16 +1,16 @@
-import { type SelectHTMLAttributes, forwardRef, type ReactNode } from "react";
+import { type InputHTMLAttributes, forwardRef, type ReactNode } from "react";
 
-interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
   hint?: string;
   leftIcon?: ReactNode;
-  children: ReactNode;
+  rightIcon?: ReactNode;
 }
 
-export const Select = forwardRef<HTMLSelectElement, SelectProps>(
+export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
-    { label, error, hint, leftIcon, children, className = "", ...props },
+    { label, error, hint, leftIcon, rightIcon, className = "", ...props },
     ref,
   ) => {
     return (
@@ -26,15 +26,18 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
               {leftIcon}
             </div>
           )}
-          <select
+          <input
             ref={ref}
-            className={`select select-bordered w-full ${leftIcon ? "pl-10" : ""} ${
-              error ? "select-error" : ""
-            } ${className}`}
+            className={`input input-bordered w-full ${leftIcon ? "pl-10" : ""} ${
+              rightIcon ? "pr-10" : ""
+            } ${error ? "input-error" : ""} ${className}`}
             {...props}
-          >
-            {children}
-          </select>
+          />
+          {rightIcon && (
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none z-10">
+              {rightIcon}
+            </div>
+          )}
         </div>
         {error && (
           <label className="label">
@@ -51,4 +54,4 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
   },
 );
 
-Select.displayName = "Select";
+Input.displayName = "Input";
