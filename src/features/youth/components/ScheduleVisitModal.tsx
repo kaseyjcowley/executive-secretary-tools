@@ -5,6 +5,7 @@ import { VisitTypeSelector } from "@/features/youth/components/VisitTypeSelector
 import { YOUTH_VISIT_TYPES } from "@/constants/youth-visit-types";
 import toast from "react-hot-toast";
 import { scheduleVisitAction } from "@/actions/youth-visits";
+import { Button } from "@/components/ui";
 
 interface ScheduleVisitModalProps {
   youthId: string;
@@ -58,11 +59,25 @@ export function ScheduleVisitModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
-        <h2 className="text-xl font-semibold mb-4 text-gray-900">
-          Schedule Visit for {youthName}
-        </h2>
+    <div
+      className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-lg p-6 max-w-md w-[90vw] max-md:w-full mx-4 shadow-xl max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-start mb-4">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Schedule Visit for {youthName}
+          </h2>
+          <button
+            onClick={onClose}
+            className="btn btn-ghost btn-sm text-xl px-2"
+          >
+            ×
+          </button>
+        </div>
 
         <div className="space-y-4">
           <div>
@@ -104,21 +119,18 @@ export function ScheduleVisitModal({
           )}
         </div>
 
-        <div className="mt-6 flex justify-end space-x-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-            disabled={isSubmitting}
-          >
+        <div className="mt-6 flex justify-end gap-2">
+          <Button variant="ghost" onClick={onClose} disabled={isSubmitting}>
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="primary"
             onClick={handleSchedule}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             disabled={isSubmitting || !visitType}
+            loading={isSubmitting}
           >
-            {isSubmitting ? "Scheduling..." : "Schedule Visit"}
-          </button>
+            Schedule Visit
+          </Button>
         </div>
       </div>
     </div>
