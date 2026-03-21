@@ -58,7 +58,7 @@ export default function UIComponentsPage() {
   return (
     <div className="min-h-screen bg-base-200">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-8">UI Components Preview</h1>
+        <h1 className="text-4xl font-bold mb-8">Design System</h1>
 
         <section className="mb-12">
           <h2 className="text-2xl font-bold mb-4">Buttons</h2>
