@@ -8,6 +8,7 @@ import {
   CalendarDaysIcon,
   ClipboardDocumentListIcon,
 } from "@/components/ui/Icon";
+import { IconMusic } from "@/components/ui/Icons";
 import { Button } from "./ui/Button";
 
 const navLinks = [
@@ -22,6 +23,11 @@ const navLinks = [
     icon: <CalendarDaysIcon className="w-5 h-5" />,
   },
   { href: "/youth", label: "Youth", icon: <UsersIcon className="w-5 h-5" /> },
+  {
+    href: "/conductors",
+    label: "Conductors",
+    icon: <IconMusic className="w-5 h-5" />,
+  },
   {
     href: "/templates",
     label: "Templates",
