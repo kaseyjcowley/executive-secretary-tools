@@ -11,6 +11,13 @@ interface AlertProps {
   onDismiss?: () => void;
 }
 
+const variantClasses: Record<AlertVariant, string> = {
+  info: "bg-info text-info-content",
+  success: "bg-success text-success-content",
+  warning: "bg-warning text-warning-content",
+  error: "bg-error text-error-content",
+};
+
 export function Alert({
   variant = "info",
   children,
@@ -18,13 +25,19 @@ export function Alert({
   dismissible = false,
   onDismiss,
 }: AlertProps) {
-  const variantClass = `alert-${variant}`;
-
   return (
-    <div role="alert" className={`alert ${variantClass} ${className}`}>
-      <span>{children}</span>
+    <div
+      role="alert"
+      className={`alert ${variantClasses[variant]} ${className}`}
+    >
+      {children}
       {dismissible && onDismiss && (
-        <Button variant="ghost" size="sm" onClick={onDismiss}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onDismiss}
+          className="shrink-0"
+        >
           <span className="text-xl leading-none">&times;</span>
         </Button>
       )}

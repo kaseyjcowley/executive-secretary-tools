@@ -96,7 +96,7 @@ export default function UIComponentsPage() {
         <section className="mb-12">
           <h2 className="text-2xl font-bold mb-4">Form Inputs</h2>
           <Card>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6">
               <Input label="Text Input" placeholder="Enter text..." />
               <Input
                 label="With Error"
@@ -111,16 +111,16 @@ export default function UIComponentsPage() {
               <Input
                 label="With Icon"
                 placeholder="Search..."
-                leftIcon={<MagnifyingGlassIcon className="w-5 h-5" />}
+                leftIcon={
+                  <MagnifyingGlassIcon className="w-5 h-5 text-base-content/50" />
+                }
               />
-              <div className="col-span-2">
-                <Select label="Select Option">
-                  <option value="">Choose an option</option>
-                  <option value="1">Option 1</option>
-                  <option value="2">Option 2</option>
-                  <option value="3">Option 3</option>
-                </Select>
-              </div>
+              <Select label="Select Option">
+                <option value="">Choose an option</option>
+                <option value="1">Option 1</option>
+                <option value="2">Option 2</option>
+                <option value="3">Option 3</option>
+              </Select>
               <Textarea
                 label="Textarea"
                 placeholder="Enter multiple lines..."
@@ -218,17 +218,47 @@ export default function UIComponentsPage() {
         <section className="mb-12">
           <h2 className="text-2xl font-bold mb-4">Avatars</h2>
           <Card>
-            <div className="flex items-end gap-4">
-              <Avatar initials="JD" size="xs" />
-              <Avatar initials="AB" size="sm" />
-              <Avatar initials="CD" size="md" />
-              <Avatar initials="EF" size="lg" />
-              <Avatar initials="GH" size="xl" />
-              <Avatar initials="IJ" size="2xl" />
+            <div className="flex flex-wrap items-end gap-6">
+              <div className="flex flex-col items-center gap-2">
+                <Avatar initials="JD" size="xs" />
+                <span className="text-xs text-base-content/60">
+                  xs • w-6 • 10px
+                </span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Avatar initials="AB" size="sm" />
+                <span className="text-xs text-base-content/60">
+                  sm • w-8 • 12px
+                </span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Avatar initials="CD" size="md" />
+                <span className="text-xs text-base-content/60">
+                  md • w-10 • 14px
+                </span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Avatar initials="EF" size="lg" />
+                <span className="text-xs text-base-content/60">
+                  lg • w-12 • 16px
+                </span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Avatar initials="GH" size="xl" />
+                <span className="text-xs text-base-content/60">
+                  xl • w-16 • 18px
+                </span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Avatar initials="IJ" size="2xl" />
+                <span className="text-xs text-base-content/60">
+                  2xl • w-20 • 20px
+                </span>
+              </div>
             </div>
             <Divider className="my-6" />
             <CardTitle>Avatars with Status</CardTitle>
-            <div className="flex items-end gap-4 mt-4">
+            <div className="flex flex-wrap items-end gap-4 mt-4">
               <Avatar initials="JS" size="lg" status="online" />
               <Avatar initials="MJ" size="lg" status="offline" />
               <Avatar initials="SK" size="lg" status="busy" />
@@ -318,11 +348,41 @@ export default function UIComponentsPage() {
           <h2 className="text-2xl font-bold mb-4">Progress</h2>
           <Card>
             <div className="space-y-6">
-              <Progress value={75} showLabel />
-              <Progress value={45} color="secondary" />
-              <Progress value={90} color="success" />
-              <Progress value={30} color="warning" />
-              <Progress value={85} color="error" />
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span className="text-sm font-medium">Default</span>
+                  <span className="text-sm text-base-content/60">75%</span>
+                </div>
+                <Progress value={75} />
+              </div>
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span className="text-sm font-medium">Secondary</span>
+                  <span className="text-sm text-base-content/60">45%</span>
+                </div>
+                <Progress value={45} color="secondary" />
+              </div>
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span className="text-sm font-medium">Success</span>
+                  <span className="text-sm text-base-content/60">90%</span>
+                </div>
+                <Progress value={90} color="success" />
+              </div>
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span className="text-sm font-medium">Warning</span>
+                  <span className="text-sm text-base-content/60">30%</span>
+                </div>
+                <Progress value={30} color="warning" />
+              </div>
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span className="text-sm font-medium">Error</span>
+                  <span className="text-sm text-base-content/60">85%</span>
+                </div>
+                <Progress value={85} color="error" />
+              </div>
             </div>
           </Card>
         </section>

@@ -53,32 +53,32 @@ export function Modal({
   }[size];
 
   return (
-    <dialog
-      ref={dialogRef}
-      className={`modal modal-bottom sm:modal-middle ${sizeClass}`}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div className={`modal-box ${scrollable ? "overflow-y-auto" : ""}`}>
-        {title && (
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold">{title}</h3>
-            <button
-              onClick={onClose}
-              className="btn btn-ghost btn-sm btn-circle"
-              aria-label="Close"
-            >
-              <XMarkIcon className="w-4 h-4" />
-            </button>
-          </div>
-        )}
-        {children}
-      </div>
-      <form method="dialog" className="modal-backdrop">
-        <button onClick={onClose}>close</button>
-      </form>
-    </dialog>
+    <>
+      <div className="fixed inset-0 z-40 bg-black/50" onClick={onClose} />
+      <dialog
+        ref={dialogRef}
+        className={`modal modal-bottom sm:modal-middle ${sizeClass} z-50`}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) onClose();
+        }}
+      >
+        <div className={`modal-box ${scrollable ? "overflow-y-auto" : ""}`}>
+          {title && (
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold">{title}</h3>
+              <button
+                onClick={onClose}
+                className="btn btn-ghost btn-sm btn-circle"
+                aria-label="Close"
+              >
+                <XMarkIcon className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+          {children}
+        </div>
+      </dialog>
+    </>
   );
 }
 

@@ -6,7 +6,13 @@ interface StatProps {
 }
 
 export function Stat({ children, className = "" }: StatProps) {
-  return <div className={`stats shadow ${className}`}>{children}</div>;
+  return (
+    <div
+      className={`stats stats-vertical lg:stats-horizontal shadow inline-flex w-auto ${className}`}
+    >
+      {children}
+    </div>
+  );
 }
 
 interface StatItemProps {

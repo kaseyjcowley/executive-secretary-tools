@@ -10,12 +10,12 @@ interface AvatarProps {
 }
 
 const sizeClasses: Record<AvatarSize, string> = {
-  xs: "w-6 h-6",
-  sm: "w-8 h-8",
-  md: "w-10 h-10",
-  lg: "w-12 h-12",
-  xl: "w-16 h-16",
-  "2xl": "w-20 h-20",
+  xs: "w-6 h-6 text-[10px]",
+  sm: "w-8 h-8 text-xs",
+  md: "w-10 h-10 text-sm",
+  lg: "w-12 h-12 text-base",
+  xl: "w-16 h-16 text-lg",
+  "2xl": "w-20 h-20 text-xl",
 };
 
 const statusClasses: Record<string, string> = {
@@ -45,14 +45,14 @@ export function Avatar({
   return (
     <div className={`avatar placeholder ${className}`}>
       <div
-        className={`${sizeClasses[size]} bg-neutral text-neutral-content rounded-full`}
+        className={`${sizeClasses[size]} bg-neutral text-neutral-content rounded-full flex items-center justify-center`}
       >
         {src ? (
           <img src={src} alt={alt} />
         ) : initials ? (
-          <span className="text-xs">{initials}</span>
+          <span>{initials}</span>
         ) : (
-          <span className="text-sm">?</span>
+          <span>?</span>
         )}
       </div>
       {status && (

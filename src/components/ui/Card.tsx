@@ -22,7 +22,17 @@ export function Card({
   compact = false,
   accentColor,
 }: CardProps) {
-  const accentClass = accentColor ? `border-t-4 border-t-${accentColor}` : "";
+  const accentClass = accentColor
+    ? {
+        primary: "border-t-4 border-t-primary",
+        secondary: "border-t-4 border-t-secondary",
+        accent: "border-t-4 border-t-accent",
+        neutral: "border-t-4 border-t-neutral",
+        success: "border-t-4 border-t-success",
+        warning: "border-t-4 border-t-warning",
+        error: "border-t-4 border-t-error",
+      }[accentColor]
+    : "";
 
   return (
     <div

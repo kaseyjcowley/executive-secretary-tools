@@ -20,8 +20,10 @@ export function SelectionToolbar({
   if (selectedCount === 0) return null;
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
-      <span className="text-sm font-medium bg-base-200 px-3 py-1 rounded-full animate-pulse">
+    <div
+      className={`flex flex-wrap sm:flex-nowrap items-center gap-3 ${className}`}
+    >
+      <span className="text-sm font-medium bg-base-200 px-3 py-1 rounded-full animate-pulse whitespace-nowrap">
         {selectedCount} contact{selectedCount !== 1 ? "s" : ""} selected
       </span>
       {actions.map((action, index) => (
