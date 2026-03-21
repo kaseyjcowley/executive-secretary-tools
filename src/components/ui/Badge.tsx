@@ -46,7 +46,8 @@ export function Badge({
     lg: "text-base px-3 py-1.5",
   }[size];
 
-  const colorClass = variantColors[variant];
+  const baseVariant = outline ? "outline" : variant;
+  const colorClass = variantColors[baseVariant];
 
   return (
     <span
