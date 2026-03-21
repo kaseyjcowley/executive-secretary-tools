@@ -1,10 +1,10 @@
 import { Suspense } from "react";
+import { ErrorState } from "@/components/ui";
 import { ContactList } from "@/features/messages/components/ContactList";
 import { sortContactsByLabel } from "@/features/messages/utils/contact-ordering";
 import { getAppointmentContacts } from "@/requests/cards";
 import { getMessagedContactIds } from "@/utils/get-messaged-contacts";
 import { MessagesLoadingSkeleton } from "@/features/messages/components/MessagesLoadingSkeleton";
-import { MessagesErrorState } from "@/features/messages/components/MessagesErrorState";
 
 export const dynamic = "force-dynamic";
 
@@ -15,19 +15,20 @@ export default async function MessagesPage() {
   } catch (error) {
     console.error("Failed to fetch appointment contacts:", error);
     return (
-      <main className="bg-gray-50 min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col space-y-8">
-          <div className="mb-4">
-            <h2 className="text-2xl font-bold text-gray-900">
-              Appointment Messages
-            </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Manage and send appointment notifications to members
-            </p>
-          </div>
-          <MessagesErrorState />
+      <div className="container mx-auto px-0 py-8 max-w-4xl">
+        <div className="bg-base-100 border border-base-300 rounded-lg shadow-sm mx-0 -mx-4 md:mx-auto md:px-6 px-4 p-4 md:p-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Appointment Messages
+          </h2>
+          <p className="text-sm text-gray-600 mb-6">
+            Manage and send appointment notifications to members
+          </p>
+          <ErrorState
+            title="Error Loading Contacts"
+            description="Unable to load appointment contacts. Please try again later."
+          />
         </div>
-      </main>
+      </div>
     );
   }
 
@@ -36,16 +37,14 @@ export default async function MessagesPage() {
   const suppressedIds = await getMessagedContactIds(contactNames);
 
   return (
-    <main className="bg-gray-50 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col space-y-8">
-        <div className="mb-4">
-          <h2 className="text-2xl font-bold text-gray-900">
-            Appointment Messages
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Manage and send appointment notifications to members
-          </p>
-        </div>
+    <div className="container mx-auto px-0 py-8 max-w-4xl">
+      <div className="bg-base-100 border border-base-300 rounded-lg shadow-sm mx-0 -mx-4 md:mx-auto md:px-6 px-4 p-4 md:p-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          Appointment Messages
+        </h2>
+        <p className="text-sm text-gray-600 mb-6">
+          Manage and send appointment notifications to members
+        </p>
         <Suspense fallback={<MessagesLoadingSkeleton />}>
           <ContactList
             contacts={sortedContacts}
@@ -53,6 +52,6 @@ export default async function MessagesPage() {
           />
         </Suspense>
       </div>
-    </main>
+    </div>
   );
 }

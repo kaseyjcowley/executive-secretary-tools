@@ -5,6 +5,7 @@ import { utcToZonedTime } from "date-fns-tz";
 import { CallingTrelloCard, InterviewTrelloCard } from "@/requests/cards";
 import { getMemberName } from "@/requests/members";
 import { InterviewRow } from "./InterviewRow";
+import { Card, CardTitle, Badge } from "@/components/ui";
 
 interface Props {
   memberId: string;
@@ -14,16 +15,34 @@ interface Props {
 const END_OF_CHURCH_HOUR = 12;
 const END_OF_CHURCH_MINUTE = 30;
 
-const MEMBER_BORDER_COLORS: Record<string, string> = {
-  "698140165dd97628fcedff99": "border-l-blue-500",
-  "6987d4cbda19b8f024c976ab": "border-l-green-500",
-  "69817e5a677e074add082272": "border-l-purple-500",
-  "5a837d172c1860b067ef60c8": "border-l-orange-500",
-  unassigned: "border-l-gray-400",
+const MEMBER_ACCENT_COLORS: Record<
+  string,
+  | "primary"
+  | "secondary"
+  | "accent"
+  | "neutral"
+  | "success"
+  | "warning"
+  | "error"
+> = {
+  "698140165dd97628fcedff99": "primary",
+  "6987d4cbda19b8f024c976ab": "success",
+  "69817e5a677e074add082272": "secondary",
+  "5a837d172c1860b067ef60c8": "warning",
+  unassigned: "neutral",
 };
 
-function getBorderColor(memberId: string): string {
-  return MEMBER_BORDER_COLORS[memberId] || "border-l-gray-400";
+function getAccentColor(
+  memberId: string,
+):
+  | "primary"
+  | "secondary"
+  | "accent"
+  | "neutral"
+  | "success"
+  | "warning"
+  | "error" {
+  return MEMBER_ACCENT_COLORS[memberId] || "neutral";
 }
 
 export const InterviewsTable = ({ memberId, interviews }: Props) => {
@@ -49,56 +68,48 @@ export const InterviewsTable = ({ memberId, interviews }: Props) => {
   });
 
   return (
-    <section
-      className={`max-w-3xl w-full mx-auto sm:bg-white sm:rounded-lg sm:shadow-sm sm:border border-gray-200 sm:border-l-4 ${getBorderColor(
-        memberId,
-      )} overflow-hidden`}
-    >
-      <div className="p-3 pb-4 sm:p-6">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
-          {getMemberName(memberId)}
-        </h2>
+    <Card accentColor={getAccentColor(memberId)} className="overflow-hidden">
+      <CardTitle className="text-xl mb-4">{getMemberName(memberId)}</CardTitle>
 
-        <div className="space-y-6 sm:space-y-8">
-          <div>
-            <div className="flex items-center gap-2 mb-3 sm:mb-4">
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700">
-                Before Church
-              </span>
-            </div>
-            <div className="space-y-2">
-              {interviewsBeforeChurch.length > 0 ? (
-                interviewsBeforeChurch.map((card) => (
-                  <InterviewRow key={card.name} card={card} />
-                ))
-              ) : (
-                <p className="text-gray-500 text-sm italic py-2">
-                  No interviews scheduled
-                </p>
-              )}
-            </div>
+      <div className="space-y-6">
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <Badge variant="primary" size="sm">
+              Before Church
+            </Badge>
           </div>
+          <div className="space-y-2">
+            {interviewsBeforeChurch.length > 0 ? (
+              interviewsBeforeChurch.map((card) => (
+                <InterviewRow key={card.name} card={card} />
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm italic py-2">
+                No interviews scheduled
+              </p>
+            )}
+          </div>
+        </div>
 
-          <div>
-            <div className="flex items-center gap-2 mb-3 sm:mb-4">
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-700">
-                After Church
-              </span>
-            </div>
-            <div className="space-y-2">
-              {interviewsAfterChurch.length > 0 ? (
-                interviewsAfterChurch.map((card) => (
-                  <InterviewRow key={card.name} card={card} />
-                ))
-              ) : (
-                <p className="text-gray-500 text-sm italic py-2">
-                  No interviews scheduled
-                </p>
-              )}
-            </div>
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <Badge variant="secondary" size="sm">
+              After Church
+            </Badge>
+          </div>
+          <div className="space-y-2">
+            {interviewsAfterChurch.length > 0 ? (
+              interviewsAfterChurch.map((card) => (
+                <InterviewRow key={card.name} card={card} />
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm italic py-2">
+                No interviews scheduled
+              </p>
+            )}
           </div>
         </div>
       </div>
-    </section>
+    </Card>
   );
 };

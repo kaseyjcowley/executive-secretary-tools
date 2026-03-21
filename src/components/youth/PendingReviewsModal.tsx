@@ -3,13 +3,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
-import type { PendingReview, MatchCandidate } from "@/types/youth";
+import type { PendingReview } from "@/types/youth";
 import {
   getPendingReviewsAction,
   syncPendingReviewsAction,
   confirmPendingReviewAction,
   dismissPendingReviewAction,
 } from "@/actions/youth-pending-reviews";
+import { Button } from "@/components/ui";
 
 interface PendingReviewsModalProps {
   onClose: () => void;
@@ -91,28 +92,35 @@ export function PendingReviewsModal({ onClose }: PendingReviewsModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-x-hidden">
-      <div className="bg-white rounded-lg p-6 max-w-2xl w-[90vw] max-md:w-full mx-4 shadow-xl max-h-[80vh] flex flex-col">
+    <div
+      className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 overflow-x-hidden"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-lg p-6 max-w-2xl w-[90vw] max-md:w-full mx-4 shadow-xl max-h-[80vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex justify-between items-start mb-4">
           <h2 className="text-xl font-semibold text-gray-900">
             Pending Reviews
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+            className="btn btn-ghost btn-sm text-xl px-2"
           >
             ×
           </button>
         </div>
 
         <div className="mb-4 flex gap-2">
-          <button
+          <Button
+            variant="primary"
             onClick={handleSync}
             disabled={isSyncing}
-            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 transition-colors"
+            loading={isSyncing}
           >
-            {isSyncing ? "Syncing..." : "↻ Sync from Trello"}
-          </button>
+            Sync from Trello
+          </Button>
         </div>
 
         {isLoading ? (
@@ -138,12 +146,14 @@ export function PendingReviewsModal({ onClose }: PendingReviewsModalProps) {
                         {format(new Date(review.cardDate), "MMMM d, yyyy")}
                       </div>
                     </div>
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={() => handleDismiss(review.trelloCardId)}
-                      className="text-gray-400 hover:text-gray-600 text-sm"
+                      className="text-gray-400"
                     >
                       Dismiss
-                    </button>
+                    </Button>
                   </div>
 
                   <div className="mt-3">
@@ -152,18 +162,34 @@ export function PendingReviewsModal({ onClose }: PendingReviewsModalProps) {
                     </div>
                     <div className="space-y-2">
                       {review.topCandidates.map((candidate) => (
-                        <CandidateRow
+                        <div
                           key={candidate.contactId}
-                          candidate={candidate}
-                          getConfidenceLabel={getConfidenceLabel}
-                          getConfidenceColor={getConfidenceColor}
-                          onConfirm={() =>
-                            handleConfirm(
-                              review.trelloCardId,
-                              candidate.contactId,
-                            )
-                          }
-                        />
+                          className="flex items-center justify-between bg-gray-50 p-2 rounded"
+                        >
+                          <div>
+                            <span className="font-medium text-gray-900">
+                              {candidate.fullName}
+                            </span>
+                            <span
+                              className={`ml-2 text-xs ${getConfidenceColor(candidate.score)}`}
+                            >
+                              {getConfidenceLabel(candidate.score)} (
+                              {Math.round(candidate.score * 100)}% match)
+                            </span>
+                          </div>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() =>
+                              handleConfirm(
+                                review.trelloCardId,
+                                candidate.contactId,
+                              )
+                            }
+                          >
+                            Confirm
+                          </Button>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -179,36 +205,6 @@ export function PendingReviewsModal({ onClose }: PendingReviewsModalProps) {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-function CandidateRow({
-  candidate,
-  getConfidenceLabel,
-  getConfidenceColor,
-  onConfirm,
-}: {
-  candidate: MatchCandidate;
-  getConfidenceLabel: (score: number) => string;
-  getConfidenceColor: (score: number) => string;
-  onConfirm: () => void;
-}) {
-  return (
-    <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
-      <div>
-        <span className="font-medium text-gray-900">{candidate.fullName}</span>
-        <span className={`ml-2 text-xs ${getConfidenceColor(candidate.score)}`}>
-          {getConfidenceLabel(candidate.score)} (
-          {Math.round(candidate.score * 100)}% match)
-        </span>
-      </div>
-      <button
-        onClick={onConfirm}
-        className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-      >
-        Confirm
-      </button>
     </div>
   );
 }

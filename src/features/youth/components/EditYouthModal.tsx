@@ -10,6 +10,7 @@ import {
   updatePreferredNameAction,
   setVisitHistoryAction,
 } from "@/actions/youth-visits";
+import { Button } from "@/components/ui";
 
 interface EditYouthModalProps {
   youthId: string;
@@ -148,11 +149,25 @@ export function EditYouthModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-x-hidden">
-      <div className="bg-white rounded-lg p-6 max-w-lg w-[90vw] max-md:w-full mx-4 shadow-xl max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-semibold mb-4 text-gray-900">
-          Edit Youth Details
-        </h2>
+    <div
+      className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 overflow-x-hidden"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-lg p-6 max-w-lg w-[90vw] max-md:w-full mx-4 shadow-xl max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-start mb-4">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Edit Youth Details
+          </h2>
+          <button
+            onClick={onClose}
+            className="btn btn-ghost btn-sm text-xl px-2"
+          >
+            ×
+          </button>
+        </div>
 
         <div className="mb-4">
           <label
@@ -174,14 +189,14 @@ export function EditYouthModal({
         <div className="mb-6">
           <label
             htmlFor="lastSeen"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-gray-700 mb-1 truncate"
           >
             Last Visited
           </label>
           <input
             id="lastSeen"
             type="date"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700 max-w-full"
             value={date}
             onChange={(e) => setDate(e.target.value)}
             disabled={isSubmitting}
@@ -189,14 +204,14 @@ export function EditYouthModal({
         </div>
 
         <div className="mb-6">
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setShowVisitHistory(!showVisitHistory)}
-            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
           >
             {showVisitHistory ? "Hide" : "Show"} Visit History (
             {visitHistory.length})
-          </button>
+          </Button>
 
           {showVisitHistory && (
             <div className="mt-3 border rounded-md p-3">
@@ -215,12 +230,14 @@ export function EditYouthModal({
                         {new Date(visit.visitedAt).toLocaleDateString()} -{" "}
                         {getVisitTypeName(visit.visitType)}
                       </span>
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => handleDeleteVisit(visit.id)}
-                        className="text-red-500 hover:text-red-700 text-xs"
+                        className="text-error"
                       >
                         Delete
-                      </button>
+                      </Button>
                     </li>
                   ))}
                 </ul>
@@ -257,33 +274,27 @@ export function EditYouthModal({
                     value={newVisitNote}
                     onChange={(e) => setNewVisitNote(e.target.value)}
                   />
-                  <button
-                    onClick={handleAddVisit}
-                    className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
-                  >
+                  <Button variant="primary" size="sm" onClick={handleAddVisit}>
                     Add
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
           )}
         </div>
 
-        <div className="flex justify-end space-x-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-            disabled={isSubmitting}
-          >
+        <div className="flex justify-end gap-2">
+          <Button variant="ghost" onClick={onClose} disabled={isSubmitting}>
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="primary"
             onClick={handleUpdate}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             disabled={isSubmitting}
+            loading={isSubmitting}
           >
-            {isSubmitting ? "Saving..." : "Save"}
-          </button>
+            Save
+          </Button>
         </div>
       </div>
     </div>

@@ -11,6 +11,7 @@ import members from "@/data/members.json";
 import { CHURCH_END_TIME, MEMBER_SELECTION } from "@/constants";
 import { getBeforeOrAfterChurch } from "@/lib/utils/time-utils";
 import { formatTimeForDisplay } from "@/lib/utils/date-formatters";
+import { Card } from "@/components/ui";
 import { ContactRowHeader } from "./ContactRowHeader";
 import { ContactMemberSelector } from "./ContactMemberSelector";
 import { ContactTemplateSelector } from "./ContactTemplateSelector";
@@ -159,10 +160,13 @@ export const ContactRow = ({
   const isCalling = contact.kind === "calling";
 
   return (
-    <div
-      className={`bg-white rounded-lg shadow-sm border border-gray-200 border-t-4 p-4 md:p-6 overflow-hidden transition-all duration-200 ${
-        isCalling ? "border-t-purple-500" : "border-t-blue-500"
-      } ${isSelected ? "ring-2 ring-blue-500 ring-offset-2 shadow-md scale-[1.01]" : "hover:shadow-md hover:-translate-y-0.5"}`}
+    <Card
+      accentColor={isCalling ? "accent" : "primary"}
+      className={`overflow-hidden transition-all duration-200 ${
+        isSelected
+          ? "ring-2 ring-primary ring-offset-2 shadow-md scale-[1.01]"
+          : "hover:shadow-md hover:-translate-y-0.5"
+      }`}
     >
       <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] md:grid-rows-4 gap-2 md:gap-4">
         <div className="grid grid-rows-[auto_auto_auto] gap-2 md:row-start-1 md:row-end-4">
@@ -206,6 +210,6 @@ export const ContactRow = ({
           />
         </div>
       </div>
-    </div>
+    </Card>
   );
 };

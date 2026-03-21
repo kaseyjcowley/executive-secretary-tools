@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { Card, Button, Radio, Badge, Avatar } from "@/components/ui";
+import { Modal, ModalActions } from "@/components/ui/Modal";
 import { CONDUCTORS } from "@/constants/conductors";
 import type { Conductor, ConductorOverride } from "@/types/conductors";
 import { setOverride, clearOverride, advanceRotation } from "./actions";
@@ -13,6 +15,14 @@ interface ConductorState {
   currentConductor: Conductor;
   nextConductor: Conductor;
 }
+
+const getInitials = (name: string): string => {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    return `${parts[0].charAt(0)}${parts[parts.length - 1].charAt(0)}`;
+  }
+  return parts[0]?.charAt(0) ?? "?";
+};
 
 type Props = ConductorState;
 
@@ -34,6 +44,7 @@ export function ConductorPageClient({
     override?.slackUserId ?? "",
   );
   const [reason, setReason] = useState(override?.reason ?? "");
+  const [showAdvanceModal, setShowAdvanceModal] = useState(false);
 
   const handleSetOverride = async () => {
     if (!selectedConductor) {
@@ -70,14 +81,6 @@ export function ConductorPageClient({
   };
 
   const handleAdvance = async () => {
-    if (
-      !confirm(
-        `Advance rotation to ${state.nextConductor.name}? This will update Slack channel topic.`,
-      )
-    ) {
-      return;
-    }
-
     try {
       const result = await advanceRotation();
       toast.success(`Rotation advanced to ${result.conductor.name}`);
@@ -89,127 +92,149 @@ export function ConductorPageClient({
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">
-          Conductor Rotation
-        </h2>
-        <p className="mt-2 text-sm text-gray-600">
-          Manage the monthly conductor rotation and overrides
-        </p>
-      </div>
-
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          Current Status
-        </h2>
-        <div className="bg-white rounded-lg p-6 shadow border">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="text-2xl">👤</span>
-            <div>
-              <div className="text-sm text-gray-600">This Month</div>
-              <div className="text-lg font-semibold text-gray-900">
-                {state.currentConductor.name}
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">➡️</span>
-            <div>
-              <div className="text-sm text-gray-600">Next</div>
-              <div className="text-lg font-semibold text-gray-900">
-                {state.nextConductor.name}
-              </div>
-            </div>
-          </div>
-          {state.override && (
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <div className="text-sm text-amber-600 font-semibold">
-                Active Override
-              </div>
-              <div className="text-sm text-gray-700">
-                {state.override.name} - {state.override.reason}
-              </div>
-            </div>
-          )}
+    <div className="container mx-auto px-0 py-8 max-w-2xl">
+      <div className="bg-base-100 border border-base-300 rounded-lg shadow-sm mx-0 -mx-4 md:mx-auto md:px-6 px-4 p-4 md:p-6">
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">
+            Conductor Rotation
+          </h2>
+          <p className="mt-1 text-sm text-gray-600">
+            Manage the monthly conductor rotation and overrides
+          </p>
         </div>
-      </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          Override (for next month)
-        </h2>
-        <div className="bg-white rounded-lg p-6 shadow border">
-          <div className="space-y-3 mb-4">
-            {CONDUCTORS.map((conductor) => (
-              <label
-                key={conductor.slackUserId}
-                className="flex items-center gap-3 cursor-pointer"
-              >
-                <input
-                  type="radio"
+        <section className="mb-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Current Status
+          </h3>
+          <Card accentColor="success" className="mb-4">
+            <div className="flex items-center gap-3">
+              <Avatar
+                initials={getInitials(state.currentConductor.name)}
+                size="md"
+              />
+              <div>
+                <div className="text-sm text-gray-600">This Month</div>
+                <div className="text-lg font-semibold text-gray-900">
+                  {state.currentConductor.name}
+                </div>
+              </div>
+            </div>
+          </Card>
+          <Card accentColor="warning" className="mb-4">
+            <div className="flex items-center gap-3">
+              <Avatar
+                initials={getInitials(state.nextConductor.name)}
+                size="md"
+              />
+              <div>
+                <div className="text-sm text-gray-600">Next</div>
+                <div className="text-lg font-semibold text-gray-900">
+                  {state.nextConductor.name}
+                </div>
+              </div>
+            </div>
+          </Card>
+          {state.override && (
+            <Card className="border-t-4 border-t-warning">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Badge variant="warning">Active Override</Badge>
+                  </div>
+                  <div className="text-sm text-gray-700">
+                    {state.override.name}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {state.override.reason}
+                  </div>
+                </div>
+                <Button variant="ghost" size="sm" onClick={handleClearOverride}>
+                  Clear
+                </Button>
+              </div>
+            </Card>
+          )}
+        </section>
+
+        <section className="mb-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Override (for next month)
+          </h3>
+          <Card>
+            <div className="space-y-3 mb-4">
+              {CONDUCTORS.map((conductor) => (
+                <Radio
+                  key={conductor.slackUserId}
                   name="conductor"
                   value={conductor.slackUserId}
                   checked={selectedConductor === conductor.slackUserId}
                   onChange={(e) => setSelectedConductor(e.target.value)}
-                  className="w-4 h-4 text-blue-600"
+                  label={conductor.name}
                 />
-                <span className="text-gray-900">{conductor.name}</span>
-              </label>
-            ))}
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="reason"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Reason (optional)
-            </label>
-            <input
-              type="text"
-              id="reason"
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              placeholder="e.g., Bishop out of town"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div className="flex gap-3">
-            <button
-              onClick={handleSetOverride}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-            >
-              Set Override
-            </button>
-            {state.override && (
-              <button
-                onClick={handleClearOverride}
-                className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
+              ))}
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="reason"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Clear Override
-              </button>
-            )}
-          </div>
-        </div>
-      </section>
+                Reason (optional)
+              </label>
+              <input
+                type="text"
+                id="reason"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder="e.g., Bishop out of town"
+                className="w-full px-3 py-2 border border-base-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-base-100"
+              />
+            </div>
+            <Button onClick={handleSetOverride} variant="primary">
+              Set Override
+            </Button>
+          </Card>
+        </section>
 
-      <section>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          Manual Actions
-        </h2>
-        <div className="bg-white rounded-lg p-6 shadow border">
-          <p className="text-sm text-gray-600 mb-4">
-            Advance the rotation to the next person. This will also update the
-            Slack bishopric channel topic.
-          </p>
-          <button
-            onClick={handleAdvance}
-            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+        <section>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Manual Actions
+          </h3>
+          <Card>
+            <p className="text-sm text-gray-600 mb-4">
+              Advance the rotation to the next person. This will also update the
+              Slack bishopric channel topic.
+            </p>
+            <Button onClick={() => setShowAdvanceModal(true)} variant="success">
+              Advance Rotation
+            </Button>
+          </Card>
+        </section>
+      </div>
+
+      <Modal
+        isOpen={showAdvanceModal}
+        onClose={() => setShowAdvanceModal(false)}
+        title="Confirm Rotation Advance"
+        size="sm"
+      >
+        <p className="text-sm text-gray-600 mb-4">
+          Advance rotation to <strong>{state.nextConductor.name}</strong>? This
+          will update the Slack channel topic.
+        </p>
+        <ModalActions>
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => setShowAdvanceModal(false)}
           >
-            Advance Rotation
-          </button>
-        </div>
-      </section>
+            Cancel
+          </Button>
+          <Button variant="success" onClick={handleAdvance}>
+            Confirm
+          </Button>
+        </ModalActions>
+      </Modal>
     </div>
   );
 }

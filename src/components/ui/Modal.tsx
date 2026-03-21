@@ -54,7 +54,10 @@ export function Modal({
 
   return (
     <>
-      <div className="fixed inset-0 z-40 bg-black/50" onClick={onClose} />
+      <div
+        className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
+        onClick={onClose}
+      />
       <dialog
         ref={dialogRef}
         className={`modal modal-bottom sm:modal-middle ${sizeClass} z-50`}

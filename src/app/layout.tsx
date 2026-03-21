@@ -4,7 +4,6 @@ import { Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import { Providers } from "./providers";
 import { Navbar } from "@/components/Navbar";
-import { LogoutButton } from "@/components/ui/LogoutButton";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -26,9 +25,6 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <Navbar />
-          <div className="hidden md:flex justify-end px-4 sm:px-6 lg:px-8 py-2 bg-base-200">
-            <LogoutButton />
-          </div>
           <main className="min-h-screen bg-base-200">{children}</main>
           <Toaster position="bottom-right" />
         </Providers>

@@ -4,6 +4,7 @@ import { formatDistanceToNow } from "date-fns";
 
 import { CallingStage } from "@/constants";
 import { CallingTrelloCard, InterviewTrelloCard } from "@/requests/cards";
+import { Badge } from "@/components/ui";
 
 interface Props {
   card: InterviewTrelloCard | CallingTrelloCard;
@@ -20,18 +21,16 @@ export const InterviewRow = ({ card }: Props) => {
       : false;
 
   return (
-    <div className="flex items-center gap-4 px-4 py-4 sm:px-6 bg-white border-2 border-slate-200 sm:border sm:border-slate-100 rounded-2xl shadow-md sm:shadow-sm hover:shadow-lg sm:hover:shadow-md transition-shadow duration-200 w-full max-w-3xl">
+    <div className="flex items-center gap-4 px-4 py-4 sm:px-6 bg-white border-2 border-slate-200 sm:border sm:border-slate-100 rounded-2xl shadow-md sm:shadow-sm hover:shadow-lg sm:hover:shadow-md transition-shadow duration-200 w-full">
       {/* Mobile: Left col (chip + time stacked) */}
       <div className="flex sm:hidden flex-col items-center gap-2 flex-shrink-0">
-        <span
-          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase ${
-            isCalling
-              ? "bg-purple-100 text-purple-700"
-              : "bg-violet-100 text-violet-700"
-          }`}
+        <Badge
+          variant={isCalling ? "secondary" : "accent"}
+          size="xs"
+          className="uppercase"
         >
           {isCalling ? "Calling" : "Interview"}
-        </span>
+        </Badge>
         <p className="text-sm font-semibold text-slate-700">{time}</p>
       </div>
 
@@ -51,15 +50,13 @@ export const InterviewRow = ({ card }: Props) => {
 
       {/* Desktop: Chip */}
       <div className="hidden sm:flex flex-shrink-0">
-        <span
-          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase ${
-            isCalling
-              ? "bg-purple-100 text-purple-700"
-              : "bg-violet-100 text-violet-700"
-          }`}
+        <Badge
+          variant={isCalling ? "secondary" : "accent"}
+          size="xs"
+          className="uppercase"
         >
           {isCalling ? "Calling" : "Interview"}
-        </span>
+        </Badge>
       </div>
 
       {/* Desktop: Name + Tagline */}

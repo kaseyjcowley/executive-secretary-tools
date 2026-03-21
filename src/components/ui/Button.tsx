@@ -1,7 +1,13 @@
 import { type ButtonHTMLAttributes, type ReactNode } from "react";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
+  variant?:
+    | "primary"
+    | "secondary"
+    | "outline"
+    | "ghost"
+    | "danger"
+    | "success";
   size?: "sm" | "md" | "lg";
   loading?: boolean;
   children: ReactNode;
@@ -22,6 +28,7 @@ export function Button({
     outline: "btn-outline",
     ghost: "btn-ghost",
     danger: "btn-error",
+    success: "btn-success",
   };
 
   const sizeClasses = {

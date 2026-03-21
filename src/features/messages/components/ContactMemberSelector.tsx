@@ -46,7 +46,7 @@ export const ContactMemberSelector = ({
             type="checkbox"
             checked={recipientsAreSubjects}
             onChange={(e) => onRecipientsAreSubjectsChange(e.target.checked)}
-            className="w-4 h-4 accent-blue-600"
+            className="w-5 h-5 accent-blue-600"
           />
           Recipients are subjects
         </label>

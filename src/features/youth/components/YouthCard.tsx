@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { formatDistanceToNow } from "date-fns";
 import type { Youth } from "@/types/youth";
+import { Card, Button, Badge } from "@/components/ui";
 
 const DAYS_180_AGO_MS = 180 * 24 * 60 * 60 * 1000;
 
@@ -12,6 +13,7 @@ interface YouthCardProps {
   onSchedule: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  onHistory: () => void;
 }
 
 export function YouthCard({
@@ -20,6 +22,7 @@ export function YouthCard({
   onSchedule,
   onEdit,
   onDelete,
+  onHistory,
 }: YouthCardProps) {
   const daysOverdue = useMemo(() => {
     return Math.floor(
@@ -28,26 +31,26 @@ export function YouthCard({
   }, [referenceDate, youth.lastSeenAt]);
 
   return (
-    <div className="bg-white rounded-lg p-4 shadow border-l-4 border-gray-200">
-      <div className="flex justify-between items-start">
+    <Card className="overflow-hidden">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
         <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
             {youth.scheduled && (
-              <span className="text-red-500 text-lg" title="Scheduled">
-                🔴
-              </span>
+              <Badge variant="error" size="sm">
+                Scheduled
+              </Badge>
             )}
             {daysOverdue > 0 && !youth.scheduled && (
-              <span className="text-yellow-500 text-lg" title="Overdue">
-                ⚠️
-              </span>
+              <Badge variant="warning" size="sm">
+                Overdue
+              </Badge>
             )}
             {daysOverdue <= -150 && !youth.scheduled && (
-              <span className="text-green-500 text-lg" title="Recently visited">
-                ✅
-              </span>
+              <Badge variant="success" size="sm">
+                Recently Visited
+              </Badge>
             )}
-            <h3 className="font-semibold text-gray-900">
+            <h3 className="font-semibold text-gray-900 text-lg md:text-base">
               {youth.preferredName || youth.name}
             </h3>
             {youth.preferredName && (
@@ -59,7 +62,7 @@ export function YouthCard({
             Last visited:{" "}
             {formatDistanceToNow(youth.lastSeenAt, { addSuffix: true })}
             {daysOverdue > 0 && (
-              <span className="text-red-600 ml-2">
+              <span className="text-error ml-2">
                 ({daysOverdue} days overdue)
               </span>
             )}
@@ -74,36 +77,30 @@ export function YouthCard({
               href={youth.trelloCardUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-blue-600 hover:underline mt-1 inline-block"
+              className="text-sm text-primary hover:underline mt-1 inline-block"
             >
               View Trello Card →
             </a>
           )}
         </div>
 
-        <div className="flex flex-wrap gap-2 ml-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full sm:w-auto">
           {!youth.scheduled && (
-            <button
-              onClick={onSchedule}
-              className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-            >
+            <Button variant="primary" size="sm" onClick={onSchedule}>
               Schedule
-            </button>
+            </Button>
           )}
-          <button
-            onClick={onEdit}
-            className="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
-          >
+          <Button variant="primary" size="sm" onClick={onEdit}>
             Edit
-          </button>
-          <button
-            onClick={onDelete}
-            className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-          >
+          </Button>
+          <Button variant="secondary" size="sm" onClick={onHistory}>
+            History
+          </Button>
+          <Button variant="danger" size="sm" onClick={onDelete}>
             Delete
-          </button>
+          </Button>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

@@ -17,6 +17,7 @@ import {
 import { useGroupRecipients } from "@/features/messages/hooks/useGroupRecipients";
 import { useGroupSubjects } from "@/features/messages/hooks/useGroupSubjects";
 import { useMessagePreview } from "@/features/messages/hooks/useMessagePreview";
+import { Card, Button } from "@/components/ui";
 import { GroupHeader } from "./GroupHeader";
 import { GroupRecipientStep } from "./GroupRecipientStep";
 import { GroupSubjectStep } from "./GroupSubjectStep";
@@ -119,7 +120,10 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
     });
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 border-t-4 border-t-accent-500 p-6 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+    <Card
+      accentColor="accent"
+      className="overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+    >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
           <GroupHeader groupNames={groupNames} contacts={groupContacts} />
@@ -142,12 +146,13 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
             onSetTemplateForSubject={setTemplateForSubject}
           />
 
-          <button
+          <Button
+            variant="ghost"
             onClick={() => onUnmerge(group.id)}
-            className="text-sm text-gray-500 hover:text-gray-700 underline mt-4 hover:no-underline transition-all duration-200"
+            className="mt-4 text-gray-500 hover:text-gray-700 underline hover:no-underline"
           >
             Unmerge
-          </button>
+          </Button>
         </div>
 
         <div className="flex justify-end">
@@ -165,6 +170,6 @@ export const GroupCard = ({ group, contacts, onUnmerge }: GroupCardProps) => {
           />
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
