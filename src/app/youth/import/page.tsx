@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { IconUser } from "@/components/ui/Icons";
+import { Card, Button } from "@/components/ui";
 import { importYouthAction } from "@/actions/youth-visits";
 
 export default function ImportYouthPage() {
@@ -39,58 +39,58 @@ export default function ImportYouthPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-md">
-      <div className="mb-8">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-100 rounded-lg">
-            <IconUser className="w-5 h-5 text-blue-600" />
-          </div>
+    <div className="container mx-auto px-0 py-8 max-w-md">
+      <Card className="mx-0 -mx-4 md:mx-auto md:px-6 px-4 p-4 md:p-6">
+        <div className="mb-4">
+          <h2 className="text-2xl font-bold text-gray-900">Import Youth</h2>
+          <p className="mt-1 text-sm text-gray-600">
+            Import multiple youth at once from a list of names
+          </p>
+        </div>
+
+        <form onSubmit={handleImport} className="space-y-4">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Import Youth</h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Import multiple youth at once from a list of names
+            <label
+              htmlFor="names"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Names (one per line)
+            </label>
+            <textarea
+              id="names"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-48 resize-none text-slate-700"
+              placeholder="Amara Johnson&#10;Marcus Chen&#10;Taylor Williams"
+              value={namesText}
+              onChange={(e) => setNamesText(e.target.value)}
+              disabled={isSubmitting}
+            />
+            <p className="text-sm text-gray-500 mt-1">
+              Enter one name per line
             </p>
           </div>
-        </div>
-      </div>
 
-      <form onSubmit={handleImport} className="space-y-4">
-        <div>
-          <label
-            htmlFor="names"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Names (one per line)
-          </label>
-          <textarea
-            id="names"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-64 resize-none text-slate-700"
-            placeholder="Amara Johnson&#10;Marcus Chen&#10;Taylor Williams"
-            value={namesText}
-            onChange={(e) => setNamesText(e.target.value)}
-            disabled={isSubmitting}
-          />
-          <p className="text-sm text-gray-500 mt-1">Enter one name per line</p>
-        </div>
-
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
-            disabled={isSubmitting}
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            disabled={isSubmitting || !namesText.trim()}
-          >
-            {isSubmitting ? "Importing..." : "Import"}
-          </button>
-        </div>
-      </form>
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              type="button"
+              onClick={() => router.back()}
+              disabled={isSubmitting}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              type="submit"
+              disabled={isSubmitting || !namesText.trim()}
+              loading={isSubmitting}
+              className="flex-1"
+            >
+              Import
+            </Button>
+          </div>
+        </form>
+      </Card>
     </div>
   );
 }

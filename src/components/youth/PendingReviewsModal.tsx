@@ -104,9 +104,12 @@ export function PendingReviewsModal({ onClose }: PendingReviewsModalProps) {
           <h2 className="text-xl font-semibold text-gray-900">
             Pending Reviews
           </h2>
-          <Button variant="ghost" size="sm" onClick={onClose}>
+          <button
+            onClick={onClose}
+            className="btn btn-ghost btn-sm text-xl px-2"
+          >
             ×
-          </Button>
+          </button>
         </div>
 
         <div className="mb-4 flex gap-2">

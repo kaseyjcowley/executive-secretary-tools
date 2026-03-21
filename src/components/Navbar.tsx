@@ -51,9 +51,8 @@ export function Navbar() {
           <Link href="/" className="btn btn-ghost text-xl gap-2">
             <span className="text-primary font-bold">EST</span>
           </Link>
-          <span className="md:hidden text-sm font-medium">{pageName}</span>
-          <div className="hidden md:flex flex-col">
-            <h1 className="text-lg font-semibold leading-none">
+          <div className="flex flex-col">
+            <h1 className="text-lg font-semibold leading-none hidden md:block">
               Executive Secretary Tools
             </h1>
             <span className="text-xs opacity-70">{pageName}</span>
@@ -79,7 +78,43 @@ export function Navbar() {
         </div>
 
         <div className="navbar-end gap-2">
-          <Button variant="ghost" size="sm">
+          <div className="dropdown dropdown-end lg:hidden">
+            <label tabIndex={0} className="btn btn-ghost btn-sm">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h8m-8 6h16"
+                />
+              </svg>
+            </label>
+            <ul
+              tabIndex={0}
+              className="menu menu-sm dropdown-content mt-3 z-50 p-2 shadow bg-base-100 rounded-box w-52"
+            >
+              {navLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className={
+                      pathname === link.href ? "active bg-primary/10" : ""
+                    }
+                  >
+                    {link.icon}
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
             Sign Out
           </Button>
         </div>
