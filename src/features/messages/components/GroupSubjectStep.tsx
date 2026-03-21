@@ -34,7 +34,7 @@ export const GroupSubjectStep = ({
               type="checkbox"
               checked={subjects.some((s) => s.name === contact.name)}
               onChange={() => onToggleSubject(contact)}
-              className="w-4 h-4 accent-green-600 rounded border-green-300"
+              className="w-5 h-5 accent-green-600 rounded border-green-300"
             />
             <span className="flex-1 text-gray-700">{contact.name}</span>
             {subjects.some((s) => s.name === contact.name) && (
