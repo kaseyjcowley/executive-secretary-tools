@@ -1,5 +1,8 @@
 import { format } from "date-fns";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+import { Card, CardBody } from "@/components/ui";
 
 import { getQueue } from "@/utils/youth-queue";
 import {
@@ -70,6 +73,10 @@ function getGreeting(): string {
 
 export const dynamic = "force-dynamic";
 
+export const metadata: Metadata = {
+  title: "Executive Secretary Tools - Dashboard",
+};
+
 export default async function DashboardPage() {
   const data = await getDashboardData();
 
@@ -90,14 +97,14 @@ export default async function DashboardPage() {
             total={data.messages.total}
             icon="📬"
             href="/messages"
-            color="blue"
+            color="primary"
           />
           <StatCard
             title="Interviews"
             value={data.interviews.total}
             icon="📅"
             href="/interviews"
-            color="purple"
+            color="secondary"
           />
           <StatCard
             title="Youth Visits Due"
@@ -105,14 +112,14 @@ export default async function DashboardPage() {
             total={data.youth.total}
             icon="👦"
             href="/youth"
-            color="yellow"
+            color="warning"
           />
           <StatCard
             title="Scheduled"
             value={data.youth.scheduled}
             icon="📅"
             href="/youth"
-            color="green"
+            color="success"
           />
         </div>
       </section>
@@ -142,13 +149,15 @@ export default async function DashboardPage() {
       </section>
 
       <section className="mb-8">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <div className="flex items-center justify-between text-sm text-gray-500">
-            <span>
-              Last updated: {format(new Date(data.lastUpdated), "h:mm a")}
-            </span>
-          </div>
-        </div>
+        <Card compact>
+          <CardBody>
+            <div className="flex items-center justify-between text-sm opacity-60">
+              <span>
+                Last updated: {format(new Date(data.lastUpdated), "h:mm a")}
+              </span>
+            </div>
+          </CardBody>
+        </Card>
       </section>
     </div>
   );
@@ -167,39 +176,27 @@ function StatCard({
   total?: number;
   icon: string;
   href: string;
-  color: "blue" | "purple" | "yellow" | "green";
+  color: "primary" | "secondary" | "warning" | "success";
 }) {
-  const colorClasses = {
-    blue: "bg-blue-50 border-blue-200",
-    purple: "bg-purple-50 border-purple-200",
-    yellow: "bg-yellow-50 border-yellow-200",
-    green: "bg-green-50 border-green-200",
-  };
-
-  const textColorClasses = {
-    blue: "text-blue-600",
-    purple: "text-purple-600",
-    yellow: "text-yellow-600",
-    green: "text-green-600",
-  };
-
   return (
-    <Link
-      href={href}
-      className={`block p-4 rounded-lg border ${colorClasses[color]} hover:shadow-md transition-shadow`}
-    >
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-2xl">{icon}</span>
-        <span className={`font-medium ${textColorClasses[color]}`}>
-          {title}
-        </span>
-      </div>
-      <div className="text-3xl font-bold text-gray-900">
-        {value}
-        {total !== undefined && (
-          <span className="text-lg font-normal text-gray-500">/{total}</span>
-        )}
-      </div>
+    <Link href={href} className="h-full">
+      <Card
+        accentColor={color}
+        className="hover:shadow-md transition-shadow cursor-pointer h-full"
+      >
+        <CardBody className="flex flex-col h-full">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-2xl">{icon}</span>
+            <span className="font-medium">{title}</span>
+          </div>
+          <div className="text-3xl font-bold mt-auto">
+            {value}
+            {total !== undefined && (
+              <span className="text-lg font-normal opacity-60">/{total}</span>
+            )}
+          </div>
+        </CardBody>
+      </Card>
     </Link>
   );
 }
@@ -214,14 +211,16 @@ function QuickActionButton({
   icon: string;
 }) {
   return (
-    <Link
-      href={href}
-      className="flex flex-col items-center justify-center p-4 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all min-h-[100px]"
-    >
-      <span className="text-2xl mb-2">{icon}</span>
-      <span className="text-sm font-medium text-gray-700 text-center">
-        {label}
-      </span>
+    <Link href={href}>
+      <Card
+        compact
+        className="hover:shadow-md transition-all cursor-pointer min-h-[100px] flex items-center justify-center"
+      >
+        <CardBody className="flex flex-col items-center justify-center p-0">
+          <span className="text-2xl mb-2">{icon}</span>
+          <span className="text-sm font-medium text-center">{label}</span>
+        </CardBody>
+      </Card>
     </Link>
   );
 }
@@ -236,12 +235,13 @@ function NavLink({
   icon: string;
 }) {
   return (
-    <Link
-      href={href}
-      className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all"
-    >
-      <span className="text-xl">{icon}</span>
-      <span className="text-sm font-medium text-gray-700">{label}</span>
+    <Link href={href}>
+      <Card compact className="hover:shadow-md transition-all cursor-pointer">
+        <CardBody className="flex items-center gap-3 p-3">
+          <span className="text-xl">{icon}</span>
+          <span className="text-sm font-medium">{label}</span>
+        </CardBody>
+      </Card>
     </Link>
   );
 }
