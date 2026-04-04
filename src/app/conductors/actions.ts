@@ -9,19 +9,24 @@ import type { Conductor, ConductorOverride } from "@/types/conductors";
 
 async function updateSlackChannelTopic(conductor: Conductor): Promise<void> {
   if (!app) {
-    console.log(`[TEST MODE] Would update channel topic to: Conducting this month: ${conductor.name}`);
+    console.log(
+      `[TEST MODE] Would update channel topic to: Conducting this month: ${conductor.name}`,
+    );
     return;
   }
-  
+
   const mention = `<@${conductor.slackUserId}>`;
   const newTopic = `Conducting this month: ${mention}`;
 
-  await app.client.conversations.setTopic({
-    channel: SlackChannelId.bishopric,
-    topic: newTopic,
-  });
-
-  console.log(`Updated channel topic to: ${newTopic}`);
+  try {
+    await app.client.conversations.setTopic({
+      channel: SlackChannelId.bishopric,
+      topic: newTopic,
+    });
+    console.log(`Updated channel topic to: ${newTopic}`);
+  } catch (error) {
+    console.error(`Failed to update Slack channel topic: ${error}`);
+  }
 }
 
 async function initializeRotationIfNeeded(): Promise<void> {
