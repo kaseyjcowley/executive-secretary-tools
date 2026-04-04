@@ -55,17 +55,17 @@ export function Modal({
   return (
     <>
       <div
-        className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
+        className={`fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
         onClick={onClose}
       />
       <dialog
         ref={dialogRef}
-        className={`modal modal-bottom sm:modal-middle ${sizeClass} z-50`}
+        className={`bg-base-100 rounded-lg shadow-xl ${sizeClass} z-50 p-6`}
         onClick={(e) => {
           if (e.target === e.currentTarget) onClose();
         }}
       >
-        <div className={`modal-box ${scrollable ? "overflow-y-auto" : ""}`}>
+        <div className={scrollable ? "overflow-y-auto" : ""}>
           {title && (
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold">{title}</h3>
