@@ -6,6 +6,7 @@ import {
   getDate,
   getDay,
   lastDayOfMonth,
+  subDays,
 } from "date-fns";
 
 import { ApiTrelloCard } from "@/requests/cards";
@@ -37,7 +38,21 @@ export const getLastSundayOfMonth = (date: Date): Date => {
   const lastDay = lastDayOfMonth(date);
   const dayOfWeek = getDay(lastDay);
   const daysToSubtract = dayOfWeek;
-  const lastSunday = new Date(lastDay);
-  lastSunday.setDate(lastDay.getDate() - daysToSubtract);
-  return startOfDay(lastSunday);
+  return new Date(
+    lastDay.getFullYear(),
+    lastDay.getMonth(),
+    lastDay.getDate() - daysToSubtract,
+  );
+};
+
+export const wasYesterdayLastSundayOfMonth = (
+  date: Date = new Date(),
+): boolean => {
+  const yesterday = subDays(date, 1);
+  const lastSunday = getLastSundayOfMonth(yesterday);
+  return (
+    yesterday.getDate() === lastSunday.getDate() &&
+    yesterday.getMonth() === lastSunday.getMonth() &&
+    yesterday.getFullYear() === lastSunday.getFullYear()
+  );
 };

@@ -2,20 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import redis from "@/utils/redis";
 import { app } from "@/utils/slack";
 import { SlackChannelId, REDIS_KEYS } from "@/constants";
-import { getLastSundayOfMonth } from "@/lib/utils/dates";
+import { wasYesterdayLastSundayOfMonth } from "@/lib/utils/dates";
 import { Conductor } from "@/types/conductors";
-
-function isLastSundayOfMonth(date: Date): boolean {
-  const lastSunday = getLastSundayOfMonth(date);
-  return date.getDate() === lastSunday.getDate();
-}
 
 async function updateSlackChannelTopic(conductor: Conductor): Promise<void> {
   if (!app) {
-    console.log(`[TEST MODE] Would update channel topic to: Conducting this month: ${conductor.name}`);
+    console.log(
+      `[TEST MODE] Would update channel topic to: Conducting this month: ${conductor.name}`,
+    );
     return;
   }
-  
+
   const mention = `<@${conductor.slackUserId}>`;
   const newTopic = `Conducting this month: ${mention}`;
 
@@ -39,9 +36,9 @@ export async function POST(request: NextRequest) {
 
   const today = new Date();
 
-  if (!isLastSundayOfMonth(today)) {
+  if (!wasYesterdayLastSundayOfMonth(today)) {
     return NextResponse.json({
-      message: "Skipped - not the last Sunday of the month",
+      message: "Skipped - not the day after the last Sunday of the month",
     });
   }
 
