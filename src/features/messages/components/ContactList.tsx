@@ -33,7 +33,7 @@ export const ContactList = ({
   // Small error boundary to prevent an error inside any child from crashing
   // the entire messages page. We render a friendly ErrorState instead.
   class Boundary extends React.Component<
-    { children: React.ReactNode },
+    { children: React.ReactNode; context?: Record<string, unknown> },
     { hasError: boolean }
   > {
     constructor(props: any) {
@@ -69,6 +69,7 @@ export const ContactList = ({
             location:
               typeof window !== "undefined" ? window.location.href : null,
             timestamp: new Date().toISOString(),
+            clientContext: this.props?.context || null,
           } as Record<string, unknown>;
 
           const body = JSON.stringify(payload);
@@ -205,8 +206,14 @@ export const ContactList = ({
     );
   }
 
+  const clientContext = {
+    visibleContactNames: visibleContacts.map((c) => c.name),
+    groups: groups.map((g) => ({ id: g.id, memberIds: g.memberIds })),
+    selectedIds: Array.from(selectedIds),
+  } as Record<string, unknown>;
+
   return (
-    <Boundary>
+    <Boundary context={clientContext}>
       <div>
         {selectedIds.size > 0 && (
           <MergeToolbar

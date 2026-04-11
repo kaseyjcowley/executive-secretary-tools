@@ -1,5 +1,6 @@
 import members from "@/data/members.json";
 import { TypeAhead, TypeAheadOption } from "@/components/ui/TypeAhead";
+import { startTransition } from "react";
 import { IconX, IconPlus } from "@/components/ui/Icons";
 
 interface MemberSelectorProps {
@@ -52,9 +53,11 @@ export function MemberSelector({
                 options={memberOptions}
                 value={selectedOption}
                 onChange={(option) =>
-                  onChangeMember(
-                    index,
-                    option ? parseInt(option.value, 10) : undefined,
+                  startTransition(() =>
+                    onChangeMember(
+                      index,
+                      option ? parseInt(option.value, 10) : undefined,
+                    ),
                   )
                 }
                 placeholder="Select member"

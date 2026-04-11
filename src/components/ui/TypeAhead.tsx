@@ -66,6 +66,13 @@ export const TypeAhead: React.FC<TypeAheadProps> = ({
   menuPlacement = "auto",
   instanceId,
 }) => {
+  // Avoid using a portal on iOS devices (mobile Safari) because creating a
+  // MenuPortal can cause focus/blur and reflow behaviors that lead to nested
+  // update issues in some environments. Use the document body portal only on
+  // non-iOS platforms.
+  const isIos =
+    typeof navigator !== "undefined" &&
+    /iP(hone|od|ad)/i.test(navigator.userAgent);
   return (
     <Select
       instanceId={instanceId || "typeahead-select"}
@@ -78,7 +85,7 @@ export const TypeAhead: React.FC<TypeAheadProps> = ({
       styles={customStyles}
       menuPlacement={menuPlacement}
       menuPortalTarget={
-        typeof document !== "undefined" ? document.body : undefined
+        typeof document !== "undefined" && !isIos ? document.body : undefined
       }
     />
   );
