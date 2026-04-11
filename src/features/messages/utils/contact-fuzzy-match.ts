@@ -23,16 +23,22 @@ const fuse = new Fuse(members as DirectoryEntry[], {
     {
       name: "name",
       getFn: (obj) => {
-        // 1. Check if the comma exists to avoid errors
-        if (!obj.name.includes(",")) return obj.name;
+        // Robustly handle names in either "Last, First" or "Last,First" or
+        // already "First Last" formats. Avoid calling string methods on
+        // undefined by normalizing and trimming parts.
+        const name = (obj && (obj as any).name) || "";
+        if (!name.includes(",")) return name;
 
-        // 2. Split once at the comma
-        // "Doe, John Quincy" -> ["Doe", "John Quincy"]
-        const [last, rest] = obj.name.split(", ");
+        // Split on comma (with or without space) and trim each part.
+        const parts = name
+          .split(",")
+          .map((p: string) => p.trim())
+          .filter(Boolean);
+        if (parts.length < 2) return name;
 
-        // 3. Return "John Quincy Doe"
-        // .trim() handles cases where the space after the comma might be missing
-        return `${rest.trim()} ${last.trim()}`;
+        const last = parts[0];
+        const rest = parts.slice(1).join(" ");
+        return `${rest} ${last}`.trim();
       },
     },
   ],
@@ -51,24 +57,78 @@ export function matchContact(name: string): number | undefined {
     return undefined;
   }
 
-  const results = fuse.search(name);
+  try {
+    // Debugging: log the name being matched so we can identify problematic inputs
+    // in environments where the maximum update depth occurs.
+    // Use console.debug to avoid noisy logs in normal runs.
+    // eslint-disable-next-line no-console
+    console.debug("matchContact called for:", name);
 
-  if (results.length === 0) {
+    const results = fuse.search(name);
+
+    if (results.length === 0) {
+      return undefined;
+    }
+
+    const bestMatch = results[0];
+
+    // Return ID if match score is below threshold AND phone is not empty
+    if (
+      bestMatch.score !== undefined &&
+      bestMatch.score < 0.4 &&
+      bestMatch.item.phone
+    ) {
+      // eslint-disable-next-line no-console
+      console.debug("matchContact bestMatch:", {
+        name,
+        id: bestMatch.item.id,
+        score: bestMatch.score,
+      });
+      return bestMatch.item.id;
+    }
+
+    // Fallback: accept a match when the input and candidate share the same
+    // last name (case-insensitive) and the candidate has a phone number.
+    try {
+      const normalize = (s: string) => s.trim().toLowerCase();
+      const inputLast = normalize(
+        name.includes(",")
+          ? name.split(",")[0]
+          : name.split(" ").slice(-1)[0] || name,
+      );
+      const candidateName = bestMatch.item.name as string;
+      const candidateLast = normalize(
+        candidateName.includes(",")
+          ? candidateName.split(",")[0]
+          : candidateName.split(" ").slice(-1)[0] || candidateName,
+      );
+      if (
+        inputLast &&
+        candidateLast &&
+        inputLast === candidateLast &&
+        bestMatch.item.phone
+      ) {
+        // eslint-disable-next-line no-console
+        console.debug("matchContact fallback last-name match:", {
+          name,
+          id: bestMatch.item.id,
+          score: bestMatch.score,
+        });
+        return bestMatch.item.id;
+      }
+    } catch (err) {
+      // swallow and continue to undefined
+      // eslint-disable-next-line no-console
+      console.debug("matchContact fallback failed for:", name, err);
+    }
+
+    return undefined;
+  } catch (err) {
+    // If Fuse throws unexpectedly for a particular input, log it and return undefined
+    // eslint-disable-next-line no-console
+    console.error("Error in matchContact for name:", name, err);
     return undefined;
   }
-
-  const bestMatch = results[0];
-
-  // Return ID if match score is below threshold AND phone is not empty
-  if (
-    bestMatch.score !== undefined &&
-    bestMatch.score < 0.4 &&
-    bestMatch.item.phone
-  ) {
-    return bestMatch.item.id;
-  }
-
-  return undefined;
 }
 
 /**

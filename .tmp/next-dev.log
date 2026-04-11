@@ -1,0 +1,195 @@
+
+> exec-secretary-tools@0.1.0 dev /Users/kcowley/Code/executive-secretary-tools
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.68.52:3000
+- Environments: .env.local
+
+✓ Starting...
+✓ Ready in 755ms
+ GET /api/auth/signin?callbackUrl=%2Fmessages 302 in 866ms (compile: 837ms, proxy.ts: 4ms, render: 24ms)
+/*! 🌼 daisyUI 5.5.19 */
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 1459ms (compile: 1212ms, proxy.ts: 5ms, render: 242ms)
+ GET /api/auth/session 200 in 30ms (compile: 10ms, proxy.ts: 7ms, render: 13ms)
+ GET /api/auth/signin?callbackUrl=%2Fmessages 302 in 17ms (compile: 7ms, proxy.ts: 4ms, render: 6ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 52ms (compile: 3ms, proxy.ts: 3ms, render: 46ms)
+ GET /api/auth/session 200 in 17ms (compile: 5ms, proxy.ts: 5ms, render: 7ms)
+ GET /api/auth/signin?callbackUrl=%2Fmessages 302 in 23ms (compile: 8ms, proxy.ts: 4ms, render: 10ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 117ms (compile: 3ms, proxy.ts: 5ms, render: 109ms)
+ GET /api/auth/session 200 in 14ms (compile: 4ms, proxy.ts: 4ms, render: 6ms)
+ GET /api/auth/signin?callbackUrl=%2Fmessages 302 in 16ms (compile: 6ms, proxy.ts: 4ms, render: 6ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 57ms (compile: 2ms, proxy.ts: 4ms, render: 51ms)
+ GET /api/auth/session 200 in 14ms (compile: 5ms, proxy.ts: 4ms, render: 6ms)
+ GET /api/auth/signin?callbackUrl=%2Fmessages 302 in 17ms (compile: 8ms, proxy.ts: 3ms, render: 6ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 63ms (compile: 3ms, proxy.ts: 3ms, render: 57ms)
+ GET /api/auth/session 200 in 14ms (compile: 3ms, proxy.ts: 3ms, render: 7ms)
+ GET /api/auth/test-login 307 in 64ms (compile: 46ms, proxy.ts: 4ms, render: 14ms)
+[redis] NODE_ENV: development REDIS_URL: redis://default:h7VApdI1cZWMrjaNqOzNhJ9JfxXnFDox@redis-17967.c74.us-east-1-4.ec2.redns.redis-cloud.com:17967
+ GET / 200 in 2.5s (compile: 52ms, proxy.ts: 9ms, render: 2.4s)
+ GET /api/auth/session 200 in 23ms (compile: 7ms, proxy.ts: 4ms, render: 12ms)
+ GET /messages 200 in 1467ms (compile: 552ms, proxy.ts: 4ms, render: 911ms)
+ GET /api/auth/session 200 in 20ms (compile: 7ms, proxy.ts: 4ms, render: 10ms)
+ GET /api/auth/test-login 307 in 12ms (compile: 3ms, proxy.ts: 4ms, render: 5ms)
+ GET / 200 in 1021ms (compile: 2ms, proxy.ts: 4ms, render: 1014ms)
+ GET /api/auth/session 200 in 20ms (compile: 7ms, proxy.ts: 4ms, render: 9ms)
+ GET /messages 200 in 818ms (compile: 3ms, proxy.ts: 4ms, render: 810ms)
+ GET /api/auth/session 200 in 17ms (compile: 7ms, proxy.ts: 3ms, render: 7ms)
+ GET /api/auth/test-login 307 in 8ms (compile: 2ms, proxy.ts: 3ms, render: 3ms)
+ GET / 200 in 967ms (compile: 1952µs, proxy.ts: 3ms, render: 962ms)
+ GET /api/auth/session 200 in 17ms (compile: 6ms, proxy.ts: 3ms, render: 9ms)
+ GET /messages 200 in 814ms (compile: 3ms, proxy.ts: 4ms, render: 807ms)
+ GET /api/auth/session 200 in 20ms (compile: 7ms, proxy.ts: 5ms, render: 9ms)
+ GET /api/auth/test-login 307 in 11ms (compile: 2ms, proxy.ts: 4ms, render: 4ms)
+ GET / 200 in 786ms (compile: 2ms, proxy.ts: 4ms, render: 780ms)
+ GET /api/auth/session 200 in 17ms (compile: 7ms, proxy.ts: 3ms, render: 7ms)
+ GET /messages 200 in 843ms (compile: 3ms, proxy.ts: 4ms, render: 836ms)
+ GET /api/auth/session 200 in 17ms (compile: 7ms, proxy.ts: 3ms, render: 7ms)
+ GET /api/auth/test-login 307 in 8ms (compile: 1832µs, proxy.ts: 3ms, render: 4ms)
+ GET / 200 in 856ms (compile: 1884µs, proxy.ts: 3ms, render: 852ms)
+ GET /api/auth/session 200 in 16ms (compile: 6ms, proxy.ts: 3ms, render: 8ms)
+ GET /messages 200 in 837ms (compile: 2ms, proxy.ts: 5ms, render: 830ms)
+ GET /api/auth/session 200 in 17ms (compile: 6ms, proxy.ts: 3ms, render: 7ms)
+ GET /api/auth/test-login 307 in 13ms (compile: 4ms, proxy.ts: 4ms, render: 5ms)
+ GET /api/auth/signin?callbackUrl=%2F 302 in 18ms (compile: 7ms, proxy.ts: 3ms, render: 8ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 55ms (compile: 4ms, proxy.ts: 4ms, render: 47ms)
+ GET /api/auth/session 200 in 14ms (compile: 4ms, proxy.ts: 5ms, render: 5ms)
+ GET /api/auth/signin?callbackUrl=%2Fmessages 302 in 13ms (compile: 5ms, proxy.ts: 2ms, render: 6ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 44ms (compile: 1959µs, proxy.ts: 3ms, render: 39ms)
+ GET /api/auth/session 200 in 14ms (compile: 4ms, proxy.ts: 3ms, render: 6ms)
+ GET /api/auth/test-login 307 in 11ms (compile: 3ms, proxy.ts: 3ms, render: 5ms)
+ GET /api/auth/signin?callbackUrl=%2F 302 in 16ms (compile: 6ms, proxy.ts: 3ms, render: 7ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 57ms (compile: 3ms, proxy.ts: 3ms, render: 51ms)
+ GET /api/auth/session 200 in 20ms (compile: 5ms, proxy.ts: 4ms, render: 11ms)
+ GET /api/auth/signin?callbackUrl=%2Fmessages 302 in 22ms (compile: 9ms, proxy.ts: 5ms, render: 8ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 71ms (compile: 3ms, proxy.ts: 6ms, render: 62ms)
+ GET /api/auth/session 200 in 23ms (compile: 7ms, proxy.ts: 6ms, render: 11ms)
+ GET /api/auth/test-login 307 in 12ms (compile: 2ms, proxy.ts: 6ms, render: 4ms)
+ GET /api/auth/signin?callbackUrl=%2F 302 in 16ms (compile: 6ms, proxy.ts: 3ms, render: 8ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 53ms (compile: 2ms, proxy.ts: 4ms, render: 46ms)
+ GET /api/auth/session 200 in 17ms (compile: 5ms, proxy.ts: 3ms, render: 8ms)
+ GET /api/auth/signin?callbackUrl=%2Fmessages 302 in 16ms (compile: 7ms, proxy.ts: 3ms, render: 6ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 52ms (compile: 3ms, proxy.ts: 3ms, render: 46ms)
+ GET /api/auth/session 200 in 20ms (compile: 5ms, proxy.ts: 6ms, render: 9ms)
+ GET /api/auth/test-login 307 in 12ms (compile: 3ms, proxy.ts: 4ms, render: 5ms)
+ GET /api/auth/signin?callbackUrl=%2F 302 in 17ms (compile: 8ms, proxy.ts: 3ms, render: 6ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 53ms (compile: 2ms, proxy.ts: 4ms, render: 47ms)
+ GET /api/auth/session 200 in 15ms (compile: 4ms, proxy.ts: 3ms, render: 7ms)
+ GET /api/auth/signin?callbackUrl=%2Fmessages 302 in 15ms (compile: 6ms, proxy.ts: 3ms, render: 7ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 51ms (compile: 2ms, proxy.ts: 3ms, render: 46ms)
+ GET /api/auth/session 200 in 18ms (compile: 5ms, proxy.ts: 4ms, render: 9ms)
+ GET /api/auth/test-login 307 in 9ms (compile: 2ms, proxy.ts: 3ms, render: 4ms)
+ GET /api/auth/signin?callbackUrl=%2F 302 in 15ms (compile: 6ms, proxy.ts: 3ms, render: 6ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 55ms (compile: 3ms, proxy.ts: 3ms, render: 49ms)
+ GET /api/auth/session 200 in 14ms (compile: 4ms, proxy.ts: 3ms, render: 7ms)
+ GET /api/auth/signin?callbackUrl=%2Fmessages 302 in 14ms (compile: 6ms, proxy.ts: 2ms, render: 6ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 49ms (compile: 3ms, proxy.ts: 3ms, render: 42ms)
+ GET /api/auth/session 200 in 15ms (compile: 4ms, proxy.ts: 5ms, render: 6ms)
+ GET /api/auth/test-login 307 in 10ms (compile: 3ms, proxy.ts: 3ms, render: 3ms)
+ GET /api/auth/signin?callbackUrl=%2F 302 in 18ms (compile: 5ms, proxy.ts: 4ms, render: 8ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 52ms (compile: 3ms, proxy.ts: 3ms, render: 46ms)
+ GET /api/auth/session 200 in 14ms (compile: 5ms, proxy.ts: 3ms, render: 7ms)
+ GET /api/auth/signin?callbackUrl=%2Fmessages 302 in 15ms (compile: 6ms, proxy.ts: 3ms, render: 7ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 71ms (compile: 2ms, proxy.ts: 3ms, render: 66ms)
+ GET /api/auth/session 200 in 29ms (compile: 9ms, proxy.ts: 8ms, render: 12ms)
+✓ Compiled in 77ms
+ GET /api/auth/test-login 307 in 12ms (compile: 3ms, proxy.ts: 4ms, render: 5ms)
+ GET /api/auth/signin?callbackUrl=%2F 302 in 17ms (compile: 7ms, proxy.ts: 3ms, render: 6ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 56ms (compile: 3ms, proxy.ts: 3ms, render: 50ms)
+ GET /api/auth/session 200 in 15ms (compile: 4ms, proxy.ts: 4ms, render: 7ms)
+ GET /api/auth/signin?callbackUrl=%2Fmessages 302 in 14ms (compile: 5ms, proxy.ts: 2ms, render: 6ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 50ms (compile: 2ms, proxy.ts: 3ms, render: 45ms)
+ GET /api/auth/session 200 in 14ms (compile: 4ms, proxy.ts: 3ms, render: 6ms)
+ GET /api/auth/signin?callbackUrl=%2F 302 in 24ms (compile: 8ms, proxy.ts: 6ms, render: 10ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 71ms (compile: 4ms, proxy.ts: 4ms, render: 63ms)
+⚠ Cross origin request detected from 100.109.131.109 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ GET /api/auth/session 200 in 23ms (compile: 8ms, proxy.ts: 6ms, render: 9ms)
+ GET /api/auth/signin?callbackUrl=%2Fmessages 302 in 21ms (compile: 10ms, proxy.ts: 4ms, render: 7ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 79ms (compile: 6ms, proxy.ts: 10ms, render: 64ms)
+[next-auth][error][JWT_SESSION_ERROR] 
+https://next-auth.js.org/errors#jwt_session_error decryption operation failed {
+  message: 'decryption operation failed',
+  stack: 'JWEDecryptionFailed: decryption operation failed\n' +
+    '    at gcmDecrypt (/Users/kcowley/Code/executive-secretary-tools/.next/dev/server/chunks/c1491_jose_dist_node_cjs_ad7cf29d._.js:734:15)\n' +
+    '    at decrypt (/Users/kcowley/Code/executive-secretary-tools/.next/dev/server/chunks/c1491_jose_dist_node_cjs_ad7cf29d._.js:757:20)\n' +
+    '    at flattenedDecrypt (/Users/kcowley/Code/executive-secretary-tools/.next/dev/server/chunks/c1491_jose_dist_node_cjs_ad7cf29d._.js:2254:52)\n' +
+    '    at async compactDecrypt (/Users/kcowley/Code/executive-secretary-tools/.next/dev/server/chunks/c1491_jose_dist_node_cjs_ad7cf29d._.js:2308:23)\n' +
+    '    at async jwtDecrypt (/Users/kcowley/Code/executive-secretary-tools/.next/dev/server/chunks/c1491_jose_dist_node_cjs_ad7cf29d._.js:3770:23)\n' +
+    '    at async Object.decode (/Users/kcowley/Code/executive-secretary-tools/.next/dev/server/chunks/bf669_next-auth_abccf455._.js:725:25)\n' +
+    '    at async Object.session (/Users/kcowley/Code/executive-secretary-tools/.next/dev/server/chunks/bf669_next-auth_abccf455._.js:2038:34)\n' +
+    '    at async AuthHandler (/Users/kcowley/Code/executive-secretary-tools/.next/dev/server/chunks/bf669_next-auth_abccf455._.js:3184:37)\n' +
+    '    at async NextAuthRouteHandler (/Users/kcowley/Code/executive-secretary-tools/.next/dev/server/chunks/bf669_next-auth_abccf455._.js:3501:30)\n' +
+    '    at async NextAuth._args$ (/Users/kcowley/Code/executive-secretary-tools/.next/dev/server/chunks/bf669_next-auth_abccf455._.js:3536:24)\n' +
+    '    at async AppRouteRouteModule.do (/Users/kcowley/Code/executive-secretary-tools/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-dom@19._bdesfdkvqefy2pasoa6b3pwt3e/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:5:37866)\n' +
+    '    at async AppRouteRouteModule.handle (/Users/kcowley/Code/executive-secretary-tools/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-dom@19._bdesfdkvqefy2pasoa6b3pwt3e/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:5:45156)\n' +
+    '    at async responseGenerator (/Users/kcowley/Code/executive-secretary-tools/.next/dev/server/chunks/d4a44_next_44044b2a._.js:12519:38)\n' +
+    '    at async AppRouteRouteModule.handleResponse (/Users/kcowley/Code/executive-secretary-tools/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-dom@19._bdesfdkvqefy2pasoa6b3pwt3e/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:1:191938)\n' +
+    '    at async handleResponse (/Users/kcowley/Code/executive-secretary-tools/.next/dev/server/chunks/d4a44_next_44044b2a._.js:12582:32)\n' +
+    '    at async Module.handler (/Users/kcowley/Code/executive-secretary-tools/.next/dev/server/chunks/d4a44_next_44044b2a._.js:12635:13)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/Users/kcowley/Code/executive-secretary-tools/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-dom@19._bdesfdkvqefy2pasoa6b3pwt3e/node_modules/next/dist/server/base-server.js:1442:9)\n' +
+    '    at async DevServer.renderPageComponent (/Users/kcowley/Code/executive-secretary-tools/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-dom@19._bdesfdkvqefy2pasoa6b3pwt3e/node_modules/next/dist/server/base-server.js:1494:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/Users/kcowley/Code/executive-secretary-tools/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-dom@19._bdesfdkvqefy2pasoa6b3pwt3e/node_modules/next/dist/server/base-server.js:1544:32)\n' +
+    '    at async DevServer.pipeImpl (/Users/kcowley/Code/executive-secretary-tools/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-dom@19._bdesfdkvqefy2pasoa6b3pwt3e/node_modules/next/dist/server/base-server.js:1038:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/Users/kcowley/Code/executive-secretary-tools/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-dom@19._bdesfdkvqefy2pasoa6b3pwt3e/node_modules/next/dist/server/next-server.js:395:17)\n' +
+    '    at async DevServer.handleRequestImpl (/Users/kcowley/Code/executive-secretary-tools/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-dom@19._bdesfdkvqefy2pasoa6b3pwt3e/node_modules/next/dist/server/base-server.js:929:17)\n' +
+    '    at async /Users/kcowley/Code/executive-secretary-tools/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-dom@19._bdesfdkvqefy2pasoa6b3pwt3e/node_modules/next/dist/server/dev/next-dev-server.js:387:20\n' +
+    '    at async Span.traceAsyncFn (/Users/kcowley/Code/executive-secretary-tools/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-dom@19._bdesfdkvqefy2pasoa6b3pwt3e/node_modules/next/dist/trace/trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (/Users/kcowley/Code/executive-secretary-tools/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-dom@19._bdesfdkvqefy2pasoa6b3pwt3e/node_modules/next/dist/server/dev/next-dev-server.js:383:24)\n' +
+    '    at async invokeRender (/Users/kcowley/Code/executive-secretary-tools/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-dom@19._bdesfdkvqefy2pasoa6b3pwt3e/node_modules/next/dist/server/lib/router-server.js:248:21)\n' +
+    '    at async handleRequest (/Users/kcowley/Code/executive-secretary-tools/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-dom@19._bdesfdkvqefy2pasoa6b3pwt3e/node_modules/next/dist/server/lib/router-server.js:447:24)\n' +
+    '    at async requestHandlerImpl (/Users/kcowley/Code/executive-secretary-tools/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-dom@19._bdesfdkvqefy2pasoa6b3pwt3e/node_modules/next/dist/server/lib/router-server.js:496:13)\n' +
+    '    at async Server.requestListener (/Users/kcowley/Code/executive-secretary-tools/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwright+test@1.58.2_react-dom@19._bdesfdkvqefy2pasoa6b3pwt3e/node_modules/next/dist/server/lib/start-server.js:226:13)',
+  name: 'JWEDecryptionFailed'
+}
+ GET /api/auth/session 200 in 22ms (compile: 5ms, proxy.ts: 5ms, render: 12ms)
+⚠ Cross origin request detected from kaseys-macbook-pro.tail051d6d.ts.net to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ GET /api/auth/providers 200 in 17ms (compile: 6ms, proxy.ts: 4ms, render: 7ms)
+ GET /api/auth/csrf 200 in 13ms (compile: 3ms, proxy.ts: 3ms, render: 7ms)
+ POST /api/auth/signin/google 200 in 139ms (compile: 3ms, proxy.ts: 4ms, render: 131ms)
+ GET /api/auth/callback/google?state=_Deek0TvJXnVxPVDpmoKDlUaC1hAAcgNh1bG9gSE4Sg&iss=https%3A%2F%2Faccounts.google.com&code=4%2F0Aci98E8NlSOnF4HJcPCffQsOgYCTGFKgHtNBamx8VNe31SJ6MYdt6a7qYsLN13YK2-8iHQ&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&authuser=0&prompt=none 302 in 386ms (compile: 6ms, proxy.ts: 5ms, render: 374ms)
+ GET /api/auth/session 200 in 195ms (compile: 182ms, proxy.ts: 3ms, render: 9ms)
+ GET /interviews 200 in 669ms (compile: 97ms, proxy.ts: 6ms, render: 567ms)
+ GET /api/auth/signin?callbackUrl=%2F 302 in 19ms (compile: 8ms, proxy.ts: 5ms, render: 5ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 52ms (compile: 3ms, proxy.ts: 4ms, render: 45ms)
+ GET /api/auth/session 200 in 12ms (compile: 3ms, proxy.ts: 3ms, render: 6ms)
+ GET /api/auth/signin?callbackUrl=%2F 302 in 15ms (compile: 6ms, proxy.ts: 3ms, render: 6ms)
+ GET /auth/signin?callbackUrl=https%3A%2F%2Fkaseys-macbook-pro.tail051d6d.ts.net%2Finterviews 200 in 54ms (compile: 8ms, proxy.ts: 3ms, render: 42ms)
+ GET /api/auth/session 200 in 12ms (compile: 3ms, proxy.ts: 3ms, render: 6ms)
+ GET /api/auth/providers 200 in 15ms (compile: 6ms, proxy.ts: 4ms, render: 5ms)
+ GET /api/auth/csrf 200 in 13ms (compile: 3ms, proxy.ts: 3ms, render: 6ms)
+ POST /api/auth/signin/google 200 in 212ms (compile: 4ms, proxy.ts: 4ms, render: 205ms)
+ GET /api/auth/callback/google?state=D3Xkw2DmppISERqb0c8rhKT90bCKhw8H3ymBv94RL-k&iss=https%3A%2F%2Faccounts.google.com&code=4%2F0Aci98E9gnOyPKYBX5f4ICx5Pk-W7quuRViE5r3SrH3z4NJWmfBtNfbKhCDACVFrmnePG1g&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid&authuser=0&prompt=none 302 in 409ms (compile: 7ms, proxy.ts: 4ms, render: 398ms)
+ GET /interviews 200 in 498ms (compile: 2ms, proxy.ts: 3ms, render: 492ms)
+ GET /api/auth/session 200 in 24ms (compile: 12ms, proxy.ts: 4ms, render: 7ms)
+[redis] NODE_ENV: development REDIS_URL: redis://default:h7VApdI1cZWMrjaNqOzNhJ9JfxXnFDox@redis-17967.c74.us-east-1-4.ec2.redns.redis-cloud.com:17967
+matchContact called for: Haven Williams
+matchContact bestMatch: { name: 'Haven Williams', id: 396, score: 0.33652102717835264 }
+matchContact called for: Jaxson Held
+matchContact called for: Conrad York
+matchContact called for: Jude Boles
+matchContact called for: Emerson Bowcut
+matchContact called for: Treyven Welch
+matchContact called for: Annie Haycock
+matchContact called for: Braxton Johnson
+matchContact bestMatch: { name: 'Braxton Johnson', id: 187, score: 8.569061098350962e-12 }
+matchContact called for: Weston Minor
+matchContact called for: Charlotte Perry
+matchContact called for: James Worland
+matchContact called for: Kari Evans
+matchContact called for: John Oakes
+matchContact bestMatch: { name: 'John Oakes', id: 267, score: 0.1963360276836047 }
+matchContact called for: How and Judy Hartzell
+matchContact called for: Mike Bowman
+matchContact bestMatch: { name: 'Mike Bowman', id: 50, score: 8.569061098350962e-12 }
+matchContact called for: Todd Astle
+matchContact bestMatch: { name: 'Todd Astle', id: 23, score: 8.569061098350962e-12 }
+matchContact called for: Ken Hyer
+matchContact bestMatch: { name: 'Ken Hyer', id: 183, score: 8.569061098350962e-12 }
+matchContact called for: Jasmin Williams
+matchContact bestMatch: { name: 'Jasmin Williams', id: 391, score: 8.569061098350962e-12 }
+matchContact called for: Dave and Kayla Parduhn
+ GET /messages 200 in 940ms (compile: 175ms, proxy.ts: 15ms, render: 749ms)
+✓ Compiled in 89ms

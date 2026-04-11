@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
+import { MessagesErrorState } from "@/features/messages/components/MessagesErrorState";
+import React from "react";
 import {
   Contact,
   ContactGroup,
@@ -28,6 +30,42 @@ export const ContactList = ({
   suppressedIds: initialSuppressedIds,
   showMessaged = false,
 }: Props) => {
+  // Small error boundary to prevent an error inside any child from crashing
+  // the entire messages page. We render a friendly ErrorState instead.
+  class Boundary extends React.Component<
+    { children: React.ReactNode },
+    { hasError: boolean }
+  > {
+    constructor(props: any) {
+      super(props);
+      this.state = { hasError: false };
+    }
+    static getDerivedStateFromError() {
+      return { hasError: true };
+    }
+    componentDidCatch(error: unknown, info: React.ErrorInfo) {
+      // Log the error, plus the React component stack and some client info
+      try {
+        console.error("Error in ContactList child:", error);
+        console.error("ContactList component stack:", info?.componentStack);
+        if (typeof navigator !== "undefined") {
+          console.error("User agent:", navigator.userAgent);
+        }
+        if (typeof window !== "undefined") {
+          console.error("Location:", window.location.href);
+        }
+      } catch (err) {
+        // Ensure we never throw from the error handler
+        console.error("Error while logging ContactList error:", err);
+      }
+    }
+    render() {
+      if (this.state.hasError) {
+        return <MessagesErrorState />;
+      }
+      return this.props.children as React.ReactElement;
+    }
+  }
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [groups, setGroups] = useState<ContactGroup[]>([]);
 
@@ -133,85 +171,87 @@ export const ContactList = ({
   }
 
   return (
-    <div>
-      {selectedIds.size > 0 && (
-        <MergeToolbar
-          selectedCount={selectedIds.size}
-          onMerge={handleMerge}
-          onClearSelection={handleClearSelection}
-          onMarkAsMessaged={handleMarkAsMessaged}
-        />
-      )}
+    <Boundary>
+      <div>
+        {selectedIds.size > 0 && (
+          <MergeToolbar
+            selectedCount={selectedIds.size}
+            onMerge={handleMerge}
+            onClearSelection={handleClearSelection}
+            onMarkAsMessaged={handleMarkAsMessaged}
+          />
+        )}
 
-      {visibleContacts.length > 0 && selectedIds.size === 0 && (
-        <Card compact className="mb-4">
-          <CardBody className="p-1">
-            <label className="flex items-center gap-3 text-sm text-gray-600 cursor-pointer">
-              <input
-                type="checkbox"
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    handleSelectAll();
-                  } else {
-                    handleClearSelection();
-                  }
-                }}
-                className="w-5 h-5 accent-blue-600 rounded"
-              />
-              <span className="font-medium">
-                Select all ({visibleContacts.length} contacts)
-              </span>
-            </label>
-          </CardBody>
-        </Card>
-      )}
+        {visibleContacts.length > 0 && selectedIds.size === 0 && (
+          <Card compact className="mb-4">
+            <CardBody className="p-1">
+              <label className="flex items-center gap-3 text-sm text-gray-600 cursor-pointer">
+                <input
+                  type="checkbox"
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      handleSelectAll();
+                    } else {
+                      handleClearSelection();
+                    }
+                  }}
+                  className="w-5 h-5 accent-blue-600 rounded"
+                />
+                <span className="font-medium">
+                  Select all ({visibleContacts.length} contacts)
+                </span>
+              </label>
+            </CardBody>
+          </Card>
+        )}
 
-      {visibleContacts.length === 0 && contacts.length > 0 && (
-        <EmptyState
-          icon={
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-              <IconCheck className="w-8 h-8 text-green-600" />
-            </div>
-          }
-          title="All Done!"
-          description={`You've messaged all ${contacts.length} contacts. Great job!`}
-        />
-      )}
+        {visibleContacts.length === 0 && contacts.length > 0 && (
+          <EmptyState
+            icon={
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                <IconCheck className="w-8 h-8 text-green-600" />
+              </div>
+            }
+            title="All Done!"
+            description={`You've messaged all ${contacts.length} contacts. Great job!`}
+          />
+        )}
 
-      <div className="space-y-8">
-        {listItems.map((item, index) => {
-          if (isContactGroup(item)) {
+        <div className="space-y-8">
+          {listItems.map((item, index) => {
+            if (isContactGroup(item)) {
+              return (
+                <GroupCard
+                  key={item.id}
+                  group={item}
+                  contacts={contacts}
+                  onUnmerge={handleUnmerge}
+                />
+              );
+            }
+
+            const contact = item as Contact;
+            const isInGroup = groupedContactNames.has(contact.name);
+            const isSelected = selectedIds.has(contact.name);
+
+            const initialTemplateId = autoSelectTemplate(
+              contact,
+              getAvailableMessageTypes(),
+            );
+
             return (
-              <GroupCard
-                key={item.id}
-                group={item}
-                contacts={contacts}
-                onUnmerge={handleUnmerge}
+              <ContactRow
+                key={contact.name || index}
+                contact={contact}
+                initialTemplateId={initialTemplateId}
+                isSelected={isSelected}
+                onSelect={handleSelect}
+                isInGroup={isInGroup}
               />
             );
-          }
-
-          const contact = item as Contact;
-          const isInGroup = groupedContactNames.has(contact.name);
-          const isSelected = selectedIds.has(contact.name);
-
-          const initialTemplateId = autoSelectTemplate(
-            contact,
-            getAvailableMessageTypes(),
-          );
-
-          return (
-            <ContactRow
-              key={contact.name || index}
-              contact={contact}
-              initialTemplateId={initialTemplateId}
-              isSelected={isSelected}
-              onSelect={handleSelect}
-              isInGroup={isInGroup}
-            />
-          );
-        })}
+          })}
+        </div>
       </div>
-    </div>
+    </Boundary>
   );
 };

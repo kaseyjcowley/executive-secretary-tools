@@ -72,16 +72,31 @@ export function useRecipientSubjectSelection({
   };
 
   const handleSetRecipientsAreSubjects = (checked: boolean) => {
-    setRecipientsAreSubjects(checked);
+    // Avoid unnecessary updates: only change state when values differ to
+    // reduce the chance of triggering nested update cycles.
+    setRecipientsAreSubjects((prev) => {
+      if (prev === checked) return prev;
+      return checked;
+    });
+
     if (checked) {
-      setSubjectMemberIds([]);
+      // Only clear if not already empty
+      setSubjectMemberIds((prev) => (prev.length === 0 ? prev : []));
     } else {
       const matchedId = matchContact(contactName);
-      if (matchedId) {
-        setSubjectMemberIds([matchedId]);
-      } else {
-        setSubjectMemberIds([MEMBER_SELECTION.INITIAL_MEMBER_ID]);
-      }
+      const next = matchedId
+        ? [matchedId]
+        : [MEMBER_SELECTION.INITIAL_MEMBER_ID];
+      setSubjectMemberIds((prev) => {
+        // simple deep-equality for single-item arrays or compare lengths
+        if (
+          prev.length === next.length &&
+          prev.every((v, i) => v === next[i])
+        ) {
+          return prev;
+        }
+        return next;
+      });
     }
   };
 

@@ -57,6 +57,27 @@ export function useMessagePreview({
       });
   }, [buildScenario]);
 
+  // Create a stable key for the reset dependencies. stringify may throw on
+  // non-serializable values; guard and fallback to a simple length/tokens
+  // representation to avoid causing the effect to re-run excessively.
+  const depsKey = (() => {
+    try {
+      return JSON.stringify(resetDependencies);
+    } catch (err) {
+      try {
+        return resetDependencies
+          .map((d: unknown) =>
+            d && typeof d === "object"
+              ? Object.keys(d as any).length
+              : String(d),
+          )
+          .join("|");
+      } catch (e) {
+        return String(resetDependencies.length);
+      }
+    }
+  })();
+
   useEffect(() => {
     setTemplatePreview("");
     setIsLoadingPreview(false);
@@ -64,8 +85,8 @@ export function useMessagePreview({
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(resetDependencies)]);
+    // depsKey intentionally captures a stable-ish representation of resetDependencies
+  }, [depsKey]);
 
   return {
     templatePreview,
