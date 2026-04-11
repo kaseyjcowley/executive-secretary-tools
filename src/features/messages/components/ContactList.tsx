@@ -58,6 +58,41 @@ export const ContactList = ({
         // Ensure we never throw from the error handler
         console.error("Error while logging ContactList error:", err);
       }
+      // Send structured payload to server-side log endpoint (best-effort)
+      try {
+        if (typeof window !== "undefined") {
+          const payload = {
+            error: String(error),
+            componentStack: info?.componentStack || null,
+            userAgent:
+              typeof navigator !== "undefined" ? navigator.userAgent : null,
+            location:
+              typeof window !== "undefined" ? window.location.href : null,
+            timestamp: new Date().toISOString(),
+          } as Record<string, unknown>;
+
+          const body = JSON.stringify(payload);
+          // Prefer sendBeacon for reliability during page unloads; fallback to fetch
+          if (
+            navigator &&
+            typeof (navigator as any).sendBeacon === "function"
+          ) {
+            try {
+              (navigator as any).sendBeacon("/api/log-client-error", body);
+            } catch (e) {
+              // ignore
+            }
+          } else {
+            void fetch("/api/log-client-error", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body,
+            }).catch(() => {});
+          }
+        }
+      } catch (err) {
+        console.error("Failed to POST client error to server:", err);
+      }
     }
     render() {
       if (this.state.hasError) {
