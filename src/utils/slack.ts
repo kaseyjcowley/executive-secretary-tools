@@ -14,15 +14,17 @@ import { BlockKit, InputBlockBuilder } from "./block-kit-builder";
 import { getClosestSunday } from "./dates";
 import { sendEmail } from "./email";
 
-const hasSlackEnv = process.env.SLACK_USER_OAUTH_TOKEN && process.env.SLACK_SIGNING_SECRET;
+const hasSlackEnv =
+  process.env.SLACK_USER_OAUTH_TOKEN && process.env.SLACK_SIGNING_SECRET;
 const isTestMode = process.env.NODE_ENV === "test";
 
-export const app = hasSlackEnv && !isTestMode
-  ? new App({
-      token: process.env.SLACK_USER_OAUTH_TOKEN,
-      signingSecret: process.env.SLACK_SIGNING_SECRET,
-    })
-  : null;
+export const app =
+  hasSlackEnv && !isTestMode
+    ? new App({
+        token: process.env.SLACK_USER_OAUTH_TOKEN,
+        signingSecret: process.env.SLACK_SIGNING_SECRET,
+      })
+    : null;
 
 type HandlerIdentifier =
   | "submit_speakers"
@@ -127,7 +129,9 @@ class SacramentSpeakersHandler implements SlackInteractivityHandler {
     const speakers = extractValuesFromView(payload.view);
 
     if (!app) {
-      console.log("[TEST MODE] Would send Slack message about submitted speakers");
+      console.log(
+        "[TEST MODE] Would send Slack message about submitted speakers",
+      );
       return;
     }
 
@@ -154,7 +158,7 @@ class SacramentSpeakersHandler implements SlackInteractivityHandler {
 
       await sendEmail({
         subject: `28th Ward Sacrament Speakers for ${formattedDate}`,
-        text: `Hi Brother Cain, here are our speakers for ${formattedDate}:\n\n${speakers.join("\n")}\n\nThanks!\nKasey Cowley`,
+        text: `Hi Josh, here are our speakers for ${formattedDate}:\n\n${speakers.join("\n")}\n\nThanks!\nKasey Cowley`,
         to: recipient,
         from: process.env.EMAIL_SENDER,
       });
